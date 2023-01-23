@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1277</width>
+    <height>849</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1000</width>
+    <height>500</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Blind Invites</string>
+  </property>
+  <property name="windowOpacity">
+   <double>1.000000000000000</double>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+QWidget {
+    background-color: #303030;
+    color: white;
+}
+
+QCheckBox{
+    background-color: #3c3c3c;
+    alignment: center
+}
+QAbstractButton{
+    background-color: #3c3c3c;
+    alignment: center
+}
+QLabel{
+	font: 87 24pt &quot;Arial&quot;;
+    font-weight: 600
+    
+}
+/* Set the color of text in LineEdit to white */
+QLineEdit {
+    color: white;
+    background-color: #3c3c3c;
+}
+
+/* Set the color of text in PushButton to white */
+QPushButton {
+    background-color: #7fcde1;
+    color: white;
+    border-radius: 4px;
+    padding: 4px;
+    font: 12pt &quot;Arial&quot;;
+    height: 35px;
+    
+    font-weight: 800;
+}
+
+/* Add a hover effect to buttons */
+QPushButton:hover {
+    background: #ff9d00;
+    color: #ffffff
+}
+
+/* Add a pressed effect to buttons */
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+    stop: 0 #ff9d00, stop: 1 #ffb900);
+}
+
+/* Set the color of text in TableWidget to white */
+QTableWidget {
+    border-radius: 10px;
+    border: 2px solid #3c3c3c;
+    background-color: #3c3c3c;
+    color: white;
+    font-weight: bold;
+    font: Arial;
+    gridline-color: #5f5f5f;
+}
+
+QTableCornerButton::section{
+    background-color: #3c3c3c;
+}
+/* Add a hover effect to rows */
+QTableWidget::item:hover {
+    background-color: #6f6f6f;
+    color: #7fcde1;
+}
+
+/* Add a hover effect to rows */
+QTableWidget::item:selected {
+    background-color: #6f6f6f;
+    color: #7fcde1;
+
+}
+
+/* Set the color of text in TableWidget header to white */
+QHeaderView::section {
+    border-radius: 1px;
+    
+    color: white;
+    background-color: #3c3c3c;
+    font: 9pt Arial;
+    font-weight: bold;
+}
+
+QScrollBar:vertical{
+    border: none;
+    background-color: #303030;
+    width: 14px;
+    margin: 15px 0 15px 0;
+    border-radius: 0px;
+}
+
+/*  HANDLE BAR VERTICAL */
+QScrollBar::handle:vertical {	
+	background-color: #6f6f6f;
+	min-height: 30px;
+	border-radius: 7px;
+}
+QScrollBar::handle:vertical:hover{	
+	background-color: #ff9d00;
+}
+QScrollBar::handle:vertical:pressed {	
+	background-color: #ffb900;
+}
+
+/* BTN TOP - SCROLLBAR */
+QScrollBar::sub-line:vertical {
+	border: none;
+	background-color: #303030;
+	height: 15px;
+	border-top-left-radius: 7px;
+	border-top-right-radius: 7px;
+	subcontrol-position: top;
+	subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical:pressed {	
+	background-color: #ffb900;
+}
+
+/* BTN BOTTOM - SCROLLBAR */
+QScrollBar::add-line:vertical {
+	border: none;
+	background-color: #303030;
+	height: 15px;
+	border-bottom-left-radius: 7px;
+	border-bottom-right-radius: 7px;
+	subcontrol-position: bottom;
+	subcontrol-origin: margin;
+}
+
+QScrollBar::add-line:vertical:pressed {	
+	background-color: #ffb900;
+}
+
+
+/* RESET ARROW */
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
+	background: none;
+}
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+	background: none;
+}
+
+
+/* HORIZONTAL SCROLLBAR - HOMEWORK */
+QScrollBar:horizontal {
+    border: none;
+    background-color: #303030;
+    height: 14px;
+    margin: 0 15px 0 15px;
+    border-radius: 0px;
+}
+QScrollBar::handle:horizontal {
+	background-color: #6f6f6f;
+	min-width: 30px;
+	border-radius: 7px;
+}
+
+QScrollBar::handle:horizontal:hover{	
+	background-color: #ff9d00;
+}
+QScrollBar::handle:horizontal:pressed {	
+	background-color: #ffb900;
+}
+QScrollBar::add-line:horizontal {
+	border: none;
+	background-color: #303030;
+	width: 15px;
+	border-bottom-right-radius: 7px;
+	border-top-right-radius: 7px;
+	subcontrol-position: right;
+	subcontrol-origin: margin;
+}
+QScrollBar::sub-line:horizontal {
+	border: none;
+	background-color: #303030;
+	width: 15px;
+	border-top-left-radius: 7px;
+	border-bottom-left-radius: 7px;
+	subcontrol-position: left;
+	subcontrol-origin: margin;
+}
+QScrollBar::up-arrow:horizontal, QScrollBar::down-arrow:horizontal{
+
+    background: none;
+}
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal{
+
+    background: none;
+}
+
+QDateTimeEdit::up-button {
+    font: 87 8pt &quot;Arial&quot;;
+    width: 20px;
+    height: 20px;
+    
+}
+
+
+
+QDateTimeEdit::down-button {
+    font: 87 8pt &quot;Arial&quot;;
+    width: 20px;
+    height: 20px;
+    
+}
+</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="styleSheet">
+      <string notr="true">QLabel{
+    font: 20pt &quot;Arial&quot;;
+    color: #fff;
+    margin-bottom: 8px
+}</string>
+     </property>
+     <property name="text">
+      <string>Blind Invite Workspace</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+     <property name="verticalScrollMode">
+      <enum>QAbstractItemView::ScrollPerPixel</enum>
+     </property>
+     <property name="horizontalScrollMode">
+      <enum>QAbstractItemView::ScrollPerPixel</enum>
+     </property>
+     <property name="showGrid">
+      <bool>false</bool>
+     </property>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton_2">
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    background-color: rgb(53, 53, 53);
+    color: rgb(125, 125, 125);
+    border: 1px solid #7fcde1;
+    border-radius: 2px;
+    padding: 4px;
+    font: 10pt &quot;Arial&quot;;
+    height: 20px;
+    
+    
+    
+}
+
+/* Add a hover effect to buttons */
+QPushButton:hover {
+    background: rgb(71, 71, 71);
+    font: rgb(204, 204, 204);
+    color: #ffffff
+}
+
+/* Add a pressed effect to buttons */
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+    stop: 0 #ff9d00, stop: 1 #ffb900);
+}</string>
+     </property>
+     <property name="text">
+      <string>Load Table</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton">
+     <property name="styleSheet">
+      <string notr="true">height: 35px;
+font: 12pt &quot;Arial&quot;;</string>
+     </property>
+     <property name="text">
+      <string>Show Invites</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

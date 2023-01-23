@@ -1,0 +1,146 @@
+from datetime import datetime, timedelta, date, time
+import win32com.client
+import time as gn
+import win32com.client
+
+from datetime import datetime
+
+today = datetime.today()
+# encapsulate below as get_conflicts(start, end) this will return list of conflicts, date_range in days (int), and start
+# as tuple return (conflicts, day_range, begin)
+outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+appointments = outlook.GetDefaultFolder(9).Items
+appointments.IncludeRecurrences = True
+
+now = datetime.now()
+# begin will be equal to start
+begin = now
+# will be equal to tdelta end - start
+day_range = 21
+# will be equal to end argument from function call
+end = begin + timedelta(days=day_range)
+print(begin)
+# restrict range of appointments to read
+
+restriction = "[Start] >= '" + begin.strftime("%m/%d/%Y %I:%M %p") + "' AND [END] <= '" + end.strftime("%m/%d/%Y %I:%M %p") + "'"
+appointments = appointments.Restrict(restriction)
+recurring_appointments = []
+
+sorted_list = sorted(appointments, key=lambda x: x.Start.date())
+
+mon = {}
+tues = {}
+wed = {}
+thur = {}
+fri = {}
+
+# capture and categorize calendar events by weekday
+for item in sorted_list:
+
+    if item.meetingstatus != 7 and 120 > item.Duration >= 15:
+        if item.RecurrenceState < 1:
+            if item.Start.weekday() == 0:
+                mon[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
+            elif item.Start.weekday() == 1:
+                tues[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
+            elif item.Start.weekday() == 2:
+                wed[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
+            elif item.Start.weekday() == 3:
+                thur[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
+            elif item.Start.weekday() == 4:
+                fri[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
+
+        else:
+            recurring_appointments.append(item)
+    # print(f"{item.Start.weekday()} {item.Subject}")
+    else:
+        pass
+
+conflicts = [mon, tues, wed, thur, fri]
+
+# will take output from get_conflicts (conflicts, day_range, begin) and meeting duration
+def find_times(item_list, meeting_duration, date_range):
+
+    time_output = []
+    conflicts = item_list
+
+    def reset_time(date_time):
+        if date_time.weekday() == 4:
+            d = date_time.date() + timedelta(days=3)
+        else:
+            d = date_time.date() + timedelta(days=1)
+        hour = 9
+        minute = 0
+        t = time(hour=hour, minute=minute)
+        return datetime.combine(d, t)
+
+    dt = date.today()
+    hour = 9
+    minute = 0
+    t = time(hour=hour, minute=minute)
+
+    selection = datetime.combine(dt, t)
+
+    # loop through weekdays
+    for i in range(date_range):
+
+        if selection.date() == datetime.today().date():
+            if selection.weekday() == 4:
+                selection = selection + timedelta(days=3)
+            elif selection.weekday() == 5:
+                selection = selection + timedelta(days=2)
+
+            else:
+                selection = selection + timedelta(days=1)
+
+        print(f'{selection.weekday()}: {selection.date()}')
+        time_key = selection.strftime("%m/%d/%Y %I:%M %p")
+        duration = meeting_duration
+        if duration == 30:
+            time_slot_count = 16
+        else:
+            time_slot_count = 26
+
+        # loop through timeslots and check conflicts using weekday index
+        for j in range(time_slot_count):
+            if conflicts[selection.weekday()].get(time_key):
+                conflict = conflicts[selection.weekday()].get(time_key)
+                print(f'Conflict: {conflicts[selection.weekday()].get(time_key).Subject} at {selection.time()}')
+
+                if duration == 30:
+                    if conflict.Duration % 2 != 0:
+                        if conflict.Duration < 30:
+                            selection = selection + timedelta(minutes=duration)
+                        else:
+                            selection = selection + timedelta(minutes=90)
+                    else:
+                        selection = selection + timedelta(minutes=conflict.Duration)
+                else:
+                    selection = selection + timedelta(minutes=conflict.Duration)
+
+                time_key = selection.strftime("%m/%d/%Y %I:%M %p")
+            else:
+                if j < time_slot_count - 1:
+                    eod = datetime.combine(date=selection.date(), time=time(hour=16, minute=0))
+                    lunch = datetime.combine(date=selection.date(), time=time(hour=12, minute=0))
+                    if selection.time() <= eod.time():
+                        if selection != lunch:
+                            print(f'opening found at {selection.time()}')
+                            time_output.append(selection)
+                        else:
+                            selection = selection + timedelta(minutes=60)
+                            time_key = selection.strftime("%m/%d/%Y %I:%M %p")
+                            continue
+                    selection = selection + timedelta(minutes=duration)
+                    time_key = selection.strftime("%m/%d/%Y %I:%M %p")
+                else:
+                    selection = reset_time(selection)
+                    time_key = selection.strftime("%m/%d/%Y %I:%M %p")
+
+    return time_output
+
+
+# testing = find_times(conflicts, 30, day_range)
+
+
+
