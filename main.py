@@ -6,6 +6,7 @@ import pandas
 from datetime import datetime
 from communications import show_invites, send_emails, send_emails_ae, send_emails_ae_unified
 from ui_functions import *
+USER = None
 
 ICONS = ['iconz\\test_icon_disabled.png', 'iconz\\cal_reg.png', 'iconz\\hand_reg.png', 'iconz\\plane_reg.png',
          'iconz\\profile_reg.png']
@@ -15,6 +16,20 @@ DISABLED = ['iconz_disabled\\test_icon.png', 'iconz_disabled\\cal_dis.png', 'ico
             'iconz_disabled\\profile_dis.png']
 
 today = datetime.today()
+
+
+def load_user():
+    file = 'catcher.csv'
+    try:
+        df = pandas.read_csv(file)
+        for index, row in df.iterrows():
+            # create an instance of the class and append it to the list
+            global USER
+            USER = Person(row['First'], row['Last'], row['Scheduling'], row['Lunch'], row['Team Meeting'])
+            return True
+    except:
+
+        return False
 
 class Person:
     def __init__(self, name, last, scheduling, lunch, team_meeting):
@@ -87,8 +102,10 @@ class MainWindow(QMainWindow):
         self.page_1 = self.findChild(QWidget, 'page_1')
         self.page_2 = self.findChild(QWidget, 'page_2')
         self.page_3 = self.findChild(QWidget, 'page_3')
+        self.page_4 = self.findChild(QWidget, 'page_4')
         self.verticalLayoutBi = self.findChild(QVBoxLayout, 'verticalLayout_6')
         self.verticalLayoutAe = self.findChild(QVBoxLayout, 'verticalLayoutAE')
+        self.VerticalLayoutOutreach = self.findChild(QVBoxLayout, 'verticalLayout_9')
         self.Btn_Toggle = self.findChild(QPushButton, 'Btn_Toggle')
         self.Btn_Toggle.setIcon(QIcon('iconz\\menu_reg.png'))
         self.btn_page_1 = self.findChild(QPushButton, 'btn_page_1')
@@ -127,19 +144,37 @@ class MainWindow(QMainWindow):
         # PAGE 3
         self.btn_page_3.clicked.connect(lambda: self.load_data_ae())
 
+        # PAGE 4
+        self.btn_page_4.clicked.connect(lambda: self.load_data_outreach())
+
         # SHOW ==> MAIN WINDOW
         ########################################################################
+
         self.show()
+
+
+
         # ==> END ##
 
     object_list = []
     client_list = []
     selected_tab = None
     loaded_file = None
+    people = []
 
     def load_home(self):
         self.selected(self.btn_page_1)
         self.stackedWidget.setCurrentWidget(self.page_1)
+
+    def load_data_outreach(self):
+        self.selected(self.btn_page_4)
+        if self.VerticalLayoutOutreach.isEmpty():
+            table_window = OutreachWindow()
+            self.VerticalLayoutOutreach.addWidget(table_window)
+            self.stackedWidget.setCurrentWidget(self.page_4)
+        else:
+
+            self.stackedWidget.setCurrentWidget(self.page_4)
 
     def load_data_ae(self):
         self.selected(self.btn_page_3)
@@ -160,7 +195,15 @@ class MainWindow(QMainWindow):
             sheet = pandas.read_excel(self.fname[0])
             self.loadButton.setText(f'File Selected: {self.fname[0].split("/")[-1]}')
             self.loaded_file = True
+            status = QLabel(f'Working With - {self.fname[0].split("/")[-1]}')
+
+            status.setStyleSheet('QLabel{color:gray; font: Arial; border:none} QStatusBar::item{border:none}')
+            self.setStatusBar(QStatusBar(self))
+            self.statusBar().addWidget(status)
+
+
         except:
+
             return False
 
         # Create a list of objects
@@ -236,17 +279,137 @@ class MainWindow(QMainWindow):
         days = (today - date).days
         return days
 
-    def load_user(self):
-        file = 'catcher.csv'
-        try:
-            df = pandas.read_csv('catcher.csv')
-            for index, row in df.iterrows():
-                # create an instance of the class and append it to the list
-                self.people.append(Person(row['First'], row['Last'], row['Scheduling'], row['Lunch'], row['Team Meeting']))
-                return True
-        except:
 
+class OutreachWindow(QWidget):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        uic.loadUi('outreach.ui', self)
+        self.pushButton = self.findChild(QPushButton, 'pushButton')
+        self.table = self.findChild(QTableWidget, 'tableWidget')
+        self.loadButton = self.findChild(QPushButton, 'pushButton_2')
+        self.customize = self.findChild(QPushButton, 'pushButton_3')
+        self.checkboxes = []
+        self.dialog = TemplateEdit(self)
+        #self.text_edit = self.dialog.findChild(QTextEdit, 'textEdit')
+        #self.line = self.dialog.findChild(QLineEdit, 'lineEdit_2')
+        #self.template_ok = self.dialog.findChild(QPushButton, 'pushButton')
+        self.custom_check = self.findChild(QCheckBox, 'checkBox')
+        self.pushButton.clicked.connect(lambda: self.create_list())
+        self.loadButton.clicked.connect(lambda: self.load_table())
+        self.customize.clicked.connect(lambda: self.open_editor())
+        self.custom_check.clicked.connect(lambda: self.customize_template())
+
+        self.object_list = MainWindow.object_list
+        self.list = []
+        for i in range(len(self.object_list)):
+            if self.object_list[i].stage != 'Closed Not Onboarded':
+                self.list.append(self.object_list[i])
+        # sort and filter the list for client stages/status (specific to blind invite window will vary for AE
+        self.sorted_list = sorted(self.list, key=lambda x: x.ae)
+
+        self.show()
+
+    change_template = False
+    template = None
+    subject = None
+
+
+    def open_editor(self):
+        if self.dialog.isHidden():
+            self.dialog.show()
+
+    def checkbox_toggled(self, state):
+        print(f'toggled: {state}')
+        print(self.windowOpacity())
+
+    def see_through(self):
+        pass
+
+    def customize_template(self):
+        if self.custom_check.isChecked():
+            print('checked')
+            self.change_template = True
+        else:
+            print('Unchecked')
+            self.change_template = False
+
+    # function called when return statement hits needs to take in template parameter if checkbox marked
+    def create_list(self):
+        data = []
+        header_labels = [self.table.horizontalHeaderItem(i).text() for i in range(self.table.columnCount())]
+        for i in range(self.table.rowCount()):
+            # checkbox_outer_widget = self.table.cellWidget(i, 0)
+            checkbox = self.table.cellWidget(i, 0)
+            if self.checkboxes[i].isChecked():
+                row_data = {}
+                for j in range(1, self.table.columnCount()):
+                    if j != 6:
+                        item = self.table.item(i, j)
+                    else:
+                        item = self.table.cellWidget(i, j)
+
+                    if item is not None:
+                        row_data[header_labels[j]] = item.text()
+                data.append(row_data)
+        print(data)
+        if self.change_template:
+            return send_emails(data, self.template, self.subject)
+        return send_emails(data)
+
+    def load_table(self):
+        if self.table.columnCount() > 1:
+            print('Already Loaded')
             return False
+
+
+        # Set the column headers to be the object's attributes
+        attributes = ['', "Name", 'Email', "Age", "Status", "AE", 'Country']
+        self.table.setColumnCount(len(attributes))
+        self.table.setHorizontalHeaderLabels(attributes)
+        self.table.verticalHeader().setDefaultAlignment(Qt.AlignCenter)
+
+
+        # Add the objects' data to the table
+        for i, obj in enumerate(self.sorted_list):
+            print(i)
+
+            self.table.insertRow(i)
+            # insert row checkbox
+            checkbox_item = QCheckBox()
+            checkbox_item.setChecked(False)
+            checkbox_item.stateChanged.connect(self.checkbox_toggled)
+            self.checkboxes.append(checkbox_item)
+
+            self.table.setCellWidget(i, 0, checkbox_item)
+            print('item 1')
+            self.table.setItem(i, 1, QTableWidgetItem(obj.name))
+            print('item 2')
+            self.table.setItem(i, 2, QTableWidgetItem(obj.email))
+            print('item 3')
+            self.table.setItem(i, 3, QTableWidgetItem(str(obj.age)))
+            self.table.item(i, 3).setTextAlignment(Qt.AlignCenter)
+
+            # color of aging clients
+            if obj.age >= 35:
+                self.table.item(i, 3).setForeground(Qt.red)
+            elif obj.age >= 20:
+                self.table.item(i, 3).setForeground(Qt.darkYellow)
+            else:
+                self.table.item(i, 3).setForeground(Qt.darkGreen)
+            print('item 4')
+            self.table.setItem(i, 4, QTableWidgetItem(str(obj.stage)))
+            print('item 5')
+            self.table.setItem(i, 5, QTableWidgetItem(obj.ae))
+            print('item 6')
+
+            self.table.setItem(i, 6, QTableWidgetItem(str(obj.country)))
+            self.table.item(i, 6).setTextAlignment(Qt.AlignCenter)
+            print('item 7')
+
+        self.table.resizeColumnsToContents()
+        self.table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.table.adjustSize()
 
 
 class AeWindow(QWidget):
@@ -543,7 +706,7 @@ class TestBox(QDialog):
 
         if len(self.nameEdit.text()) > 3 and len(self.lastEdit.text()) > 3 and len(self.schedulingEdit.text()) > 10:
             self.button.setEnabled(False)
-        #self.show()
+        self.show()
 
     def verify_fields(self):
         if len(self.nameEdit.text()) > 3 and len(self.lastEdit.text()) > 3 and len(self.schedulingEdit.text()) > 10:
@@ -570,12 +733,42 @@ class TestBox(QDialog):
         df.to_csv(f'catcher.csv',
                   index=False, header=True, columns=columns)
         start.setEnabled(True)
+        global USER
+        USER = True
+
         self.close()
 
 
+class TemplateEdit(QDialog):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        uic.loadUi('template_editor.ui', self)
+        self.button = self.findChild(QPushButton, 'pushButton')
+        self.textEdit = self.findChild(QTextEdit, 'textEdit')
+        self.subject = self.findChild(QLineEdit, 'lineEdit_2')
+        self.button.clicked.connect(lambda: self.button_clicked())
+
+    def button_clicked(self):
+        print('Clicked')
+        OutreachWindow.template = self.textEdit.toHtml()
+        OutreachWindow.subject = self.subject.text()
+        print(OutreachWindow.template)
+        self.close()
+
 if __name__ == '__main__':
     app = QApplication([])
-    start = MainWindow()
+    if load_user():
+        start = MainWindow()
+
+    else:
+        start = MainWindow()
+        start.setEnabled(False)
+        test = TestBox()
+        load_user()
+
+
+
+
     #window = BiWindow()
     #window.show()
     app.exec_()

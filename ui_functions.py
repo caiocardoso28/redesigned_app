@@ -2,6 +2,8 @@ from main import MainWindow, ICONS, DISABLED
 from PyQt5 import QtCore
 from PyQt5.QtCore import (QCoreApplication, QPropertyAnimation, QDate, QDateTime, QMetaObject, QObject, QPoint, QRect, QSize, QTime, QUrl, Qt, QEvent)
 from PyQt5.QtGui import QIcon
+
+
 class UIFunctions(MainWindow):
 
     def toggleMenu(self, maxWidth, enable):
@@ -22,7 +24,7 @@ class UIFunctions(MainWindow):
                 self.btn_page_5.setText('Profile Info')
                 self.btn_page_1.setText('Load File')
                 self.btn_page_2.setText('BI Workspace')
-                self.btn_page_3.setText('AE Connection')
+                self.btn_page_3.setText('AE Collaboration')
                 self.btn_page_4.setText('Reach Out')
                 self.Btn_Toggle.setIcon(QIcon())
                 self.Btn_Toggle.setText('Menu')

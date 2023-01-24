@@ -31,24 +31,28 @@ def show_invites(clients):
         cal_item.display()
 
 
-def send_emails(clients):
+def send_emails(clients, template=None, subject=None):
     outlook = win32com.client.Dispatch('outlook.application')
     for client in clients:
 
         mail = outlook.CreateItem(0)
         mail.To = client['Email']
-        mail.Subject = 'Gartner Platform Overview'
-        mail.HTMLBody = f"""Hello <b>{client['Name'].split(' ')[0]},</b>
-    
-                <br><br>I am reaching out to schedule some time for your Gartner platform overview. This session is a 30 minute introduction to the resources you have access to on the Gartner.com portal. We do strongly encourage you to take advantage of this onboarding session as it does come as part of your service and this introductory call will allow us to customize the portal to best suit your needs.
-    
-                <br><br>Please see below for my most current availability and I look forward to connecting with you soon!
-    
-                <br><br><b>Scheduling:</b> {'www.scheduling.com'}
-    
-                <br><br>Best,
-    
-                <br><br>{'Caio'} {'Cardoso'}<br>Client Onboarding Specialist-NCE | Gartner"""
+        if template and subject:
+            mail.Subject = subject
+            mail.HTMLBody = f"""Hello <b>{client['Name'].split(' ')[0]},</b><br><br>{template}"""
+        else:
+            mail.Subject = 'Gartner Platform Overview'
+            mail.HTMLBody = f"""Hello <b>{client['Name'].split(' ')[0]},</b>
+        
+                    <br><br>I am reaching out to schedule some time for your Gartner platform overview. This session is a 30 minute introduction to the resources you have access to on the Gartner.com portal. We do strongly encourage you to take advantage of this onboarding session as it does come as part of your service and this introductory call will allow us to customize the portal to best suit your needs.
+        
+                    <br><br>Please see below for my most current availability and I look forward to connecting with you soon!
+        
+                    <br><br><b>Scheduling:</b> {'www.scheduling.com'}
+        
+                    <br><br>Best,
+        
+                    <br><br>{'Caio'} {'Cardoso'}<br>Client Onboarding Specialist-NCE | Gartner"""
         # mail.Send()
         mail.Display()
 
@@ -92,6 +96,7 @@ def send_emails_ae_unified(clients):
         elif last_ae == f'{client["AE"]}':
             mail_list.append(client)
         else:
+            print('False')
             return False
 
     for client in mail_list:

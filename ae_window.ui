@@ -234,6 +234,13 @@ QDateTimeEdit::down-button {
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
+     <property name="styleSheet">
+      <string notr="true">QLabel{
+    font: 20pt &quot;Arial&quot;;
+    color: #fff;
+    margin-bottom: 8px
+}</string>
+     </property>
      <property name="text">
       <string>AE Collaboration Workspace</string>
      </property>
@@ -243,19 +250,6 @@ QDateTimeEdit::down-button {
      <property name="margin">
       <number>0</number>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QTableWidget" name="tableWidget">
-     <property name="selectionBehavior">
-      <enum>QAbstractItemView::SelectRows</enum>
-     </property>
-     <property name="showGrid">
-      <bool>false</bool>
-     </property>
-     <attribute name="horizontalHeaderStretchLastSection">
-      <bool>true</bool>
-     </attribute>
     </widget>
    </item>
    <item>
@@ -293,6 +287,28 @@ QPushButton:pressed {
     </widget>
    </item>
    <item>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+     <property name="verticalScrollMode">
+      <enum>QAbstractItemView::ScrollPerPixel</enum>
+     </property>
+     <property name="horizontalScrollMode">
+      <enum>QAbstractItemView::ScrollPerPixel</enum>
+     </property>
+     <property name="showGrid">
+      <bool>false</bool>
+     </property>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+    </widget>
+   </item>
+   <item>
     <widget class="QPushButton" name="pushButton">
      <property name="text">
       <string>Show Emails</string>
@@ -302,31 +318,7 @@ QPushButton:pressed {
    <item>
     <widget class="QPushButton" name="pushButton_3">
      <property name="styleSheet">
-      <string notr="true">QPushButton {
-    background-color: #303030;
-    color: white;
-   border: 1px solid rgb(255, 162, 0);
-    border-radius: 2px;
-    padding: 4px;
-    font: 12pt &quot;Arial&quot;;
-    height: 35px;
-    
-    font-weight: 800;
-}
-
-/* Add a hover effect to buttons */
-QPushButton:hover {
-    background:rgb(255, 162, 0);
-    border: 1px solid rgb(255, 162, 0);
-    border-radius: 2px;
-    color: #ffffff
-}
-
-/* Add a pressed effect to buttons */
-QPushButton:pressed {
-    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-    stop: 0 #ff9d00, stop: 1 #ffb900);
-}</string>
+      <string notr="true"/>
      </property>
      <property name="text">
       <string>Show Account Email</string>
