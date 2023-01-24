@@ -329,9 +329,12 @@ class OutreachWindow(QWidget):
     def customize_template(self):
         if self.custom_check.isChecked():
             print('checked')
+            if self.subject:
+                self.custom_check.setText(f'Template Selected: {self.subject}')
             self.change_template = True
         else:
             print('Unchecked')
+            self.custom_check.setText(f'Use Custom Template')
             self.change_template = False
 
     # function called when return statement hits needs to take in template parameter if checkbox marked
@@ -746,6 +749,7 @@ class TemplateEdit(QDialog):
         self.button = self.findChild(QPushButton, 'pushButton')
         self.textEdit = self.findChild(QTextEdit, 'textEdit')
         self.subject = self.findChild(QLineEdit, 'lineEdit_2')
+        self.subject.setFocus()
         self.button.clicked.connect(lambda: self.button_clicked())
 
     def button_clicked(self):
