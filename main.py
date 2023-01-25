@@ -423,10 +423,15 @@ class AeWindow(QWidget):
         self.table = self.findChild(QTableWidget, 'tableWidget')
         self.loadButton = self.findChild(QPushButton, 'pushButton_2')
         self.sendUnifiedButton = self.findChild(QPushButton, 'pushButton_3')
+        self.customize = self.findChild(QPushButton, 'pushButton_4')
+        self.dialog = TemplateEdit(self)
+        self.custom_check = self.findChild(QCheckBox, 'checkBox')
         self.checkboxes = []
         self.pushButton.clicked.connect(lambda: self.create_list())
         self.loadButton.clicked.connect(lambda: self.load_table())
         self.sendUnifiedButton.clicked.connect(lambda: self.create_unified_list())
+        self.customize.clicked.connect(lambda: self.open_editor())
+        self.custom_check.clicked.connect(lambda: self.customize_template())
 
         # algorithmically suggest times from outlook
         # self.pyt = find_times(self.calendar[0], duration=30, date_range=self.calendar[1], start=self.calendar[2])
@@ -445,7 +450,25 @@ class AeWindow(QWidget):
 
         self.show()
 
+    change_template = False
+    template = None
+    subject = None
 
+    def customize_template(self):
+
+        if self.custom_check.isChecked():
+            print('checked')
+            if self.subject:
+                self.custom_check.setText(f'Template Selected: {self.subject}')
+            self.change_template = True
+        else:
+            print('Unchecked')
+            self.custom_check.setText(f'Use Custom Template')
+            self.change_template = False
+
+    def open_editor(self):
+        if self.dialog.isHidden():
+            self.dialog.show()
 
     def checkbox_toggled(self, state):
         print(f'toggled: {state}')
@@ -493,6 +516,8 @@ class AeWindow(QWidget):
                         row_data[header_labels[j]] = item.text()
                 data.append(row_data)
         print(data)
+        if self.change_template:
+            return send_emails_ae(data, self.template, self.subject)
         return send_emails_ae(data)
 
     # Connect the date time changed signal to the slot function and pass the row number
@@ -746,18 +771,30 @@ class TemplateEdit(QDialog):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         uic.loadUi('template_editor.ui', self)
+        self.parent = self.parentWidget()
         self.button = self.findChild(QPushButton, 'pushButton')
+
         self.textEdit = self.findChild(QTextEdit, 'textEdit')
+
         self.subject = self.findChild(QLineEdit, 'lineEdit_2')
+        #self.subject.changeEvent(lambda: self.enable_button())
         self.subject.setFocus()
         self.button.clicked.connect(lambda: self.button_clicked())
 
+    def enable_button(self):
+        print(self.textEdit.toPlainText())
+
     def button_clicked(self):
-        print('Clicked')
-        OutreachWindow.template = self.textEdit.toHtml()
-        OutreachWindow.subject = self.subject.text()
-        print(OutreachWindow.template)
-        self.close()
+        if len(self.subject.text()) < 3:
+            self.subject.setFocus()
+            pass
+        else:
+            print('Clicked')
+            print(self.parentWidget().template)
+            self.parentWidget().template = self.textEdit.toHtml()
+            self.parentWidget().subject = self.subject.text()
+            print(self.parentWidget().template)
+            self.close()
 
 if __name__ == '__main__':
     app = QApplication([])

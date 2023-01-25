@@ -33,13 +33,34 @@ def show_invites(clients):
 
 def send_emails(clients, template=None, subject=None):
     outlook = win32com.client.Dispatch('outlook.application')
+    template = template
+    to_change = ['(AE)', '(AGE)', '(CLIENT)', '(ORG)']
+    i = 0
+    last_client = None
     for client in clients:
-
         mail = outlook.CreateItem(0)
         mail.To = client['Email']
         if template and subject:
+            for item in to_change:
+                if item == '(AE)':
+                    if i == 0:
+                        template = template.replace(item, client['AE'].split(',')[1])
+                    else:
+                        template = template.replace(last_client['AE'].split(',')[1], client['AE'].split(',')[1])
+                elif item == '(AGE)':
+                    if i == 0:
+                        template = template.replace(item, client['Age'])
+                    else:
+                        template = template.replace(last_client['Age'], client['Age'])
+                elif item == '(CLIENT)':
+                    if i == 0:
+                        template = template.replace(item, client['Name'].split(' ')[0])
+                    else:
+                        template = template.replace(last_client['Name'].split(' ')[0], client['Name'].split(' ')[0])
+
+            last_client = client
             mail.Subject = subject
-            mail.HTMLBody = f"""Hello <b>{client['Name'].split(' ')[0]},</b><br><br>{template}"""
+            mail.HTMLBody = template
         else:
             mail.Subject = 'Gartner Platform Overview'
             mail.HTMLBody = f"""Hello <b>{client['Name'].split(' ')[0]},</b>
@@ -54,33 +75,63 @@ def send_emails(clients, template=None, subject=None):
         
                     <br><br>{'Caio'} {'Cardoso'}<br>Client Onboarding Specialist-NCE | Gartner"""
         # mail.Send()
+        i += 1
         mail.Display()
 
 
-def send_emails_ae(clients):
+def send_emails_ae(clients, template=None, subject=None):
     outlook = win32com.client.Dispatch('outlook.application')
+    template = template
+    to_change = ['(AE)', '(AGE)', '(CLIENT)', '(ORG)']
+    i = 0
+    last_client = None
     for client in clients:
         mail = outlook.CreateItem(0)
         mail.To = f'{client["AE"]};'
         mail.CC = 'Conley, Ashlee;'
-        mail.Subject = 'Gartner Platform Overview'
-        mail.HTMLBody = f"""Hello <b>{client['AE'].split(',')[1]},</b>
-
-                <br><br>I hope you are doing well! I am reaching out today because I have been trying to get a hold of 
-                {client['Client'].split(' ')[0]} from <b>{client['Account']}</b>. Have you been able to speak with them yet? I
-                would love to partner with you to help the client get off to a fast start with Gartner. I have also 
-                included my scheduling link below to make it easier in case you have an upcoming meeting with the client.
-                I look forward to getting {client['Client'].split(' ')[0]} up to speed. Thank you!
-
-                <br><br><b>Scheduling:</b> {'www.scheduling.com'}
-
-                <br><br>Best,
-
-                <br><br>{'Caio'} {'Cardoso'}<br>Client Onboarding Specialist-NCE | Gartner"""
+        if template and subject:
+            for item in to_change:
+                if item == '(AE)':
+                    if i == 0:
+                        template = template.replace(item, client['AE'].split(',')[1])
+                    else:
+                        template = template.replace(last_client['AE'].split(',')[1], client['AE'].split(',')[1])
+                elif item == '(AGE)':
+                    if i == 0:
+                        template = template.replace(item, client['Age'])
+                    else:
+                        template = template.replace(last_client['Age'], client['Age'])
+                elif item == '(CLIENT)':
+                    if i == 0:
+                        template = template.replace(item, client['Client'].split(' ')[0])
+                    else:
+                        template = template.replace(last_client['Client'].split(' ')[0], client['Client'].split(' ')[0])
+                elif item == '(ORG)':
+                    if i == 0:
+                        template = template.replace(item, client['Account'].title())
+                    else:
+                        template = template.replace(last_client['Account'].title(), client['Account'].title())
+            last_client = client
+            mail.Subject = subject
+            mail.HTMLBody = template
+        else:
+            mail.Subject = 'Gartner Platform Overview'
+            mail.HTMLBody = f"""Hello <b>{client['AE'].split(',')[1]},</b>
+    
+                    <br><br>I hope you are doing well! I am reaching out today because I have been trying to get a hold of 
+                    {client['Client'].split(' ')[0]} from <b>{client['Account']}</b>. Have you been able to speak with them yet? I
+                    would love to partner with you to help the client get off to a fast start with Gartner. I have also 
+                    included my scheduling link below to make it easier in case you have an upcoming meeting with the client.
+                    I look forward to getting {client['Client'].split(' ')[0]} up to speed. Thank you!
+    
+                    <br><br><b>Scheduling:</b> {'www.scheduling.com'}
+    
+                    <br><br>Best,
+    
+                    <br><br>{'Caio'} {'Cardoso'}<br>Client Onboarding Specialist-NCE | Gartner"""
         # mail.Send()
+        i += 1
         mail.Display()
-
-
 
 def send_emails_ae_unified(clients):
     outlook = win32com.client.Dispatch('outlook.application')
