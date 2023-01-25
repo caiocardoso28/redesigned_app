@@ -536,7 +536,7 @@ QPushButton:pressed {
   </widget>
  </widget>
  <resources>
-  <include location="../../Desktop/test3.qrc"/>
+  <include location="../../Desktop/Stuff/test3.qrc"/>
  </resources>
  <connections/>
 </ui>

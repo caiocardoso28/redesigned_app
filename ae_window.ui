@@ -382,11 +382,17 @@ font: 12pt &quot;Arial&quot;;</string>
    </item>
    <item alignment="Qt::AlignHCenter">
     <widget class="QCheckBox" name="checkBox">
+     <property name="minimumSize">
+      <size>
+       <width>120</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="styleSheet">
       <string notr="true">QCheckBox{
     font: 10pt &quot;Arial&quot;;
     background-color: rgb(47, 47, 47);
-    margin-bottom: 8px
+    
 }</string>
      </property>
      <property name="text">

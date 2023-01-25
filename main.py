@@ -31,6 +31,7 @@ def load_user():
 
         return False
 
+
 class Person:
     def __init__(self, name, last, scheduling, lunch, team_meeting):
         self.name = name
@@ -38,6 +39,7 @@ class Person:
         self.scheduling = scheduling
         self.lunch = lunch
         self.team_meeting = team_meeting
+
 
 class Client:
     def __init__(self,
@@ -128,11 +130,11 @@ class MainWindow(QMainWindow):
         self.loadButton.clicked.connect(self.open_file)
         self.stackedWidget.setCurrentWidget(self.page_1)
         self.selected(self.btn_page_1)
-        ## TOGGLE/BURGUER MENU
-        ########################################################################
+        # TOGGLE/BURGER MENU
+
         self.Btn_Toggle.clicked.connect(lambda: UIFunctions.toggleMenu(self, 220, True))
 
-        ## PAGES
+        # PAGES
         ########################################################################
 
         # PAGE 1
@@ -151,8 +153,6 @@ class MainWindow(QMainWindow):
         ########################################################################
 
         self.show()
-
-
 
         # ==> END ##
 
@@ -331,11 +331,13 @@ class OutreachWindow(QWidget):
             print('checked')
             if self.subject:
                 self.custom_check.setText(f'Template Selected: {self.subject}')
+                self.customize.setEnabled(False)
             self.change_template = True
         else:
             print('Unchecked')
             self.custom_check.setText(f'Use Custom Template')
             self.change_template = False
+            self.customize.setEnabled(True)
 
     # function called when return statement hits needs to take in template parameter if checkbox marked
     def create_list(self):
@@ -460,11 +462,13 @@ class AeWindow(QWidget):
             print('checked')
             if self.subject:
                 self.custom_check.setText(f'Template Selected: {self.subject}')
+                self.customize.setEnabled(False)
             self.change_template = True
         else:
             print('Unchecked')
             self.custom_check.setText(f'Use Custom Template')
             self.change_template = False
+            self.customize.setEnabled(True)
 
     def open_editor(self):
         if self.dialog.isHidden():
@@ -790,11 +794,11 @@ class TemplateEdit(QDialog):
             pass
         else:
             print('Clicked')
-            print(self.parentWidget().template)
             self.parentWidget().template = self.textEdit.toHtml()
             self.parentWidget().subject = self.subject.text()
-            print(self.parentWidget().template)
+
             self.close()
+
 
 if __name__ == '__main__':
     app = QApplication([])
@@ -807,10 +811,5 @@ if __name__ == '__main__':
         test = TestBox()
         load_user()
 
-
-
-
-    #window = BiWindow()
-    #window.show()
     app.exec_()
 
