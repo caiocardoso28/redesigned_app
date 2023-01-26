@@ -229,7 +229,7 @@ class MainWindow(QMainWindow):
                             eng_age=eng_age
                             )
 
-            print(f"{client.eng_age}{client.is_engaged()}")
+            #print(f"{client.eng_age}{client.is_engaged()}")
             self.client_list.append(client)
 
         for j in range(len(self.client_list)):
@@ -327,12 +327,16 @@ class OutreachWindow(QWidget):
         pass
 
     def customize_template(self):
+        
         if self.custom_check.isChecked():
             print('checked')
             if self.subject:
                 self.custom_check.setText(f'Template Selected: {self.subject}')
                 self.customize.setEnabled(False)
-            self.change_template = True
+                self.change_template = True
+            else:
+                print('Unchecked')
+                self.custom_check.setChecked(False)
         else:
             print('Unchecked')
             self.custom_check.setText(f'Use Custom Template')
@@ -377,7 +381,7 @@ class OutreachWindow(QWidget):
 
         # Add the objects' data to the table
         for i, obj in enumerate(self.sorted_list):
-            print(i)
+            #print(i)
 
             self.table.insertRow(i)
             # insert row checkbox
@@ -387,11 +391,11 @@ class OutreachWindow(QWidget):
             self.checkboxes.append(checkbox_item)
 
             self.table.setCellWidget(i, 0, checkbox_item)
-            print('item 1')
+            #print('item 1')
             self.table.setItem(i, 1, QTableWidgetItem(obj.name))
-            print('item 2')
+            #print('item 2')
             self.table.setItem(i, 2, QTableWidgetItem(obj.email))
-            print('item 3')
+            #print('item 3')
             self.table.setItem(i, 3, QTableWidgetItem(str(obj.age)))
             self.table.item(i, 3).setTextAlignment(Qt.AlignCenter)
 
@@ -402,15 +406,15 @@ class OutreachWindow(QWidget):
                 self.table.item(i, 3).setForeground(Qt.darkYellow)
             else:
                 self.table.item(i, 3).setForeground(Qt.darkGreen)
-            print('item 4')
+            #print('item 4')
             self.table.setItem(i, 4, QTableWidgetItem(str(obj.stage)))
-            print('item 5')
+            #print('item 5')
             self.table.setItem(i, 5, QTableWidgetItem(obj.ae))
-            print('item 6')
+            #print('item 6')
 
             self.table.setItem(i, 6, QTableWidgetItem(str(obj.country)))
             self.table.item(i, 6).setTextAlignment(Qt.AlignCenter)
-            print('item 7')
+            #print('item 7')
 
         self.table.resizeColumnsToContents()
         self.table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
@@ -443,9 +447,9 @@ class AeWindow(QWidget):
         for i in range(len(self.object_list)):
             if self.object_list[i].stage != 'Closed Not Onboarded':
                 if type(self.object_list[i].eng_age) != type(3):
-                    self.object_list[i].eng_age = 'N/A'
+                    self.object_list[i].eng_age = 'Not Engaged'
                     self.list.append(self.object_list[i])
-                elif self.object_list[i].eng_age > 21:
+                elif self.object_list[i].eng_age < 60:
                     self.list.append(self.object_list[i])
         # sort and filter the list for client stages/status (specific to blind invite window will vary for AE
         self.sorted_list = sorted(self.list, key=lambda x: x.ae)
@@ -463,7 +467,10 @@ class AeWindow(QWidget):
             if self.subject:
                 self.custom_check.setText(f'Template Selected: {self.subject}')
                 self.customize.setEnabled(False)
-            self.change_template = True
+                self.change_template = True
+            else:
+                print('Unchecked')
+                self.custom_check.setChecked(False)
         else:
             print('Unchecked')
             self.custom_check.setText(f'Use Custom Template')
@@ -499,7 +506,9 @@ class AeWindow(QWidget):
                         row_data[header_labels[j]] = item.text()
                 data.append(row_data)
         print(data)
-        return send_emails_ae_unified(data)
+        if data:
+            return send_emails_ae_unified(data)
+        return False
 
     def create_list(self):
 
@@ -543,7 +552,7 @@ class AeWindow(QWidget):
 
         # Add the objects' data to the table
         for i, obj in enumerate(self.sorted_list):
-            print(i)
+            #print(i)
 
             self.table.insertRow(i)
             # insert row checkbox
@@ -553,11 +562,11 @@ class AeWindow(QWidget):
             self.checkboxes.append(checkbox_item)
 
             self.table.setCellWidget(i, 0, checkbox_item)
-            print('item 1')
+            #print('item 1')
             self.table.setItem(i, 1, QTableWidgetItem(obj.ae))
-            print('item 2')
+            #print('item 2')
             self.table.setItem(i, 2, QTableWidgetItem(obj.name))
-            print('item 3')
+            #print('item 3')
             self.table.setItem(i, 3, QTableWidgetItem(str(obj.age)))
             self.table.item(i, 3).setTextAlignment(Qt.AlignCenter)
 
@@ -568,18 +577,18 @@ class AeWindow(QWidget):
                 self.table.item(i, 3).setForeground(Qt.darkYellow)
             else:
                 self.table.item(i, 3).setForeground(Qt.darkGreen)
-            print('item 4')
+            #print('item 4')
             self.table.setItem(i, 4, QTableWidgetItem(str(obj.stage)))
-            print('item 5')
+            #print('item 5')
             self.table.setItem(i, 5, QTableWidgetItem(obj.org_name))
-            print('item 6')
+            #print('item 6')
 
             self.table.setItem(i, 6, QTableWidgetItem(str(obj.eng_age)))
             self.table.item(i, 6).setTextAlignment(Qt.AlignCenter)
-            print('item 7')
+            #print('item 7')
             self.table.setItem(i, 7, QTableWidgetItem(obj.country))
             self.table.item(i, 7).setTextAlignment(Qt.AlignCenter)
-            print('item 8')
+            #print('item 8')
         self.table.resizeColumnsToContents()
         self.table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.table.adjustSize()
@@ -664,7 +673,7 @@ class BiWindow(QWidget):
 
         # Add the objects' data to the table
         for i, obj in enumerate(self.sorted_list):
-            print(i)
+            #print(i)
             self.table.insertRow(i)
             # insert row checkbox
             checkbox_item = QCheckBox()
@@ -784,9 +793,6 @@ class TemplateEdit(QDialog):
         #self.subject.changeEvent(lambda: self.enable_button())
         self.subject.setFocus()
         self.button.clicked.connect(lambda: self.button_clicked())
-
-    def enable_button(self):
-        print(self.textEdit.toPlainText())
 
     def button_clicked(self):
         if len(self.subject.text()) < 3:
