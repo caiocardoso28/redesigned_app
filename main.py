@@ -8,6 +8,9 @@ from datetime import datetime, timedelta
 from communications import show_invites, send_emails, send_emails_ae, send_emails_ae_unified
 from ui_functions import *
 USER = None
+SELECTION = None
+SELECTION_NAME = None
+
 
 ICONS = ['iconz\\test_icon_disabled.png', 'iconz\\cal_reg.png', 'iconz\\hand_reg.png', 'iconz\\plane_reg.png',
          'iconz\\profile_reg.png']
@@ -489,6 +492,9 @@ class AeWindow(QWidget):
                     self.list.append(self.object_list[i])
                 elif self.object_list[i].eng_age < 60:
                     self.list.append(self.object_list[i])
+                else:
+                    self.object_list[i].eng_age = 'Not Engaged'
+                    self.list.append(self.object_list[i])
         # sort and filter the list for client stages/status (specific to blind invite window will vary for AE
         self.sorted_list = sorted(self.list, key=lambda x: x.ae)
 
@@ -580,17 +586,14 @@ class AeWindow(QWidget):
             print('Already Loaded')
             return False
 
-
         # Set the column headers to be the object's attributes
         attributes = ['', "AE", 'Client', "Age", "Status", "Account", "Last Engaged", 'Country']
         self.table.setColumnCount(len(attributes))
         self.table.setHorizontalHeaderLabels(attributes)
         self.table.verticalHeader().setDefaultAlignment(Qt.AlignCenter)
 
-
         # Add the objects' data to the table
         for i, obj in enumerate(self.sorted_list):
-            #print(i)
 
             self.table.insertRow(i)
             # insert row checkbox
@@ -770,8 +773,16 @@ class AeMonth(AeWindow):
         super().__init__(*args, **kwargs)
         uic.loadUi('ae_window.ui', self)
         self.label = self.findChild(QLabel, 'label')
-        self.label.setText('January AE Workspace')
-        self.sorted_list = MainWindow.object_list
+        self.label.setText(f'{SELECTION_NAME} AE Workspace')
+        self.list = []
+        for item in SELECTION:
+            if type(item.eng_age) != type(3):
+                item.eng_age = 'Not Engaged'
+                self.list.append(item)
+            else:
+                self.list.append(item)
+        self.sorted_list = sorted(self.list, key=lambda x: x.ae)
+        print(self.sorted_list)
         self.show()
 
 
@@ -789,7 +800,9 @@ class MetricWindow(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         uic.loadUi('metrics.ui', self)
-
+        self.frame_1 = self.findChild(QFrame, 'frame_1')
+        self.frame_2 = self.findChild(QFrame, 'frame_2')
+        self.frame_3 = self.findChild(QFrame, 'frame_3')
         # grab labels
         self.totalLabel_1 = self.findChild(QLabel, 'totalLabel_1')
         self.totalLabel_2 = self.findChild(QLabel, 'totalLabel_2')
@@ -813,10 +826,14 @@ class MetricWindow(QWidget):
 
         # identify buttons
         self.select_1 = self.findChild(QPushButton, 'select_1')
+        self.select_1.clicked.connect(lambda: self.selection(1))
         self.select_2 = self.findChild(QPushButton, 'select_2')
+        self.select_2.clicked.connect(lambda: self.selection(2))
         self.select_3 = self.findChild(QPushButton, 'select_3')
+        self.select_3.clicked.connect(lambda: self.selection(3))
 
         self.aeButton = self.findChild(QPushButton, 'aeButton')
+        self.aeButton.clicked.connect(lambda: self.open_ae())
         self.biButton = self.findChild(QPushButton, 'biButton')
         self.outreachButton = self.findChild(QPushButton, 'outreachButton')
 
@@ -827,12 +844,10 @@ class MetricWindow(QWidget):
             self.month_names.append(all_months[month])
 
         # set month titles
-        self.monthLabel_1 = self.monthLabel_1.setText(self.month_names[0])
-        self.monthLabel_2 = self.monthLabel_2.setText(self.month_names[1])
-        self.monthLabel_3 = self.monthLabel_3.setText(self.month_names[2])
-        print(self.monthLabel_1)
-        print(self.monthLabel_2)
-        print(self.monthLabel_3)
+        self.monthLabel_1.setText(self.month_names[0])
+        self.monthLabel_2.setText(self.month_names[1])
+        self.monthLabel_3.setText(self.month_names[2])
+
         self.monthly_clients = self.get_monthly_clients(self.current_months)
         print(self.monthly_clients)
         #grab and set totals
@@ -843,7 +858,64 @@ class MetricWindow(QWidget):
         self.third_month_total = len(self.monthly_clients[2])
         self.totalLabel_3.setText(str(len(self.monthly_clients[2])))
         self.quick_maths(self.monthly_clients)
+
         self.show()
+
+    active_month = None
+    window_list = []
+
+    def open_ae(self):
+        ae_window = AeMonth()
+
+    def selection(self, selection):
+        global SELECTION, SELECTION_NAME
+        if selection == 1:
+            if selection == self.active_month:
+                return True
+            self.frame_1.setStyleSheet('QLabel{border: 1px solid #7fcde1;'
+                                       'border-radius: 4px}'
+                                       )
+            if self.active_month:
+                self.deselection(self.active_month)
+
+            SELECTION = self.monthly_clients[0]
+            SELECTION_NAME = self.month_names[0]
+            self.active_month = 1
+        elif selection == 2:
+            if selection == self.active_month:
+                return True
+            self.frame_2.setStyleSheet('QLabel{border: 1px solid #7fcde1;'
+                                       'border-radius: 4px}')
+            if self.active_month:
+                self.deselection(self.active_month)
+
+            SELECTION = self.monthly_clients[1]
+            SELECTION_NAME = self.month_names[1]
+            self.active_month = 2
+        elif selection == 3:
+            if selection == self.active_month:
+                return True
+            self.frame_3.setStyleSheet('QLabel{border: 1px solid #7fcde1;'
+                                       'border-radius: 4px}')
+            if self.active_month:
+                self.deselection(self.active_month)
+
+            SELECTION = self.monthly_clients[2]
+            SELECTION_NAME = self.month_names[2]
+            self.active_month = 3
+        print(self.active_month)
+        print(self.window_list)
+
+    def deselection(self, frame):
+        if frame == 1:
+            self.frame_1.setStyleSheet('QFrame{background-color: rgb(38, 38, 38);}'
+                                       'QLabel{border:none}')
+        if frame == 2:
+            self.frame_2.setStyleSheet('QFrame{background-color: rgb(38, 38, 38);}'
+                                       'QLabel{border:none}')
+        if frame == 3:
+            self.frame_3.setStyleSheet('QFrame{background-color: rgb(38, 38, 38);}'
+                                       'QLabel{border:none}')
 
     def quick_maths(self, clients):
         total_closed = []
@@ -854,28 +926,40 @@ class MetricWindow(QWidget):
                     closed += 1
             total_closed.append(closed)
         ob_1 = total_closed[0]/int(self.totalLabel_1.text())
-        self.obLabel_1.setText(f'{str(round(ob_1, 2) * 100)}%')
+        self.obLabel_1.setText(f'{str(ob_1 * 100)[:4]}%')
 
         ob_2 = total_closed[1] / int(self.totalLabel_2.text())
-        self.obLabel_2.setText(f'{str(round(ob_2, 2) * 100)}%')
+        self.obLabel_2.setText(f'{str(ob_2 * 100)[:4]}%')
 
         ob_3 = total_closed[2] / int(self.totalLabel_3.text())
-        self.obLabel_3.setText(f'{str(round(ob_3, 2) * 100)}%')
+        self.obLabel_3.setText(f'{str(ob_3 * 100)[:4]}%')
         opportunities = []
 
         for month in clients:
             opportunity_total = 0
             for j in range(len(month)):
-                if month[j].stage == 'Closed Onboarded' or month[j].age > 55:
+                if month[j].stage == 'Closed Onboarded' or month[j].age > 45:
                     opportunity_total += 1
             opportunities.append(opportunity_total)
 
         opp_1 = int(self.totalLabel_1.text()) - opportunities[0]
         self.oppLabel_1.setText(str(opp_1))
 
+        opp_2 = int(self.totalLabel_2.text()) - opportunities[1]
+        self.oppLabel_2.setText(str(opp_2))
 
+        opp_3 = int(self.totalLabel_3.text()) - opportunities[2]
+        self.oppLabel_3.setText(str(opp_3))
 
-
+        rem_1 = (total_closed[0] + opp_1) / int(self.totalLabel_1.text())
+        self.maxLabel_1.setText(f"{str(rem_1 * 100)[:4]}%")
+        rem_2 = (total_closed[1] + opp_2) / int(self.totalLabel_2.text())
+        self.maxLabel_2.setText(f"{str(rem_2 * 100)[:4]}%")
+        rem_3 = (total_closed[2] + opp_3) / int(self.totalLabel_3.text())
+        if rem_3 == 1:
+            self.maxLabel_3.setText(f"{str(rem_3 * 100)[:3]}%")
+        else:
+            self.maxLabel_3.setText(f"{str(rem_3 * 100)[:4]}%")
 
     def find_months(self, td):
         first = td.month - 2

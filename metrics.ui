@@ -295,6 +295,7 @@ QDateTimeEdit::down-button {
           </property>
           <property name="styleSheet">
            <string notr="true">font: 14pt Arial;
+border: none;
 
 </string>
           </property>
@@ -310,7 +311,7 @@ QDateTimeEdit::down-button {
          <widget class="QLabel" name="totalLabel_2">
           <property name="minimumSize">
            <size>
-            <width>60</width>
+            <width>70</width>
             <height>0</height>
            </size>
           </property>
@@ -366,7 +367,7 @@ border-radius: 2px</string>
           </property>
           <property name="styleSheet">
            <string notr="true">font: 14pt Arial;
-
+border: none;
 </string>
           </property>
           <property name="text">
@@ -381,7 +382,7 @@ border-radius: 2px</string>
          <widget class="QLabel" name="obLabel_2">
           <property name="minimumSize">
            <size>
-            <width>60</width>
+            <width>70</width>
             <height>0</height>
            </size>
           </property>
@@ -434,6 +435,7 @@ border-radius: 2px</string>
           </property>
           <property name="styleSheet">
            <string notr="true">font: 14pt Arial;
+border: none;
 </string>
           </property>
           <property name="text">
@@ -448,7 +450,7 @@ border-radius: 2px</string>
          <widget class="QLabel" name="oppLabel_2">
           <property name="minimumSize">
            <size>
-            <width>60</width>
+            <width>70</width>
             <height>0</height>
            </size>
           </property>
@@ -501,7 +503,7 @@ border-radius: 2px</string>
           </property>
           <property name="styleSheet">
            <string notr="true">font: 14pt Arial;
-</string>
+border: none;</string>
           </property>
           <property name="text">
            <string>Total Possible OB60</string>
@@ -515,7 +517,7 @@ border-radius: 2px</string>
          <widget class="QLabel" name="maxLabel_2">
           <property name="minimumSize">
            <size>
-            <width>60</width>
+            <width>70</width>
             <height>0</height>
            </size>
           </property>
@@ -537,7 +539,9 @@ border-radius: 2px</string>
           <property name="styleSheet">
            <string notr="true">font: 12pt Arial;
 font-weight: bold;
-background-color: rgb(79, 79, 79);</string>
+background-color: rgb(79, 79, 79);
+border: 1px solid rgb(79, 79, 79);
+border-radius: 2px</string>
           </property>
           <property name="text">
            <string>71%</string>
@@ -668,6 +672,7 @@ QPushButton:pressed {
           </property>
           <property name="styleSheet">
            <string notr="true">font: 14pt Arial;
+border: none;
 
 </string>
           </property>
@@ -683,7 +688,7 @@ QPushButton:pressed {
          <widget class="QLabel" name="totalLabel_3">
           <property name="minimumSize">
            <size>
-            <width>60</width>
+            <width>70</width>
             <height>0</height>
            </size>
           </property>
@@ -739,6 +744,7 @@ border-radius: 2px</string>
           </property>
           <property name="styleSheet">
            <string notr="true">font: 14pt Arial;
+border: none;
 
 </string>
           </property>
@@ -754,7 +760,7 @@ border-radius: 2px</string>
          <widget class="QLabel" name="obLabel_3">
           <property name="minimumSize">
            <size>
-            <width>60</width>
+            <width>70</width>
             <height>0</height>
            </size>
           </property>
@@ -807,6 +813,7 @@ border-radius: 2px</string>
           </property>
           <property name="styleSheet">
            <string notr="true">font: 14pt Arial;
+border: none;
 </string>
           </property>
           <property name="text">
@@ -821,7 +828,7 @@ border-radius: 2px</string>
          <widget class="QLabel" name="oppLabel_3">
           <property name="minimumSize">
            <size>
-            <width>60</width>
+            <width>70</width>
             <height>0</height>
            </size>
           </property>
@@ -874,6 +881,7 @@ border-radius: 2px</string>
           </property>
           <property name="styleSheet">
            <string notr="true">font: 14pt Arial;
+border: none;
 </string>
           </property>
           <property name="text">
@@ -888,7 +896,7 @@ border-radius: 2px</string>
          <widget class="QLabel" name="maxLabel_3">
           <property name="minimumSize">
            <size>
-            <width>60</width>
+            <width>70</width>
             <height>0</height>
            </size>
           </property>
@@ -910,7 +918,9 @@ border-radius: 2px</string>
           <property name="styleSheet">
            <string notr="true">font: 12pt Arial;
 font-weight: bold;
-background-color: rgb(79, 79, 79);</string>
+background-color: rgb(79, 79, 79);
+border: 1px solid rgb(79, 79, 79);
+border-radius: 2px</string>
           </property>
           <property name="text">
            <string>71%</string>
@@ -984,7 +994,7 @@ QPushButton:pressed {
       <string notr="true">font: 24pt Arial</string>
      </property>
      <property name="text">
-      <string>Monthly Metrics</string>
+      <string>My Opportunities</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -1104,7 +1114,7 @@ QPushButton:pressed {
           </property>
           <property name="styleSheet">
            <string notr="true">font: 14pt Arial;
-
+border: none;
 </string>
           </property>
           <property name="text">
@@ -1119,7 +1129,7 @@ QPushButton:pressed {
          <widget class="QLabel" name="totalLabel_1">
           <property name="minimumSize">
            <size>
-            <width>60</width>
+            <width>70</width>
             <height>0</height>
            </size>
           </property>
@@ -1175,7 +1185,7 @@ border-radius: 2px</string>
           </property>
           <property name="styleSheet">
            <string notr="true">font: 14pt Arial;
-
+border: none;
 </string>
           </property>
           <property name="text">
@@ -1190,7 +1200,7 @@ border-radius: 2px</string>
          <widget class="QLabel" name="obLabel_1">
           <property name="minimumSize">
            <size>
-            <width>60</width>
+            <width>70</width>
             <height>0</height>
            </size>
           </property>
@@ -1243,7 +1253,7 @@ border-radius: 2px</string>
           </property>
           <property name="styleSheet">
            <string notr="true">font: 14pt Arial;
-</string>
+border: none;</string>
           </property>
           <property name="text">
            <string>Opportunities Remaining</string>
@@ -1257,7 +1267,7 @@ border-radius: 2px</string>
          <widget class="QLabel" name="oppLabel_1">
           <property name="minimumSize">
            <size>
-            <width>60</width>
+            <width>70</width>
             <height>0</height>
            </size>
           </property>
@@ -1310,6 +1320,8 @@ border-radius: 2px</string>
           </property>
           <property name="styleSheet">
            <string notr="true">font: 14pt Arial;
+border: none;
+
 </string>
           </property>
           <property name="text">
@@ -1324,7 +1336,7 @@ border-radius: 2px</string>
          <widget class="QLabel" name="maxLabel_1">
           <property name="minimumSize">
            <size>
-            <width>60</width>
+            <width>70</width>
             <height>0</height>
            </size>
           </property>
@@ -1346,7 +1358,9 @@ border-radius: 2px</string>
           <property name="styleSheet">
            <string notr="true">font: 12pt Arial;
 font-weight: bold;
-background-color: rgb(79, 79, 79);</string>
+background-color: rgb(79, 79, 79);
+border: 1px solid rgb(79, 79, 79);
+border-radius: 2px</string>
           </property>
           <property name="text">
            <string>71%</string>
