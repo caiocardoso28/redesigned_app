@@ -1,9 +1,10 @@
-
+import csv
+from monthly import all_months
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QTime, QDate, QDateTime, QEvent
 from PyQt5 import uic, QtGui
 import pandas
-from datetime import datetime
+from datetime import datetime, timedelta
 from communications import show_invites, send_emails, send_emails_ae, send_emails_ae_unified
 from ui_functions import *
 USER = None
@@ -58,7 +59,8 @@ class Client:
                  inq=None,
                  org_name=None,
                  eng_lad=None,
-                 eng_age=None):
+                 eng_age=None,
+                 extra=None,):
         self.date = date
         self.name = name
         self.email = email
@@ -75,6 +77,7 @@ class Client:
         self.org_name = org_name
         self.eng_lad = eng_lad
         self.eng_age = eng_age
+        self.extra = extra
 
 
     close_date = None
@@ -105,9 +108,11 @@ class MainWindow(QMainWindow):
         self.page_2 = self.findChild(QWidget, 'page_2')
         self.page_3 = self.findChild(QWidget, 'page_3')
         self.page_4 = self.findChild(QWidget, 'page_4')
+        self.page_5 = self.findChild(QWidget, 'page_5')
         self.verticalLayoutBi = self.findChild(QVBoxLayout, 'verticalLayout_6')
         self.verticalLayoutAe = self.findChild(QVBoxLayout, 'verticalLayoutAE')
         self.VerticalLayoutOutreach = self.findChild(QVBoxLayout, 'verticalLayout_9')
+        self.VerticalLayoutMetrics = self.findChild(QVBoxLayout, 'verticalLayout_2')
         self.Btn_Toggle = self.findChild(QPushButton, 'Btn_Toggle')
         self.Btn_Toggle.setIcon(QIcon('iconz\\menu_reg.png'))
         self.btn_page_1 = self.findChild(QPushButton, 'btn_page_1')
@@ -149,18 +154,42 @@ class MainWindow(QMainWindow):
         # PAGE 4
         self.btn_page_4.clicked.connect(lambda: self.load_data_outreach())
 
+        self.btn_page_5.clicked.connect(lambda: self.testing())
+
         # SHOW ==> MAIN WINDOW
         ########################################################################
 
         self.show()
 
         # ==> END ##
-
+    months = {'1': [],
+              '2': [],
+              '3': [],
+              '4': [],
+              '5': [],
+              '6': [],
+              '7': [],
+              '8': [],
+              '9': [],
+              '10': [],
+              '11': [],
+              '12': [],
+              }
     object_list = []
     client_list = []
     selected_tab = None
     loaded_file = None
     people = []
+
+    def testing(self):
+        self.selected(self.btn_page_5)
+        if self.VerticalLayoutMetrics.isEmpty():
+            window = MetricWindow()
+            self.VerticalLayoutMetrics.addWidget(window)
+            self.stackedWidget.setCurrentWidget(self.page_5)
+        else:
+
+            self.stackedWidget.setCurrentWidget(self.page_5)
 
     def load_home(self):
         self.selected(self.btn_page_1)
@@ -203,12 +232,12 @@ class MainWindow(QMainWindow):
 
 
         except:
-
             return False
 
         # Create a list of objects
 
         for index, row in sheet.iterrows():
+
             age = self.calculate_age(row['ACT_CREATE_DT'])
             eng_age = self.calculate_age(row['ENGAGEMENT_LAD'])
             client = Client(name=str(row['CLIENT_NAME']),
@@ -226,12 +255,21 @@ class MainWindow(QMainWindow):
                             inq=row['Inq_In_30D_Post_Ob'],
                             org_name=row['ORG_NAME'],
                             eng_lad=row['ENGAGEMENT_LAD'],
-                            eng_age=eng_age
+                            eng_age=eng_age,
+                            extra=row['ACT_REASON']
                             )
 
             #print(f"{client.eng_age}{client.is_engaged()}")
-            self.client_list.append(client)
 
+            self.client_list.append(client)
+            if client.age < 95:
+                if client.stage == 'Closed Not Onboarded':
+                    if client.extra == 'Placeholder/Seat Swap' or client.extra == 'Ineligible-Binder Changes' or client.extra == 'Ineligible-Renewal' or client.extra == 'Dual Service' or client.extra == 'Ineligible-Language Support':
+                        pass
+                    else:
+                        self.months[str(client.date.month)].append(client)
+                else:
+                    self.months[str(client.date.month)].append(client)
         for j in range(len(self.client_list)):
             if self.client_list[j].is_over() and self.client_list[j].status == 0:
                 self.object_list.append(self.client_list[j])
@@ -647,8 +685,8 @@ class BiWindow(QWidget):
                         row_data[header_labels[j]] = item.text()
                 data.append(row_data)
         print(data)
-        return show_invites(data)
 
+        return show_invites(data)
 
     # Connect the date time changed signal to the slot function and pass the row number
     def update_table(self, date_time, row_number):
@@ -715,6 +753,149 @@ class BiWindow(QWidget):
         self.table.resizeColumnsToContents()
         self.table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.table.adjustSize()
+
+
+class BiMonth(BiWindow):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        uic.loadUi('blind_invite.ui', self)
+        self.label = self.findChild(QLabel, 'label')
+        self.label.setText('January BI Workspace')
+        # self.sorted_list = MainWindow.object_list
+        self.show()
+
+
+class AeMonth(AeWindow):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        uic.loadUi('ae_window.ui', self)
+        self.label = self.findChild(QLabel, 'label')
+        self.label.setText('January AE Workspace')
+        self.sorted_list = MainWindow.object_list
+        self.show()
+
+
+class OutreachMonth(OutreachWindow):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        uic.loadUi('outreach.ui', self)
+        self.label = self.findChild(QLabel, 'label')
+        self.label.setText('January Outreach Workspace')
+        self.sorted_list = MainWindow.object_list
+        self.show()
+
+
+class MetricWindow(QWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        uic.loadUi('metrics.ui', self)
+
+        # grab labels
+        self.totalLabel_1 = self.findChild(QLabel, 'totalLabel_1')
+        self.totalLabel_2 = self.findChild(QLabel, 'totalLabel_2')
+        self.totalLabel_3 = self.findChild(QLabel, 'totalLabel_3')
+
+        self.monthLabel_1 = self.findChild(QLabel, 'monthLabel_1')
+        self.monthLabel_2 = self.findChild(QLabel, 'monthLabel_2')
+        self.monthLabel_3 = self.findChild(QLabel, 'monthLabel_3')
+
+        self.obLabel_1 = self.findChild(QLabel, 'obLabel_1')
+        self.obLabel_2 = self.findChild(QLabel, 'obLabel_2')
+        self.obLabel_3 = self.findChild(QLabel, 'obLabel_3')
+
+        self.oppLabel_1 = self.findChild(QLabel, 'oppLabel_1')
+        self.oppLabel_2 = self.findChild(QLabel, 'oppLabel_2')
+        self.oppLabel_3 = self.findChild(QLabel, 'oppLabel_3')
+
+        self.maxLabel_1 = self.findChild(QLabel, 'maxLabel_1')
+        self.maxLabel_2 = self.findChild(QLabel, 'maxLabel_2')
+        self.maxLabel_3 = self.findChild(QLabel, 'maxLabel_3')
+
+        # identify buttons
+        self.select_1 = self.findChild(QPushButton, 'select_1')
+        self.select_2 = self.findChild(QPushButton, 'select_2')
+        self.select_3 = self.findChild(QPushButton, 'select_3')
+
+        self.aeButton = self.findChild(QPushButton, 'aeButton')
+        self.biButton = self.findChild(QPushButton, 'biButton')
+        self.outreachButton = self.findChild(QPushButton, 'outreachButton')
+
+        self.current_months = self.find_months(today)
+        self.month_names = []
+
+        for month in self.current_months:
+            self.month_names.append(all_months[month])
+
+        # set month titles
+        self.monthLabel_1 = self.monthLabel_1.setText(self.month_names[0])
+        self.monthLabel_2 = self.monthLabel_2.setText(self.month_names[1])
+        self.monthLabel_3 = self.monthLabel_3.setText(self.month_names[2])
+        print(self.monthLabel_1)
+        print(self.monthLabel_2)
+        print(self.monthLabel_3)
+        self.monthly_clients = self.get_monthly_clients(self.current_months)
+        print(self.monthly_clients)
+        #grab and set totals
+        self.first_month_total = len(self.monthly_clients[0])
+        self.totalLabel_1.setText(str(len(self.monthly_clients[0])))
+        self.second_month_total = len(self.monthly_clients[1])
+        self.totalLabel_2.setText(str(len(self.monthly_clients[1])))
+        self.third_month_total = len(self.monthly_clients[2])
+        self.totalLabel_3.setText(str(len(self.monthly_clients[2])))
+        self.quick_maths(self.monthly_clients)
+        self.show()
+
+    def quick_maths(self, clients):
+        total_closed = []
+        for month in clients:
+            closed = 0
+            for j in range(len(month)):
+                if month[j].stage == 'Closed Onboarded':
+                    closed += 1
+            total_closed.append(closed)
+        ob_1 = total_closed[0]/int(self.totalLabel_1.text())
+        self.obLabel_1.setText(f'{str(round(ob_1, 2) * 100)}%')
+
+        ob_2 = total_closed[1] / int(self.totalLabel_2.text())
+        self.obLabel_2.setText(f'{str(round(ob_2, 2) * 100)}%')
+
+        ob_3 = total_closed[2] / int(self.totalLabel_3.text())
+        self.obLabel_3.setText(f'{str(round(ob_3, 2) * 100)}%')
+        opportunities = []
+
+        for month in clients:
+            opportunity_total = 0
+            for j in range(len(month)):
+                if month[j].stage == 'Closed Onboarded' or month[j].age > 55:
+                    opportunity_total += 1
+            opportunities.append(opportunity_total)
+
+        opp_1 = int(self.totalLabel_1.text()) - opportunities[0]
+        self.oppLabel_1.setText(str(opp_1))
+
+
+
+
+
+    def find_months(self, td):
+        first = td.month - 2
+        second = td.month - 1
+        if first == -1:
+            first = 11
+        elif first == 0:
+            first = 12
+        if second == 0:
+            second = 12
+
+        return [first, second, td.month]
+
+    def get_monthly_clients(self, current_months):
+        clients = []
+        for month in current_months:
+            if MainWindow.months.get(str(month)):
+                clients.append(MainWindow.months.get(str(month)))
+        return clients
+
 
 
 class TestBox(QDialog):
