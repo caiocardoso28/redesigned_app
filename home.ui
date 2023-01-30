@@ -432,7 +432,7 @@ QPushButton:hover {
 }</string>
                </property>
                <property name="text">
-                <string>Profile Info</string>
+                <string>My Opportunities</string>
                </property>
               </widget>
              </item>

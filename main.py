@@ -763,8 +763,14 @@ class BiMonth(BiWindow):
         super().__init__(*args, **kwargs)
         uic.loadUi('blind_invite.ui', self)
         self.label = self.findChild(QLabel, 'label')
-        self.label.setText('January BI Workspace')
-        # self.sorted_list = MainWindow.object_list
+        self.label.setText(f'{SELECTION_NAME} BI Workspace')
+        self.list = []
+        for item in SELECTION:
+            if item.stage != 'Closed Onboarded':
+                if item.stage == 'Waiting For Client' or item.stage == 'Holding':
+                    self.list.append(item)
+
+        self.sorted_list = sorted(self.list, key=lambda x: x.age)
         self.show()
 
 
@@ -791,8 +797,13 @@ class OutreachMonth(OutreachWindow):
         super().__init__(*args, **kwargs)
         uic.loadUi('outreach.ui', self)
         self.label = self.findChild(QLabel, 'label')
-        self.label.setText('January Outreach Workspace')
-        self.sorted_list = MainWindow.object_list
+        self.label.setText(f'{SELECTION_NAME} Outreaches')
+        self.list = []
+        for item in SELECTION:
+            if item.stage != 'Closed Onboarded':
+                if item.stage == 'Waiting For Client' or item.stage == 'Webtour Scheduled' or item.stage == 'Holding':
+                    self.list.append(item)
+        self.sorted_list = sorted(self.list, key=lambda x: x.age)
         self.show()
 
 
@@ -835,7 +846,9 @@ class MetricWindow(QWidget):
         self.aeButton = self.findChild(QPushButton, 'aeButton')
         self.aeButton.clicked.connect(lambda: self.open_ae())
         self.biButton = self.findChild(QPushButton, 'biButton')
+        self.biButton.clicked.connect(lambda: self.open_bi())
         self.outreachButton = self.findChild(QPushButton, 'outreachButton')
+        self.outreachButton.clicked.connect(lambda: self.open_outreach())
 
         self.current_months = self.find_months(today)
         self.month_names = []
@@ -864,8 +877,21 @@ class MetricWindow(QWidget):
     active_month = None
     window_list = []
 
+    def open_outreach(self):
+        global SELECTION
+        if SELECTION:
+            outreach_window = OutreachMonth()
+
+
+    def open_bi(self):
+        global SELECTION
+        if SELECTION:
+            bi_window = BiMonth()
+
     def open_ae(self):
-        ae_window = AeMonth()
+        global SELECTION
+        if SELECTION:
+            ae_window = AeMonth()
 
     def selection(self, selection):
         global SELECTION, SELECTION_NAME
@@ -952,10 +978,82 @@ class MetricWindow(QWidget):
         self.oppLabel_3.setText(str(opp_3))
 
         rem_1 = (total_closed[0] + opp_1) / int(self.totalLabel_1.text())
+        if rem_1 < .82:
+            self.maxLabel_1.setStyleSheet('''font: 12pt Arial;
+                                        font-weight: bold;
+                                        color: yellow;
+                                        background-color: rgb(79, 79, 79);
+                                        border: 1px solid rgb(79, 79, 79);
+                                        border-radius: 2px'''
+                                          )
+        elif rem_1 < .70:
+            self.maxLabel_1.setStyleSheet('''font: 12pt Arial;
+                                        font-weight: bold;
+                                        color: red;
+                                        background-color: rgb(79, 79, 79);
+                                        border: 1px solid rgb(79, 79, 79);
+                                        border-radius: 2px'''
+                                          )
+        else:
+            self.maxLabel_1.setStyleSheet('''font: 12pt Arial;
+                                        font-weight: bold;
+                                        color: green;
+                                        background-color: rgb(79, 79, 79);
+                                        border: 1px solid rgb(79, 79, 79);
+                                        border-radius: 2px'''
+                                          )
         self.maxLabel_1.setText(f"{str(rem_1 * 100)[:4]}%")
         rem_2 = (total_closed[1] + opp_2) / int(self.totalLabel_2.text())
+        if rem_2 < .82:
+            self.maxLabel_2.setStyleSheet('''font: 12pt Arial;
+                                        font-weight: bold;
+                                        color: yellow;
+                                        background-color: rgb(79, 79, 79);
+                                        border: 1px solid rgb(79, 79, 79);
+                                        border-radius: 2px'''
+                                          )
+        elif rem_2 < .70:
+            self.maxLabel_2.setStyleSheet('''font: 12pt Arial;
+                                        font-weight: bold;
+                                        color: red;
+                                        background-color: rgb(79, 79, 79);
+                                        border: 1px solid rgb(79, 79, 79);
+                                        border-radius: 2px'''
+                                          )
+        else:
+            self.maxLabel_2.setStyleSheet('''font: 12pt Arial;
+                                        font-weight: bold;
+                                        color: green;
+                                        background-color: rgb(79, 79, 79);
+                                        border: 1px solid rgb(79, 79, 79);
+                                        border-radius: 2px'''
+                                          )
         self.maxLabel_2.setText(f"{str(rem_2 * 100)[:4]}%")
         rem_3 = (total_closed[2] + opp_3) / int(self.totalLabel_3.text())
+        if rem_3 < .82:
+            self.maxLabel_3.setStyleSheet('''font: 12pt Arial;
+                                        font-weight: bold;
+                                        color: yellow;
+                                        background-color: rgb(79, 79, 79);
+                                        border: 1px solid rgb(79, 79, 79);
+                                        border-radius: 2px'''
+                                          )
+        elif rem_3 < .70:
+            self.maxLabel_3.setStyleSheet('''font: 12pt Arial;
+                                        font-weight: bold;
+                                        color: red;
+                                        background-color: rgb(79, 79, 79);
+                                        border: 1px solid rgb(79, 79, 79);
+                                        border-radius: 2px'''
+                                          )
+        else:
+            self.maxLabel_3.setStyleSheet('''font: 12pt Arial;
+                                        font-weight: bold;
+                                        color: green;
+                                        background-color: rgb(79, 79, 79);
+                                        border: 1px solid rgb(79, 79, 79);
+                                        border-radius: 2px'''
+                                          )
         if rem_3 == 1:
             self.maxLabel_3.setText(f"{str(rem_3 * 100)[:3]}%")
         else:
@@ -979,7 +1077,6 @@ class MetricWindow(QWidget):
             if MainWindow.months.get(str(month)):
                 clients.append(MainWindow.months.get(str(month)))
         return clients
-
 
 
 class TestBox(QDialog):
@@ -1083,4 +1180,3 @@ if __name__ == '__main__':
         load_user()
 
     app.exec_()
-

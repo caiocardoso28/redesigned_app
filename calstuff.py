@@ -59,6 +59,8 @@ for item in sorted_list:
 conflicts = [mon, tues, wed, thur, fri]
 
 # will take output from get_conflicts (conflicts, day_range, begin) and meeting duration
+
+
 def find_times(item_list, meeting_duration, date_range):
 
     time_output = []

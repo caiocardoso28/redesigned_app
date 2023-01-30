@@ -21,7 +21,7 @@ class UIFunctions(MainWindow):
                 widthExtended = maxExtend
                 for button in self.buttons:
                     button.setIcon(QIcon())
-                self.btn_page_5.setText('Profile Info')
+                self.btn_page_5.setText('My Opportunities')
                 self.btn_page_1.setText('Load File')
                 self.btn_page_2.setText('BI Workspace')
                 self.btn_page_3.setText('AE Collaboration')
