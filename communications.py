@@ -44,9 +44,9 @@ def send_emails(clients, template=None, subject=None):
             for item in to_change:
                 if item == '(AE)':
                     if i == 0:
-                        template = template.replace(item, client['AE'].split(',')[1])
+                        template = template.replace(item, f"@{client['AE'].split(',')[1]}")
                     else:
-                        template = template.replace(last_client['AE'].split(',')[1], client['AE'].split(',')[1])
+                        template = template.replace(f"@{last_client['AE'].split(',')[1]}", f"@{client['AE'].split(',')[1]}")
                 elif item == '(AGE)':
                     if i == 0:
                         template = template.replace(item, client['Age'])
@@ -82,7 +82,7 @@ def send_emails(clients, template=None, subject=None):
 def send_emails_ae(clients, template=None, subject=None):
     outlook = win32com.client.Dispatch('outlook.application')
     template = template
-    to_change = ['(AE)', '(AGE)', '(CLIENT)', '(ORG)']
+    to_change = ['(AGE)', '(CLIENT)', '(ORG)', '(AE)']
     i = 0
     last_client = None
     for client in clients:
@@ -103,9 +103,9 @@ def send_emails_ae(clients, template=None, subject=None):
                         template = template.replace(last_client['Age'], client['Age'])
                 elif item == '(CLIENT)':
                     if i == 0:
-                        template = template.replace(item, client['Client'].split(' ')[0])
+                        template = template.replace(item, client['Client'])
                     else:
-                        template = template.replace(last_client['Client'].split(' ')[0], client['Client'].split(' ')[0])
+                        template = template.replace(last_client['Client'], client['Client'])
                 elif item == '(ORG)':
                     if i == 0:
                         template = template.replace(item, client['Account'].title())

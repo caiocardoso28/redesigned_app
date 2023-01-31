@@ -391,7 +391,7 @@ class OutreachWindow(QWidget):
         for i in range(self.table.rowCount()):
             # checkbox_outer_widget = self.table.cellWidget(i, 0)
             checkbox = self.table.cellWidget(i, 0)
-            if self.checkboxes[i].isChecked():
+            if checkbox.isChecked():
                 row_data = {}
                 for j in range(1, self.table.columnCount()):
                     if j != 6:
@@ -538,7 +538,7 @@ class AeWindow(QWidget):
         for i in range(self.table.rowCount()):
             # checkbox_outer_widget = self.table.cellWidget(i, 0)
             checkbox = self.table.cellWidget(i, 0)
-            if self.checkboxes[i].isChecked():
+            if checkbox.isChecked():
                 row_data = {}
                 for j in range(1, self.table.columnCount()):
                     if j != 6:
@@ -561,7 +561,7 @@ class AeWindow(QWidget):
         for i in range(self.table.rowCount()):
             # checkbox_outer_widget = self.table.cellWidget(i, 0)
             checkbox = self.table.cellWidget(i, 0)
-            if self.checkboxes[i].isChecked():
+            if checkbox.isChecked():
                 row_data = {}
                 for j in range(1, self.table.columnCount()):
                     if j != 6:
@@ -676,7 +676,7 @@ class BiWindow(QWidget):
         for i in range(self.table.rowCount()):
             # checkbox_outer_widget = self.table.cellWidget(i, 0)
             checkbox = self.table.cellWidget(i, 0)
-            if self.checkboxes[i].isChecked():
+            if checkbox.isChecked():
                 row_data = {}
                 for j in range(1, self.table.columnCount()):
                     if j != 6:
@@ -767,8 +767,9 @@ class BiMonth(BiWindow):
         self.list = []
         for item in SELECTION:
             if item.stage != 'Closed Onboarded':
-                if item.stage == 'Waiting For Client' or item.stage == 'Holding':
-                    self.list.append(item)
+                if item.stage == 'Waiting For Client' or item.stage == 'Holding' or item.stage == 'Webtour Scheduled':
+                    if item.age < 60:
+                        self.list.append(item)
 
         self.sorted_list = sorted(self.list, key=lambda x: x.age)
         self.show()
@@ -782,11 +783,12 @@ class AeMonth(AeWindow):
         self.label.setText(f'{SELECTION_NAME} AE Workspace')
         self.list = []
         for item in SELECTION:
-            if type(item.eng_age) != type(3):
-                item.eng_age = 'Not Engaged'
-                self.list.append(item)
-            else:
-                self.list.append(item)
+            if item.age < 60 and item.stage != 'Closed Onboarded':
+                if type(item.eng_age) != type(3):
+                    item.eng_age = 'Not Engaged'
+                    self.list.append(item)
+                else:
+                    self.list.append(item)
         self.sorted_list = sorted(self.list, key=lambda x: x.ae)
         print(self.sorted_list)
         self.show()
@@ -802,7 +804,8 @@ class OutreachMonth(OutreachWindow):
         for item in SELECTION:
             if item.stage != 'Closed Onboarded':
                 if item.stage == 'Waiting For Client' or item.stage == 'Webtour Scheduled' or item.stage == 'Holding':
-                    self.list.append(item)
+                    if item.age < 60:
+                        self.list.append(item)
         self.sorted_list = sorted(self.list, key=lambda x: x.age)
         self.show()
 
