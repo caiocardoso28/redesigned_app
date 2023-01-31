@@ -44,9 +44,9 @@ def send_emails(clients, template=None, subject=None):
             for item in to_change:
                 if item == '(AE)':
                     if i == 0:
-                        template = template.replace(item, f"@{client['AE'].split(',')[1]}")
+                        template = template.replace(item, f"@{client['AE']}")
                     else:
-                        template = template.replace(f"@{last_client['AE'].split(',')[1]}", f"@{client['AE'].split(',')[1]}")
+                        template = template.replace(f"@{last_client['AE']}", f"@{client['AE']}")
                 elif item == '(AGE)':
                     if i == 0:
                         template = template.replace(item, client['Age'])
