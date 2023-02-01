@@ -63,7 +63,8 @@ class Client:
                  org_name=None,
                  eng_lad=None,
                  eng_age=None,
-                 extra=None,):
+                 extra=None,
+                 mem_status=None):
         self.date = date
         self.name = name
         self.email = email
@@ -81,6 +82,7 @@ class Client:
         self.eng_lad = eng_lad
         self.eng_age = eng_age
         self.extra = extra
+        self.mem_status = mem_status
 
 
     close_date = None
@@ -259,7 +261,8 @@ class MainWindow(QMainWindow):
                             org_name=row['ORG_NAME'],
                             eng_lad=row['ENGAGEMENT_LAD'],
                             eng_age=eng_age,
-                            extra=row['ACT_REASON']
+                            extra=row['ACT_REASON'],
+                            mem_status=row['MEMBER_STATUS']
                             )
 
             #print(f"{client.eng_age}{client.is_engaged()}")
@@ -272,7 +275,8 @@ class MainWindow(QMainWindow):
                     else:
                         self.months[str(client.date.month)].append(client)
                 else:
-                    self.months[str(client.date.month)].append(client)
+                    if client.mem_status != 'INACTIVE':
+                        self.months[str(client.date.month)].append(client)
         for j in range(len(self.client_list)):
             if self.client_list[j].is_over() and self.client_list[j].status == 0:
                 self.object_list.append(self.client_list[j])
@@ -555,7 +559,6 @@ class AeWindow(QWidget):
         return False
 
     def create_list(self):
-
         data = []
         header_labels = [self.table.horizontalHeaderItem(i).text() for i in range(self.table.columnCount())]
         for i in range(self.table.rowCount()):
@@ -873,7 +876,9 @@ class MetricWindow(QWidget):
         self.totalLabel_2.setText(str(len(self.monthly_clients[1])))
         self.third_month_total = len(self.monthly_clients[2])
         self.totalLabel_3.setText(str(len(self.monthly_clients[2])))
+
         self.quick_maths(self.monthly_clients)
+
 
         self.show()
 
@@ -948,20 +953,28 @@ class MetricWindow(QWidget):
 
     def quick_maths(self, clients):
         total_closed = []
+
         for month in clients:
             closed = 0
             for j in range(len(month)):
                 if month[j].stage == 'Closed Onboarded':
                     closed += 1
             total_closed.append(closed)
+            print(total_closed)
         ob_1 = total_closed[0]/int(self.totalLabel_1.text())
         self.obLabel_1.setText(f'{str(ob_1 * 100)[:4]}%')
 
         ob_2 = total_closed[1] / int(self.totalLabel_2.text())
         self.obLabel_2.setText(f'{str(ob_2 * 100)[:4]}%')
 
-        ob_3 = total_closed[2] / int(self.totalLabel_3.text())
-        self.obLabel_3.setText(f'{str(ob_3 * 100)[:4]}%')
+        # check if month has clients before dividing by 0
+        if int(self.totalLabel_3.text()) != 0:
+            ob_3 = total_closed[2] / int(self.totalLabel_3.text())
+            self.obLabel_3.setText(f'{str(ob_3 * 100)[:4]}%')
+        else:
+            ob_3 = 0
+            self.obLabel_3.setText(f'{str(ob_3)}%')
+
         opportunities = []
 
         for month in clients:
@@ -1032,19 +1045,23 @@ class MetricWindow(QWidget):
                                         border-radius: 2px'''
                                           )
         self.maxLabel_2.setText(f"{str(rem_2 * 100)[:4]}%")
-        rem_3 = (total_closed[2] + opp_3) / int(self.totalLabel_3.text())
-        if rem_3 < .82:
+        # check if month has clients before dividing by 0
+        if int(self.totalLabel_3.text()) != 0:
+            rem_3 = (total_closed[2] + opp_3) / int(self.totalLabel_3.text())
+        else:
+            rem_3 = 0
+        if rem_3 < .70:
             self.maxLabel_3.setStyleSheet('''font: 12pt Arial;
                                         font-weight: bold;
-                                        color: yellow;
+                                        color: red;
                                         background-color: rgb(79, 79, 79);
                                         border: 1px solid rgb(79, 79, 79);
                                         border-radius: 2px'''
                                           )
-        elif rem_3 < .70:
+        elif rem_3 < .82:
             self.maxLabel_3.setStyleSheet('''font: 12pt Arial;
                                         font-weight: bold;
-                                        color: red;
+                                        color: yellow;
                                         background-color: rgb(79, 79, 79);
                                         border: 1px solid rgb(79, 79, 79);
                                         border-radius: 2px'''
@@ -1059,6 +1076,8 @@ class MetricWindow(QWidget):
                                           )
         if rem_3 == 1:
             self.maxLabel_3.setText(f"{str(rem_3 * 100)[:3]}%")
+        elif rem_3 == 0:
+            self.maxLabel_3.setText(f"NA")
         else:
             self.maxLabel_3.setText(f"{str(rem_3 * 100)[:4]}%")
 
@@ -1077,8 +1096,8 @@ class MetricWindow(QWidget):
     def get_monthly_clients(self, current_months):
         clients = []
         for month in current_months:
-            if MainWindow.months.get(str(month)):
-                clients.append(MainWindow.months.get(str(month)))
+
+            clients.append(MainWindow.months.get(str(month)))
         return clients
 
 
