@@ -8,55 +8,128 @@ from datetime import datetime
 today = datetime.today()
 # encapsulate below as get_conflicts(start, end) this will return list of conflicts, date_range in days (int), and start
 # as tuple return (conflicts, day_range, begin)
-outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-appointments = outlook.GetDefaultFolder(9).Items
-appointments.IncludeRecurrences = True
 
-now = datetime.now()
-# begin will be equal to start
-begin = now
-# will be equal to tdelta end - start
-day_range = 21
-# will be equal to end argument from function call
-end = begin + timedelta(days=day_range)
-print(begin)
-# restrict range of appointments to read
 
-restriction = "[Start] >= '" + begin.strftime("%m/%d/%Y %I:%M %p") + "' AND [END] <= '" + end.strftime("%m/%d/%Y %I:%M %p") + "'"
-appointments = appointments.Restrict(restriction)
-recurring_appointments = []
+def get_conflicts(start_date=None, end_date=None, cal_view=False):
+    outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+    appointments = outlook.GetDefaultFolder(9).Items
+    appointments.IncludeRecurrences = True
 
-sorted_list = sorted(appointments, key=lambda x: x.Start.date())
-
-mon = {}
-tues = {}
-wed = {}
-thur = {}
-fri = {}
-
-# capture and categorize calendar events by weekday
-for item in sorted_list:
-
-    if item.meetingstatus != 7 and 120 > item.Duration >= 15:
-        if item.RecurrenceState < 1:
-            if item.Start.weekday() == 0:
-                mon[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
-            elif item.Start.weekday() == 1:
-                tues[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
-            elif item.Start.weekday() == 2:
-                wed[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
-            elif item.Start.weekday() == 3:
-                thur[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
-            elif item.Start.weekday() == 4:
-                fri[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
-
-        else:
-            recurring_appointments.append(item)
-    # print(f"{item.Start.weekday()} {item.Subject}")
+    now = datetime.now()
+    # begin will be equal to start
+    if start_date:
+        begin_date = start_date.date()
     else:
+        begin_date = today.date()
+    begin_time = time(8, 0, 0)
+    begin = datetime.combine(begin_date, begin_time)
+    # will be equal to tdelta end - start
+    if not cal_view:
+        day_range = 21
+    else:
+        day_range = 5
+    # will be equal to end argument from function call
+    if end_date:
+        ending_date = end_date.date()
+    else:
+        ending_date = begin_date + timedelta(days=day_range)
+    ending_time = time(17, 0, 0)
+
+    end = datetime.combine(ending_date, ending_time)
+    print(begin)
+    # restrict range of appointments to read
+
+    restriction = "[Start] >= '" + begin.strftime("%m/%d/%Y %I:%M %p") + "' AND [END] <= '" + end.strftime("%m/%d/%Y %I:%M %p") + "'"
+    appointments = appointments.Restrict(restriction)
+    recurring_appointments = []
+
+    sorted_list = sorted(appointments, key=lambda x: x.Start.date())
+
+    mon = {}
+    tues = {}
+    wed = {}
+    thur = {}
+    fri = {}
+
+    # capture and categorize calendar events by weekday
+    for item in sorted_list:
+
+        if item.meetingstatus != 7 and 120 > item.Duration >= 15:
+            if item.RecurrenceState < 1:
+                if item.Start.weekday() == 0:
+                    mon[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
+                elif item.Start.weekday() == 1:
+                    tues[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
+                elif item.Start.weekday() == 2:
+                    wed[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
+                elif item.Start.weekday() == 3:
+                    thur[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
+                elif item.Start.weekday() == 4:
+                    fri[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
+
+            else:
+                recurring_appointments.append(item)
+        # print(f"{item.Start.weekday()} {item.Subject}")
+        else:
+            pass
+
+    conflicts = [mon, tues, wed, thur, fri]
+    return conflicts
+
+def get_meetings_week(week):
+    if week == 'This Week':
+        today = datetime.today().weekday()
+        week_start = datetime.today() - timedelta(days=today)
+        meetings = get_conflicts(start_date=week_start, cal_view=True)
+        print(meetings)
+
+        return meetings
+    elif week == 'Next Week':
+        today = datetime.today().weekday()
+        week_next = datetime.today() + timedelta(weeks=1)
+        week_start = week_next - timedelta(days=today)
+        meetings = get_conflicts(start_date=week_start, cal_view=True)
+        print(meetings)
+
+        return meetings
+        pass
+    elif week == 'Last Week':
+        today = datetime.today().weekday()
+        week_last = datetime.today() - timedelta(weeks=1)
+        week_start = week_last - timedelta(days=today)
+        meetings = get_conflicts(start_date=week_start, cal_view=True)
+        print(meetings)
+
+        return meetings
         pass
 
-conflicts = [mon, tues, wed, thur, fri]
+
+
+def get_meetings_today(array):
+    meetings = []
+    td = datetime.today()
+    td_day = td.weekday()
+    td_string = td.strftime("%m/%d/%Y")
+
+    for key in array[td_day]:
+        appointment = array[td_day].get(key)
+        appointment_date = appointment.Start.strftime("%m/%d/%Y")
+        if appointment_date == td_string:
+            if 'Your Gartner Call' in appointment.Subject or 'Accept or Reschedule' in appointment.Subject or 'Seu' in appointment.Subject:
+                meetings.append(appointment)
+
+    clients = []
+    i = 0
+    for item in meetings:
+        # print(i)
+        for recipient in item.Recipients:
+            if ',' not in recipient.Name:
+                clients.append(recipient.Name)
+                # print(f"Recipient: {recipient.Name}")
+
+        i += 1
+    return clients
+
 
 # will take output from get_conflicts (conflicts, day_range, begin) and meeting duration
 

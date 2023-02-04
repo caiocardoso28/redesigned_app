@@ -84,7 +84,6 @@ class Client:
         self.extra = extra
         self.mem_status = mem_status
 
-
     close_date = None
     to_send = True
     mobile = None
@@ -706,8 +705,8 @@ class BiWindow(QWidget):
             print('Already Loaded')
             return False
 
-        from calstuff import conflicts, find_times, day_range
-        self.pyt = find_times(conflicts, 30, day_range)
+        from calstuff import get_conflicts, find_times
+        self.pyt = find_times(get_conflicts(), 30, 21)
         # Set the column headers to be the object's attributes
         attributes = ['', "Name", 'Status', "Age", 'AE', "Email", 'Suggested Time', 'Edited Time', 'Country']
         self.table.setColumnCount(len(attributes))
@@ -774,7 +773,7 @@ class BiMonth(BiWindow):
                     if item.age < 60:
                         self.list.append(item)
 
-        self.sorted_list = sorted(self.list, key=lambda x: x.age)
+        self.sorted_list = sorted(self.list, key=lambda x: x.age, reverse=True)
         self.show()
 
 
@@ -786,7 +785,7 @@ class AeMonth(AeWindow):
         self.label.setText(f'{SELECTION_NAME} AE Workspace')
         self.list = []
         for item in SELECTION:
-            if item.age < 60 and item.stage != 'Closed Onboarded':
+            if 60 > item.age > 11 and item.stage != 'Closed Onboarded':
                 if type(item.eng_age) != type(3):
                     item.eng_age = 'Not Engaged'
                     self.list.append(item)
@@ -807,10 +806,65 @@ class OutreachMonth(OutreachWindow):
         for item in SELECTION:
             if item.stage != 'Closed Onboarded':
                 if item.stage == 'Waiting For Client' or item.stage == 'Webtour Scheduled' or item.stage == 'Holding':
-                    if item.age < 60:
+                    if 11 < item.age < 60:
                         self.list.append(item)
         self.sorted_list = sorted(self.list, key=lambda x: x.age)
         self.show()
+
+
+class WeekView(QDialog):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        uic.loadUi('week_table.ui', self)
+        self.week_select = self.findChild(QComboBox, 'comboBox')
+        self.load_button = self.findChild(QPushButton, 'pushButton')
+        self.table = self.findChild(QTableWidget, 'tableWidget')
+
+        self.current_clients = MetricWindow.current_clients
+        self.week_selection = self.week_select.currentText()
+        self.week_select.activated[str].connect(self.on_activated)
+
+
+
+    mon = []
+    tues = []
+    wed = []
+    thurs = []
+    fri = []
+    weekly_clients = []
+
+    def on_activated(self, text):
+        print(text)
+        self.week_selection = text
+
+    def load_table(self, text):
+        from calstuff import get_meetings_week
+        meetings = get_meetings_week(text)
+        i = 0
+        for meeting in meetings:
+            print(i)
+            j = 0
+            for key in meeting:
+                if 'Your Gartner Call' in meeting[key].Subject or 'Accept or Reschedule' in meeting[key].Subject or 'Seu' in meeting[key].Subject:
+                    if i == 0:
+                        self.mon.append(meeting[key])
+                    elif i == 1:
+                        self.tues.append(meeting[key])
+                    elif i == 2:
+                        self.wed.append(meeting[key])
+                    elif i == 3:
+                        self.thurs.append(meeting[key])
+                    elif i == 4:
+                        self.fri.append(meeting[key])
+
+                j += 1
+            i += 1
+        self.weekly_clients = [self.mon, self.tues, self.wed, self.thurs, self.fri]
+        print(self.weekly_clients)
+
+
+
+
 
 
 class MetricWindow(QWidget):
@@ -842,6 +896,8 @@ class MetricWindow(QWidget):
         self.maxLabel_3 = self.findChild(QLabel, 'maxLabel_3')
 
         # identify buttons
+        self.weekButton = self.findChild(QPushButton, 'weekButton')
+        self.weekButton.clicked.connect(lambda: self.open_calendar())
         self.select_1 = self.findChild(QPushButton, 'select_1')
         self.select_1.clicked.connect(lambda: self.selection(1))
         self.select_2 = self.findChild(QPushButton, 'select_2')
@@ -884,6 +940,15 @@ class MetricWindow(QWidget):
 
     active_month = None
     window_list = []
+    current_clients = []
+
+
+    def open_calendar(self):
+        self.current_clients = self.monthly_clients
+        calendar = WeekView(self)
+        calendar.show()
+
+
 
     def open_outreach(self):
         global SELECTION
@@ -1044,7 +1109,10 @@ class MetricWindow(QWidget):
                                         border: 1px solid rgb(79, 79, 79);
                                         border-radius: 2px'''
                                           )
-        self.maxLabel_2.setText(f"{str(rem_2 * 100)[:4]}%")
+        if rem_2 == 1:
+            self.maxLabel_2.setText(f"{str(rem_2 * 100)[:3]}%")
+        else:
+            self.maxLabel_2.setText(f"{str(rem_2 * 100)[:4]}%")
         # check if month has clients before dividing by 0
         if int(self.totalLabel_3.text()) != 0:
             rem_3 = (total_closed[2] + opp_3) / int(self.totalLabel_3.text())
