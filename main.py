@@ -821,6 +821,7 @@ class WeekView(QDialog):
         uic.loadUi('week_table.ui', self)
         self.week_select = self.findChild(QComboBox, 'comboBox')
         self.load_button = self.findChild(QPushButton, 'pushButton')
+        self.span_label = self.findChild(QLabel, 'label_2')
         self.table = self.findChild(QTableWidget, 'tableWidget')
         self.table.cellDoubleClicked.connect(self.show_item_info)
         self.clients = self.parentWidget().current_clients
@@ -850,6 +851,13 @@ class WeekView(QDialog):
         else:
             pass
 
+    def discover_email(self, email):
+        for client in MainWindow.client_list:
+
+            if email == client.email.lower():
+                return client.name
+        return 'Unknown'
+
     def get_item_info(self, name):
         if name:
             for client in MainWindow.client_list:
@@ -870,8 +878,10 @@ class WeekView(QDialog):
         self.wed.clear()
         self.thurs.clear()
         self.fri.clear()
+        self.span_label.setText('')
         from calstuff import get_meetings_week
         meetings = get_meetings_week(text)
+
         i = 0
         for meeting in meetings:
             # print(i)
@@ -897,7 +907,9 @@ class WeekView(QDialog):
                                sorted(self.thurs, key=lambda x: x.Start.time()),
                                sorted(self.fri, key=lambda x: x.Start.time())]
         print(self.weekly_clients)
-
+        span = f"Viewing: {self.weekly_clients[0][0].Start.date().strftime('%m/%d/%Y')} - {self.weekly_clients[-1][0].Start.date().strftime('%m/%d/%Y')}"
+        self.span_label.setText(span)
+        self.span_label.setStyleSheet('font: 9pt Arial')
         # loading table
         for col_index, day in enumerate(self.weekly_clients):
             meetings = self.weekly_clients[col_index]
@@ -909,28 +921,34 @@ class WeekView(QDialog):
                         client_email = recipient.Address
                 match_found = False
                 for client in self.clients[0]:
-                    if client_email == client.email:
+                    if client_email == client.email.lower():
                         self.month_1 = self.parentWidget().month_names[0]
                         self.month_1_count += 1
                         self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
+                        self.table.item(row_index, col_index).setForeground(Qt.red)
                         match_found = True
                         break
                 for client in self.clients[1]:
-                    if client_email == client.email:
+                    if client_email == client.email.lower():
                         self.month_2 = self.parentWidget().month_names[1]
                         self.month_2_count += 1
                         self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
+                        self.table.item(row_index, col_index).setForeground(Qt.darkYellow)
                         match_found = True
                         break
                 for client in self.clients[2]:
-                    if client_email == client.email:
+                    if client_email == client.email.lower():
                         self.month_3 = self.parentWidget().month_names[2]
                         self.month_3_count += 1
                         self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
+                        self.table.item(row_index, col_index).setForeground(Qt.darkGreen)
                         match_found = True
                         break
                 if not match_found:
-                    self.table.setItem(row_index, col_index, QTableWidgetItem('Other'))
+
+                    self.table.setItem(row_index, col_index, QTableWidgetItem(self.discover_email(client_email)))
+                    self.table.item(row_index, col_index).setForeground(Qt.gray)
+
 
 
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>897</width>
-    <height>626</height>
+    <width>914</width>
+    <height>696</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -79,7 +79,7 @@ QTableCornerButton::section{
 }
 /* Add a hover effect to rows */
 QTableWidget::item:hover {
-    background-color: #6f6f6f;
+    
     color: #7fcde1;
 }
 
@@ -93,7 +93,7 @@ QTableWidget::item:selected {
 /* Set the color of text in TableWidget header to white */
 QHeaderView::section {
     border-radius: 1px;
-    
+    border: 1px solid white;
     color: white;
     background-color: #3c3c3c;
     font: 9pt Arial;
@@ -228,15 +228,21 @@ QDateTimeEdit::down-button {
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
+     <property name="styleSheet">
+      <string notr="true">height: 80px</string>
+     </property>
      <property name="text">
       <string>Clients on the Calendar</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
+     <property name="margin">
+      <number>8</number>
+     </property>
     </widget>
    </item>
-   <item alignment="Qt::AlignHCenter">
+   <item>
     <widget class="QComboBox" name="comboBox">
      <property name="minimumSize">
       <size>
@@ -244,8 +250,19 @@ QDateTimeEdit::down-button {
        <height>0</height>
       </size>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="styleSheet">
-      <string notr="true">font: 9pt Arial</string>
+      <string notr="true">QComboBox{
+font: 9pt Arial;
+color: rgb(130, 130, 130);
+height: 20px
+}
+
+QComboBox:focus{
+color: white;
+}</string>
      </property>
      <item>
       <property name="text">
@@ -265,17 +282,25 @@ QDateTimeEdit::down-button {
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QLabel" name="label_2">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>25</height>
+      </size>
+     </property>
      <property name="styleSheet">
-      <string notr="true">height: 15px;
-font: 10pt Arial</string>
+      <string notr="true">font: 9pt Arial;</string>
      </property>
      <property name="text">
-      <string>Load Meetings</string>
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
-   <item alignment="Qt::AlignHCenter">
+   <item>
     <widget class="QTableWidget" name="tableWidget">
      <property name="minimumSize">
       <size>
@@ -284,7 +309,7 @@ font: 10pt Arial</string>
       </size>
      </property>
      <property name="editTriggers">
-      <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::EditKeyPressed</set>
+      <set>QAbstractItemView::EditKeyPressed</set>
      </property>
      <property name="verticalScrollMode">
       <enum>QAbstractItemView::ScrollPerPixel</enum>
@@ -307,6 +332,12 @@ font: 10pt Arial</string>
      <property name="columnCount">
       <number>5</number>
      </property>
+     <attribute name="horizontalHeaderCascadingSectionResizes">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="horizontalHeaderDefaultSectionSize">
+      <number>175</number>
+     </attribute>
      <attribute name="horizontalHeaderHighlightSections">
       <bool>true</bool>
      </attribute>
@@ -314,7 +345,7 @@ font: 10pt Arial</string>
       <bool>false</bool>
      </attribute>
      <attribute name="horizontalHeaderStretchLastSection">
-      <bool>false</bool>
+      <bool>true</bool>
      </attribute>
      <attribute name="verticalHeaderVisible">
       <bool>false</bool>
@@ -360,6 +391,45 @@ font: 10pt Arial</string>
        <string>Friday</string>
       </property>
      </column>
+     <item row="0" column="0">
+      <property name="textAlignment">
+       <set>AlignCenter</set>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton">
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    background-color: rgb(53, 53, 53);
+    color: rgb(125, 125, 125);
+    border: 1px solid #7fcde1;
+    border-radius: 2px;
+    padding: 4px;
+    font: 10pt &quot;Arial&quot;;
+    height: 25px;
+    
+    
+    
+}
+
+/* Add a hover effect to buttons */
+QPushButton:hover {
+    background: rgb(71, 71, 71);
+    font: rgb(204, 204, 204);
+    color: #ffffff
+}
+
+/* Add a pressed effect to buttons */
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+    stop: 0 #ff9d00, stop: 1 #ffb900);
+}</string>
+     </property>
+     <property name="text">
+      <string>Load Meetings</string>
+     </property>
     </widget>
    </item>
   </layout>
