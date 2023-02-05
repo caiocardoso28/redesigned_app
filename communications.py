@@ -15,10 +15,27 @@ def show_invites(clients):
         cal_item = outlook.CreateItem(1)
         if client.get('Country') == 'BRAZIL':
             cal_item.subject = "Gartner | Seu call de introdução às ferramentas está disponível"
-            cal_item.body = f"""Oi {client['Name'].split(' ')[0]},\n\n"""
+            cal_item.body = f"""Oi {client['Name'].split(' ')[0]},\n\nNotamos que você ainda não selecionou um outro horário para o seu tour do portal e do app. Portanto, proponho este para explorarmos os seus novos recursos dentro do Gartner.com. para otimizar o seu uso das funcionalidades.\n
+Além de responder as suas perguntas, revisaremos:
+•	Como procurar pesquisas relevantes eficientemente
+•	Customizar o mural de notícias inteligente
+•	Comunicar com outros clientes via o nosso fórum de discussões\n
+Antes da reunião, afim de maximizar o nosso tempo, peço que:
+•	Baixe o nosso app My Gartner Mobile (Versão IOS / Versão Android)
+•	Realize o login no seu portal do Gartner –  Se estiver procurando procurando o seu usuário e senha, clique aqui para resetar a sua senha ou usuário.
+•	Procure ter acesso ao seu notebook/computador para a sessão
+
+Estou animado para falar contigo. Se você não estiver disponível neste horário por favor responder “RESCHEDULE” a este email e proporei um novo horário.
+"""
         else:
             cal_item.subject = 'Accept or Reschedule > Your Gartner Membership'
-            cal_item.body = f"""Hi {client['Name'].split(' ')[0]},\n\n"""
+            cal_item.body = f"""Hi {client['Name'].split(' ')[0]},\n\nMy name is Caio and I am an Onboarding Specialist here at Gartner and I work very closely with your Account Team. I am reaching out as we have not had a chance to meet, so I would like to propose this time to customize your Gartner.com platform based on your current initiatives.\n
+Before the meeting:
+•	Please download our Gartner Mobile App (IOS Version / Android Version)
+•	Please log in to your Gartner portal – for your login credentials click here to reset your password or username
+•	Please have access to your laptop/computer for the session\n
+The visual below highlights exclusive digital resources available at your disposal to maximize the value from your Gartner services.
+"""
         cal_item.location = 'Teams Meeting'
         cal_item.start = dt
         cal_item.duration = 30
@@ -27,7 +44,7 @@ def show_invites(clients):
         required.Type = 1
         optional = cal_item.Recipients.add(f"{client['AE']};")
         optional.Type = 2
-        gn.sleep(1)
+
         cal_item.display()
 
 

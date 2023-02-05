@@ -873,7 +873,7 @@ class WeekView(QDialog):
     info = None
     def show_item_info(self, row, col):
         item = self.table.item(row, col)
-        if item:
+        if item and '@' not in item.text():
             self.info = self.get_item_info(item.text())
             client_card = ClientView(self)
             client_card.show()
@@ -889,6 +889,8 @@ class WeekView(QDialog):
 
     def get_item_info(self, name):
         if name:
+            if name[0] == '✓':
+                name = name[1:]
             for client in MainWindow.client_list:
                 if name == client.name:
                     return [client.name, client.email, client.ae, client.age, client.stage]
@@ -953,7 +955,10 @@ class WeekView(QDialog):
                     if client_email == client.email.lower():
                         self.month_1 = self.parentWidget().month_names[0]
                         self.month_1_count += 1
-                        self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
+                        if client.stage == 'Closed Onboarded':
+                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{client.name}"))
+                        else:
+                            self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
                         self.table.item(row_index, col_index).setForeground(Qt.red)
                         self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
                         match_found = True
@@ -962,7 +967,10 @@ class WeekView(QDialog):
                     if client_email == client.email.lower():
                         self.month_2 = self.parentWidget().month_names[1]
                         self.month_2_count += 1
-                        self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
+                        if client.stage == 'Closed Onboarded':
+                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{client.name}"))
+                        else:
+                            self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
                         self.table.item(row_index, col_index).setForeground(Qt.darkYellow)
                         self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
                         match_found = True
@@ -971,7 +979,10 @@ class WeekView(QDialog):
                     if client_email == client.email.lower():
                         self.month_3 = self.parentWidget().month_names[2]
                         self.month_3_count += 1
-                        self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
+                        if client.stage == 'Closed Onboarded':
+                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{client.name}"))
+                        else:
+                            self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
                         self.table.item(row_index, col_index).setForeground(Qt.darkGreen)
                         self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
                         match_found = True
@@ -979,7 +990,10 @@ class WeekView(QDialog):
                 if not match_found:
                     response = self.discover_email(client_email)
                     if response != 'Unknown':
-                        self.table.setItem(row_index, col_index, QTableWidgetItem(response.name))
+                        if client.stage == 'Closed Onboarded':
+                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{response.name}"))
+                        else:
+                            self.table.setItem(row_index, col_index, QTableWidgetItem(response.name))
                         if self.month_1 == all_months[response.date.month]:
                             self.table.item(row_index, col_index).setForeground(Qt.red)
                             self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)

@@ -241,7 +241,7 @@ QDateTimeEdit::down-button {
       <string notr="true"/>
      </property>
      <property name="text">
-      <string>Caio Cardoso</string>
+      <string/>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -282,7 +282,7 @@ border-radius: 2px;
 font: 12pt Arial</string>
      </property>
      <property name="text">
-      <string>caioleitecardoso@gmail.com</string>
+      <string/>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -316,7 +316,7 @@ border-radius: 2px;
 font: 12pt Arial</string>
      </property>
      <property name="text">
-      <string>Duarte, Rogerio</string>
+      <string/>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -350,7 +350,7 @@ border-radius: 2px;
 font: 12pt Arial</string>
      </property>
      <property name="text">
-      <string>45</string>
+      <string/>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -384,7 +384,7 @@ border-radius: 2px;
 font: 12pt Arial</string>
      </property>
      <property name="text">
-      <string>Webtour Scheduled</string>
+      <string/>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -438,31 +438,7 @@ QPushButton:pressed {
       <bool>true</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">QPushButton {
-    background-color: rgb(53, 53, 53);
-    color: rgb(125, 125, 125);
-    border: 1px solid #7fcde1;
-    border-radius: 2px;
-    padding: 4px;
-    font: 10pt &quot;Arial&quot;;
-    height: 25px;
-    
-    
-    
-}
-
-/* Add a hover effect to buttons */
-QPushButton:hover {
-    background: rgb(71, 71, 71);
-    font: rgb(204, 204, 204);
-    color: #ffffff
-}
-
-/* Add a pressed effect to buttons */
-QPushButton:pressed {
-    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-    stop: 0 #ff9d00, stop: 1 #ffb900);
-}</string>
+      <string notr="true">\</string>
      </property>
      <property name="text">
       <string>Show Outreach</string>
@@ -475,31 +451,7 @@ QPushButton:pressed {
       <bool>true</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">QPushButton {
-    background-color: rgb(53, 53, 53);
-    color: rgb(125, 125, 125);
-    border: 1px solid #7fcde1;
-    border-radius: 2px;
-    padding: 4px;
-    font: 10pt &quot;Arial&quot;;
-    height: 25px;
-    
-    
-    
-}
-
-/* Add a hover effect to buttons */
-QPushButton:hover {
-    background: rgb(71, 71, 71);
-    font: rgb(204, 204, 204);
-    color: #ffffff
-}
-
-/* Add a pressed effect to buttons */
-QPushButton:pressed {
-    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-    stop: 0 #ff9d00, stop: 1 #ffb900);
-}</string>
+      <string notr="true"/>
      </property>
      <property name="text">
       <string>Message AE</string>
