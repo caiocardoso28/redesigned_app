@@ -98,6 +98,9 @@ class Client:
     def is_over(self):
         return 14 <= self.age < 60
 
+    def __repr__(self):
+        return repr(f"Client Object: {self.name}")
+
 
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
@@ -819,13 +822,19 @@ class WeekView(QDialog):
         self.week_select = self.findChild(QComboBox, 'comboBox')
         self.load_button = self.findChild(QPushButton, 'pushButton')
         self.table = self.findChild(QTableWidget, 'tableWidget')
+        self.table.cellDoubleClicked.connect(self.show_item_info)
+        self.clients = self.parentWidget().current_clients
 
-        self.current_clients = MetricWindow.current_clients
         self.week_selection = self.week_select.currentText()
         self.week_select.activated[str].connect(self.on_activated)
+        self.load_button.clicked.connect(lambda: self.load_table(self.week_selection))
 
-
-
+    month_1 = None
+    month_1_count = 0
+    month_2 = None
+    month_2_count = 0
+    month_3 = None
+    month_3_count = 0
     mon = []
     tues = []
     wed = []
@@ -833,16 +842,39 @@ class WeekView(QDialog):
     fri = []
     weekly_clients = []
 
+    def show_item_info(self, row, col):
+        item = self.table.item(row, col)
+        if item:
+            info = self.get_item_info(item.text())
+            QMessageBox.information(self, 'Item Info', info)
+        else:
+            pass
+
+    def get_item_info(self, name):
+        if name:
+            for client in MainWindow.client_list:
+                if name == client.name:
+                    return f"{client.name}: {client.email}\nStart Date: {all_months[client.date.month]}\nAge: {client.age}"
+            return 'NA'
+
     def on_activated(self, text):
-        print(text)
         self.week_selection = text
+        print(self.week_selection)
+        print(self.clients)
 
     def load_table(self, text):
+        self.table.clearContents()
+        self.weekly_clients.clear()
+        self.mon.clear()
+        self.tues.clear()
+        self.wed.clear()
+        self.thurs.clear()
+        self.fri.clear()
         from calstuff import get_meetings_week
         meetings = get_meetings_week(text)
         i = 0
         for meeting in meetings:
-            print(i)
+            # print(i)
             j = 0
             for key in meeting:
                 if 'Your Gartner Call' in meeting[key].Subject or 'Accept or Reschedule' in meeting[key].Subject or 'Seu' in meeting[key].Subject:
@@ -859,11 +891,46 @@ class WeekView(QDialog):
 
                 j += 1
             i += 1
-        self.weekly_clients = [self.mon, self.tues, self.wed, self.thurs, self.fri]
+        self.weekly_clients = [sorted(self.mon, key=lambda x: x.Start.time()),
+                               sorted(self.tues, key=lambda x: x.Start.time()),
+                               sorted(self.wed, key=lambda x: x.Start.time()),
+                               sorted(self.thurs, key=lambda x: x.Start.time()),
+                               sorted(self.fri, key=lambda x: x.Start.time())]
         print(self.weekly_clients)
 
+        # loading table
+        for col_index, day in enumerate(self.weekly_clients):
+            meetings = self.weekly_clients[col_index]
 
-
+            for row_index, meeting in enumerate(meetings):
+                client_email = None
+                for recipient in meeting.Recipients:
+                    if ',' not in recipient.Name:
+                        client_email = recipient.Address
+                match_found = False
+                for client in self.clients[0]:
+                    if client_email == client.email:
+                        self.month_1 = self.parentWidget().month_names[0]
+                        self.month_1_count += 1
+                        self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
+                        match_found = True
+                        break
+                for client in self.clients[1]:
+                    if client_email == client.email:
+                        self.month_2 = self.parentWidget().month_names[1]
+                        self.month_2_count += 1
+                        self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
+                        match_found = True
+                        break
+                for client in self.clients[2]:
+                    if client_email == client.email:
+                        self.month_3 = self.parentWidget().month_names[2]
+                        self.month_3_count += 1
+                        self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
+                        match_found = True
+                        break
+                if not match_found:
+                    self.table.setItem(row_index, col_index, QTableWidgetItem('Other'))
 
 
 
@@ -945,6 +1012,7 @@ class MetricWindow(QWidget):
 
     def open_calendar(self):
         self.current_clients = self.monthly_clients
+        print(self.current_clients)
         calendar = WeekView(self)
         calendar.show()
 

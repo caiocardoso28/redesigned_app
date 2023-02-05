@@ -124,7 +124,7 @@ def get_meetings_today(array):
         # print(i)
         for recipient in item.Recipients:
             if ',' not in recipient.Name:
-                clients.append(recipient.Name)
+                clients.append(recipient.Address)
                 # print(f"Recipient: {recipient.Name}")
 
         i += 1

@@ -283,6 +283,9 @@ font: 10pt Arial</string>
        <height>0</height>
       </size>
      </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::EditKeyPressed</set>
+     </property>
      <property name="verticalScrollMode">
       <enum>QAbstractItemView::ScrollPerPixel</enum>
      </property>
@@ -299,7 +302,7 @@ font: 10pt Arial</string>
       <bool>false</bool>
      </property>
      <property name="rowCount">
-      <number>3</number>
+      <number>16</number>
      </property>
      <property name="columnCount">
       <number>5</number>
@@ -316,6 +319,19 @@ font: 10pt Arial</string>
      <attribute name="verticalHeaderVisible">
       <bool>false</bool>
      </attribute>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
      <row/>
      <row/>
      <row/>
@@ -344,11 +360,6 @@ font: 10pt Arial</string>
        <string>Friday</string>
       </property>
      </column>
-     <item row="0" column="0">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
     </widget>
    </item>
   </layout>
