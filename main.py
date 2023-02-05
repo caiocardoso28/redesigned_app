@@ -815,6 +815,34 @@ class OutreachMonth(OutreachWindow):
         self.show()
 
 
+class ClientView(QDialog):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        uic.loadUi('client_info.ui', self)
+
+        self.dialog = TemplateEdit(self)
+        # self.dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+
+        self.name_label = self.findChild(QLabel, 'name_label')
+        self.name_label.setText(self.parentWidget().info[0])
+        self.email_label = self.findChild(QLabel, 'email_label')
+        self.email_label.setText(self.parentWidget().info[1])
+        self.ae_label = self.findChild(QLabel, 'ae_label')
+        self.ae_label.setText(self.parentWidget().info[2])
+        self.age_label = self.findChild(QLabel, 'age_label')
+        self.age_label.setText(str(self.parentWidget().info[3]))
+        self.status_label = self.findChild(QLabel, 'status_label')
+        self.status_label.setText(self.parentWidget().info[4])
+
+        self.customize = self.findChild(QPushButton, 'pushButton_3')
+        self.customize.clicked.connect(lambda: self.open_editor())
+        self.ae_button = self.findChild(QPushButton, 'pushButton_2')
+        self.outreach_button = self.findChild(QPushButton, 'pushButton')
+
+    def open_editor(self):
+        if self.dialog.isHidden():
+            self.dialog.show()
+
 class WeekView(QDialog):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -842,12 +870,13 @@ class WeekView(QDialog):
     thurs = []
     fri = []
     weekly_clients = []
-
+    info = None
     def show_item_info(self, row, col):
         item = self.table.item(row, col)
         if item:
-            info = self.get_item_info(item.text())
-            QMessageBox.information(self, 'Item Info', info)
+            self.info = self.get_item_info(item.text())
+            client_card = ClientView(self)
+            client_card.show()
         else:
             pass
 
@@ -862,7 +891,7 @@ class WeekView(QDialog):
         if name:
             for client in MainWindow.client_list:
                 if name == client.name:
-                    return f"{client.name}: {client.email}\nStart Date: {all_months[client.date.month]}\nAge: {client.age}"
+                    return [client.name, client.email, client.ae, client.age, client.stage]
             return 'NA'
 
     def on_activated(self, text):
@@ -926,6 +955,7 @@ class WeekView(QDialog):
                         self.month_1_count += 1
                         self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
                         self.table.item(row_index, col_index).setForeground(Qt.red)
+                        self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
                         match_found = True
                         break
                 for client in self.clients[1]:
@@ -934,6 +964,7 @@ class WeekView(QDialog):
                         self.month_2_count += 1
                         self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
                         self.table.item(row_index, col_index).setForeground(Qt.darkYellow)
+                        self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
                         match_found = True
                         break
                 for client in self.clients[2]:
@@ -942,6 +973,7 @@ class WeekView(QDialog):
                         self.month_3_count += 1
                         self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
                         self.table.item(row_index, col_index).setForeground(Qt.darkGreen)
+                        self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
                         match_found = True
                         break
                 if not match_found:
@@ -950,15 +982,20 @@ class WeekView(QDialog):
                         self.table.setItem(row_index, col_index, QTableWidgetItem(response.name))
                         if self.month_1 == all_months[response.date.month]:
                             self.table.item(row_index, col_index).setForeground(Qt.red)
+                            self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
                         elif self.month_2 == all_months[response.date.month]:
                             self.table.item(row_index, col_index).setForeground(Qt.darkYellow)
+                            self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
                         elif self.month_3 == all_months[response.date.month]:
                             self.table.item(row_index, col_index).setForeground(Qt.darkGreen)
+                            self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
                         else:
                             self.table.item(row_index, col_index).setForeground(Qt.gray)
+                            self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
                     else:
                         self.table.setItem(row_index, col_index, QTableWidgetItem(client_email))
                         self.table.item(row_index, col_index).setForeground(Qt.gray)
+                        self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
 
 
 
