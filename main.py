@@ -855,7 +855,7 @@ class WeekView(QDialog):
         for client in MainWindow.client_list:
 
             if email == client.email.lower():
-                return client.name
+                return client
         return 'Unknown'
 
     def get_item_info(self, name):
@@ -887,7 +887,7 @@ class WeekView(QDialog):
             # print(i)
             j = 0
             for key in meeting:
-                if 'Your Gartner Call' in meeting[key].Subject or 'Accept or Reschedule' in meeting[key].Subject or 'Seu' in meeting[key].Subject:
+                if 'Your Gartner Call' in meeting[key].Subject or 'Accept or Reschedule' in meeting[key].Subject or 'Seu' in meeting[key].Subject or 'Sua' in meeting[key].Subject:
                     if i == 0:
                         self.mon.append(meeting[key])
                     elif i == 1:
@@ -909,7 +909,7 @@ class WeekView(QDialog):
         print(self.weekly_clients)
         span = f"Viewing: {self.weekly_clients[0][0].Start.date().strftime('%m/%d/%Y')} - {self.weekly_clients[-1][0].Start.date().strftime('%m/%d/%Y')}"
         self.span_label.setText(span)
-        self.span_label.setStyleSheet('font: 9pt Arial')
+        self.span_label.setStyleSheet('font: 12pt Arial')
         # loading table
         for col_index, day in enumerate(self.weekly_clients):
             meetings = self.weekly_clients[col_index]
@@ -917,7 +917,7 @@ class WeekView(QDialog):
             for row_index, meeting in enumerate(meetings):
                 client_email = None
                 for recipient in meeting.Recipients:
-                    if ',' not in recipient.Name:
+                    if ',' not in recipient.Name and recipient.Type == 1:
                         client_email = recipient.Address
                 match_found = False
                 for client in self.clients[0]:
@@ -945,10 +945,20 @@ class WeekView(QDialog):
                         match_found = True
                         break
                 if not match_found:
-
-                    self.table.setItem(row_index, col_index, QTableWidgetItem(self.discover_email(client_email)))
-                    self.table.item(row_index, col_index).setForeground(Qt.gray)
-
+                    response = self.discover_email(client_email)
+                    if response != 'Unknown':
+                        self.table.setItem(row_index, col_index, QTableWidgetItem(response.name))
+                        if self.month_1 == all_months[response.date.month]:
+                            self.table.item(row_index, col_index).setForeground(Qt.red)
+                        elif self.month_2 == all_months[response.date.month]:
+                            self.table.item(row_index, col_index).setForeground(Qt.darkYellow)
+                        elif self.month_3 == all_months[response.date.month]:
+                            self.table.item(row_index, col_index).setForeground(Qt.darkGreen)
+                        else:
+                            self.table.item(row_index, col_index).setForeground(Qt.gray)
+                    else:
+                        self.table.setItem(row_index, col_index, QTableWidgetItem(client_email))
+                        self.table.item(row_index, col_index).setForeground(Qt.gray)
 
 
 
