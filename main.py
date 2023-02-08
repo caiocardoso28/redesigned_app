@@ -135,6 +135,7 @@ class MainWindow(QMainWindow):
         self.btn_page_4.setEnabled(False)
         self.buttons.append(self.btn_page_4)
         self.btn_page_5 = self.findChild(QPushButton, 'btn_page_5')
+        self.btn_page_5.setEnabled(False)
         self.buttons.append(self.btn_page_5)
         self.adjust_text()
         self.frame_left_menu = self.findChild(QFrame, 'frame_left_menu')
@@ -161,6 +162,7 @@ class MainWindow(QMainWindow):
         # PAGE 4
         self.btn_page_4.clicked.connect(lambda: self.load_data_outreach())
 
+        # PAGE 5
         self.btn_page_5.clicked.connect(lambda: self.testing())
 
         # SHOW ==> MAIN WINDOW
@@ -843,6 +845,7 @@ class ClientView(QDialog):
         if self.dialog.isHidden():
             self.dialog.show()
 
+
 class WeekView(QDialog):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1015,7 +1018,6 @@ class WeekView(QDialog):
                         self.table.setItem(row_index, col_index, QTableWidgetItem(client_email))
                         self.table.item(row_index, col_index).setForeground(Qt.gray)
                         self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
-
 
 
 class MetricWindow(QWidget):
@@ -1199,7 +1201,7 @@ class MetricWindow(QWidget):
             print(month)
             for j in range(len(month)):
                 if month[j].stage != 'Closed Onboarded':
-                    if month[j].age < 60 and month[j].stage != 'Closed Not Onboarded':
+                    if month[j].age < 53 and month[j].stage != 'Closed Not Onboarded':
                         print(f"{month[j].stage} {month[j].age}")
                         opportunity_total += 1
 
