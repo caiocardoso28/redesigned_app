@@ -898,6 +898,7 @@ class WeekView(QDialog):
 
     def on_activated(self, text):
         self.week_selection = text
+        self.load_table(self.week_selection)
         print(self.week_selection)
         print(self.clients)
 
@@ -938,7 +939,10 @@ class WeekView(QDialog):
                                sorted(self.thurs, key=lambda x: x.Start.time()),
                                sorted(self.fri, key=lambda x: x.Start.time())]
         print(self.weekly_clients)
-        span = f"Viewing: {self.weekly_clients[0][0].Start.date().strftime('%m/%d/%Y')} - {self.weekly_clients[-1][0].Start.date().strftime('%m/%d/%Y')}"
+        try:
+            span = f"Viewing: {self.weekly_clients[0][0].Start.date().strftime('%m/%d/%Y')} - {self.weekly_clients[-1][0].Start.date().strftime('%m/%d/%Y')}"
+        except:
+            span = 'Viewing: Next Week'
         self.span_label.setText(span)
         self.span_label.setStyleSheet('font: 12pt Arial')
         # loading table
@@ -946,6 +950,7 @@ class WeekView(QDialog):
             meetings = self.weekly_clients[col_index]
 
             for row_index, meeting in enumerate(meetings):
+
                 client_email = None
                 for recipient in meeting.Recipients:
                     if ',' not in recipient.Name and recipient.Type == 1:
@@ -1191,18 +1196,23 @@ class MetricWindow(QWidget):
 
         for month in clients:
             opportunity_total = 0
+            print(month)
             for j in range(len(month)):
-                if month[j].stage == 'Closed Onboarded' or month[j].age > 45:
-                    opportunity_total += 1
+                if month[j].stage != 'Closed Onboarded':
+                    if month[j].age < 60 and month[j].stage != 'Closed Not Onboarded':
+                        print(f"{month[j].stage} {month[j].age}")
+                        opportunity_total += 1
+
             opportunities.append(opportunity_total)
 
-        opp_1 = int(self.totalLabel_1.text()) - opportunities[0]
+        opp_1 = opportunities[0]
         self.oppLabel_1.setText(str(opp_1))
+        print(opp_1)
 
-        opp_2 = int(self.totalLabel_2.text()) - opportunities[1]
+        opp_2 = opportunities[1]
         self.oppLabel_2.setText(str(opp_2))
-
-        opp_3 = int(self.totalLabel_3.text()) - opportunities[2]
+        print(opp_2)
+        opp_3 = opportunities[2]
         self.oppLabel_3.setText(str(opp_3))
 
         rem_1 = (total_closed[0] + opp_1) / int(self.totalLabel_1.text())
