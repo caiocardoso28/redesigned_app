@@ -269,7 +269,7 @@ class MainWindow(QMainWindow):
                             mem_status=row['MEMBER_STATUS']
                             )
 
-            #print(f"{client.eng_age}{client.is_engaged()}")
+            # print(f"{client.eng_age}{client.is_engaged()}")
 
             self.client_list.append(client)
             if client.age < 95:
@@ -340,9 +340,9 @@ class OutreachWindow(QWidget):
         self.customize = self.findChild(QPushButton, 'pushButton_3')
         self.checkboxes = []
         self.dialog = TemplateEdit(self)
-        #self.text_edit = self.dialog.findChild(QTextEdit, 'textEdit')
-        #self.line = self.dialog.findChild(QLineEdit, 'lineEdit_2')
-        #self.template_ok = self.dialog.findChild(QPushButton, 'pushButton')
+        # self.text_edit = self.dialog.findChild(QTextEdit, 'textEdit')
+        # self.line = self.dialog.findChild(QLineEdit, 'lineEdit_2')
+        # self.template_ok = self.dialog.findChild(QPushButton, 'pushButton')
         self.custom_check = self.findChild(QCheckBox, 'checkBox')
         self.pushButton.clicked.connect(lambda: self.create_list())
         self.loadButton.clicked.connect(lambda: self.load_table())
@@ -362,7 +362,6 @@ class OutreachWindow(QWidget):
     change_template = False
     template = None
     subject = None
-
 
     def open_editor(self):
         if self.dialog.isHidden():
@@ -420,18 +419,15 @@ class OutreachWindow(QWidget):
             print('Already Loaded')
             return False
 
-
         # Set the column headers to be the object's attributes
         attributes = ['', "Name", 'Email', "Age", "Status", "AE", 'Country']
         self.table.setColumnCount(len(attributes))
         self.table.setHorizontalHeaderLabels(attributes)
         self.table.verticalHeader().setDefaultAlignment(Qt.AlignCenter)
 
-
         # Add the objects' data to the table
         for i, obj in enumerate(self.sorted_list):
-            #print(i)
-
+            # print(i)
             self.table.insertRow(i)
             # insert row checkbox
             checkbox_item = QCheckBox()
@@ -440,11 +436,11 @@ class OutreachWindow(QWidget):
             self.checkboxes.append(checkbox_item)
 
             self.table.setCellWidget(i, 0, checkbox_item)
-            #print('item 1')
+            # print('item 1')
             self.table.setItem(i, 1, QTableWidgetItem(obj.name))
-            #print('item 2')
+            # print('item 2')
             self.table.setItem(i, 2, QTableWidgetItem(obj.email))
-            #print('item 3')
+            # print('item 3')
             self.table.setItem(i, 3, QTableWidgetItem(str(obj.age)))
             self.table.item(i, 3).setTextAlignment(Qt.AlignCenter)
 
@@ -455,15 +451,15 @@ class OutreachWindow(QWidget):
                 self.table.item(i, 3).setForeground(Qt.darkYellow)
             else:
                 self.table.item(i, 3).setForeground(Qt.darkGreen)
-            #print('item 4')
+            # print('item 4')
             self.table.setItem(i, 4, QTableWidgetItem(str(obj.stage)))
-            #print('item 5')
+            # print('item 5')
             self.table.setItem(i, 5, QTableWidgetItem(obj.ae))
-            #print('item 6')
+            # print('item 6')
 
             self.table.setItem(i, 6, QTableWidgetItem(str(obj.country)))
             self.table.item(i, 6).setTextAlignment(Qt.AlignCenter)
-            #print('item 7')
+            # print('item 7')
 
         self.table.resizeColumnsToContents()
         self.table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
@@ -610,11 +606,11 @@ class AeWindow(QWidget):
             self.checkboxes.append(checkbox_item)
 
             self.table.setCellWidget(i, 0, checkbox_item)
-            #print('item 1')
+            # print('item 1')
             self.table.setItem(i, 1, QTableWidgetItem(obj.ae))
-            #print('item 2')
+            # print('item 2')
             self.table.setItem(i, 2, QTableWidgetItem(obj.name))
-            #print('item 3')
+            # print('item 3')
             self.table.setItem(i, 3, QTableWidgetItem(str(obj.age)))
             self.table.item(i, 3).setTextAlignment(Qt.AlignCenter)
 
@@ -625,18 +621,18 @@ class AeWindow(QWidget):
                 self.table.item(i, 3).setForeground(Qt.darkYellow)
             else:
                 self.table.item(i, 3).setForeground(Qt.darkGreen)
-            #print('item 4')
+            # print('item 4')
             self.table.setItem(i, 4, QTableWidgetItem(str(obj.stage)))
-            #print('item 5')
+            # print('item 5')
             self.table.setItem(i, 5, QTableWidgetItem(obj.org_name))
-            #print('item 6')
+            # print('item 6')
 
             self.table.setItem(i, 6, QTableWidgetItem(str(obj.eng_age)))
             self.table.item(i, 6).setTextAlignment(Qt.AlignCenter)
-            #print('item 7')
+            # print('item 7')
             self.table.setItem(i, 7, QTableWidgetItem(obj.country))
             self.table.item(i, 7).setTextAlignment(Qt.AlignCenter)
-            #print('item 8')
+            # print('item 8')
         self.table.resizeColumnsToContents()
         self.table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.table.adjustSize()
@@ -677,7 +673,6 @@ class BiWindow(QWidget):
         pass
 
     def create_list(self):
-
         data = []
         header_labels = [self.table.horizontalHeaderItem(i).text() for i in range(self.table.columnCount())]
         for i in range(self.table.rowCount()):
@@ -718,10 +713,9 @@ class BiWindow(QWidget):
         self.table.setHorizontalHeaderLabels(attributes)
         self.table.verticalHeader().setDefaultAlignment(Qt.AlignCenter)
 
-
         # Add the objects' data to the table
         for i, obj in enumerate(self.sorted_list):
-            #print(i)
+            # print(i)
             self.table.insertRow(i)
             # insert row checkbox
             checkbox_item = QCheckBox()
@@ -874,6 +868,7 @@ class WeekView(QDialog):
     fri = []
     weekly_clients = []
     info = None
+
     def show_item_info(self, row, col):
         item = self.table.item(row, col)
         if item and '@' not in item.text():
@@ -1078,7 +1073,7 @@ class MetricWindow(QWidget):
 
         self.monthly_clients = self.get_monthly_clients(self.current_months)
         print(self.monthly_clients)
-        #grab and set totals
+        # grab and set totals
         self.first_month_total = len(self.monthly_clients[0])
         self.totalLabel_1.setText(str(len(self.monthly_clients[0])))
         self.second_month_total = len(self.monthly_clients[1])
@@ -1088,13 +1083,11 @@ class MetricWindow(QWidget):
 
         self.quick_maths(self.monthly_clients)
 
-
         self.show()
 
     active_month = None
     window_list = []
     current_clients = []
-
 
     def open_calendar(self):
         self.current_clients = self.monthly_clients
@@ -1102,13 +1095,10 @@ class MetricWindow(QWidget):
         calendar = WeekView(self)
         calendar.show()
 
-
-
     def open_outreach(self):
         global SELECTION
         if SELECTION:
             outreach_window = OutreachMonth()
-
 
     def open_bi(self):
         global SELECTION
@@ -1401,7 +1391,7 @@ class TemplateEdit(QDialog):
         self.textEdit = self.findChild(QTextEdit, 'textEdit')
 
         self.subject = self.findChild(QLineEdit, 'lineEdit_2')
-        #self.subject.changeEvent(lambda: self.enable_button())
+        # self.subject.changeEvent(lambda: self.enable_button())
         self.subject.setFocus()
         self.button.clicked.connect(lambda: self.button_clicked())
 
