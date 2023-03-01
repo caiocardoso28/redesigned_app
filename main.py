@@ -816,7 +816,7 @@ class ClientView(QDialog):
         super().__init__(*args, **kwargs)
         uic.loadUi('client_info.ui', self)
 
-        self.dialog = TemplateEdit(self)
+
         # self.dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
         self.name_label = self.findChild(QLabel, 'name_label')
@@ -830,14 +830,19 @@ class ClientView(QDialog):
         self.status_label = self.findChild(QLabel, 'status_label')
         self.status_label.setText(self.parentWidget().info[4])
 
-        self.customize = self.findChild(QPushButton, 'pushButton_3')
-        self.customize.clicked.connect(lambda: self.open_editor())
+        self.reschedule = self.findChild(QPushButton, 'pushButton_4')
+        self.reschedule.clicked.connect(lambda: self.reschedule_meeting())
         self.ae_button = self.findChild(QPushButton, 'pushButton_2')
         self.outreach_button = self.findChild(QPushButton, 'pushButton')
+        self.outreach_button.clicked.connect(lambda: self.send_outreach())
 
-    def open_editor(self):
-        if self.dialog.isHidden():
-            self.dialog.show()
+    def reschedule_meeting(self):
+        from communications import send_email
+        send_email(client=self.parentWidget().info, to='client', purpose='reschedule')
+
+    def send_outreach(self):
+        from communications import send_email
+        send_email(client=self.parentWidget().info, to='client', purpose='other')
 
 
 class WeekView(QDialog):
@@ -887,11 +892,15 @@ class WeekView(QDialog):
 
     def get_item_info(self, name):
         if name:
-            if name[0] == '✓':
-                name = name[1:]
+            if name[0] == '✓' or name[3] == '-':
+                if name[3] == '-':
+                    name = name[5:]
+                    print(name)
+                else:
+                    name = name[1:]
             for client in MainWindow.client_list:
                 if name == client.name:
-                    return [client.name, client.email, client.ae, client.age, client.stage]
+                    return [client.name, client.email, client.ae, client.age, client.stage, client.ppl_code]
             return 'NA'
 
     def on_activated(self, text):
@@ -950,9 +959,11 @@ class WeekView(QDialog):
             for row_index, meeting in enumerate(meetings):
 
                 client_email = None
+                meeting_type = None
                 for recipient in meeting.Recipients:
                     if ',' not in recipient.Name and recipient.Type == 1:
                         client_email = recipient.Address
+                        meeting_type = meeting.Subject
                 match_found = False
                 for client in self.clients[0]:
                     if client_email == client.email.lower():
@@ -960,6 +971,8 @@ class WeekView(QDialog):
                         self.month_1_count += 1
                         if client.stage == 'Closed Onboarded':
                             self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{client.name}"))
+                        elif "Your Gartner Call" not in meeting_type:
+                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"BI - {client.name}"))
                         else:
                             self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
                         self.table.item(row_index, col_index).setForeground(Qt.red)
@@ -972,6 +985,8 @@ class WeekView(QDialog):
                         self.month_2_count += 1
                         if client.stage == 'Closed Onboarded':
                             self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{client.name}"))
+                        elif "Your Gartner Call" not in meeting_type:
+                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"BI - {client.name}"))
                         else:
                             self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
                         self.table.item(row_index, col_index).setForeground(Qt.darkYellow)
@@ -984,6 +999,8 @@ class WeekView(QDialog):
                         self.month_3_count += 1
                         if client.stage == 'Closed Onboarded':
                             self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{client.name}"))
+                        elif "Your Gartner Call" not in meeting_type:
+                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"BI - {client.name}"))
                         else:
                             self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
                         self.table.item(row_index, col_index).setForeground(Qt.darkGreen)

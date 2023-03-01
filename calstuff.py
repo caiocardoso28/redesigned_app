@@ -215,6 +215,58 @@ def find_times(item_list, meeting_duration, date_range):
     return time_output
 
 
+def get_most_recent_email_from_sender(email_address):
+    outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+    inbox = outlook.GetDefaultFolder(6)  # 6 refers to the index of the Inbox folder
+    invite_responses = inbox.Folders["Invite Responses"]
+    print('that was ok')
+    start_of_year = today - timedelta(weeks=4)
+    # Retrieve all emails in the inbox folder
+    messages = inbox.Items.Restrict("[ReceivedTime] >= '" + start_of_year.strftime('%m/%d/%Y %H:%M %p') + "'")
+    invite_responses = invite_responses.Items.Restrict("[ReceivedTime] >= '" + start_of_year.strftime('%m/%d/%Y %H:%M %p') + "'")
+
+    # Create a list of emails that match the given email address
+    email_list = []
+    response_list = []
+    i = 0
+    try:
+
+        for message in messages:
+            if message.Class != 43:
+                continue
+            if i < 1000:
+                try:
+                    print(message.ReceivedTime)
+                    print('working')
+                    if message.SenderEmailAddress.lower() == email_address.lower():
+                        print('found')
+                        email_list.append(message)
+                        break
+                except:
+                    pass
+                i += 1
+            else:
+                break
+        print(invite_responses)
+        i = 0
+
+    except Exception as e:
+        print(f"An error occurred:", str(e))
+
+    # Sort the emails by received time and get the most recent one
+
+    email_list.sort(key=lambda x: x.ReceivedTime, reverse=True)
+    try:
+        most_recent_email = email_list[0]
+        most_recent_email.Display()
+    except:
+        if len(response_list) > 0:
+            most_recent_email = response_list[0]
+            most_recent_email.Display()
+        else:
+            most_recent_email = None
+
+    return most_recent_email
 # testing = find_times(conflicts, 30, day_range)
 
 

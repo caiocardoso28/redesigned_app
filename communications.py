@@ -29,13 +29,7 @@ Estou animado para falar contigo. Se você não estiver disponível neste horár
 """
         else:
             cal_item.subject = 'Accept or Reschedule > Your Gartner Membership'
-            cal_item.body = f"""Hi {client['Name'].split(' ')[0]},\n\nMy name is Caio and I am an Onboarding Specialist here at Gartner and I work very closely with your Account Team. I am reaching out as we have not had a chance to meet, so I would like to propose this time to customize your Gartner.com platform based on your current initiatives.\n
-Before the meeting:
-•	Please download our Gartner Mobile App (IOS Version / Android Version)
-•	Please log in to your Gartner portal – for your login credentials click here to reset your password or username
-•	Please have access to your laptop/computer for the session\n
-The visual below highlights exclusive digital resources available at your disposal to maximize the value from your Gartner services.
-"""
+            cal_item.body = f"""Hi {client['Name'].split(' ')[0]},\n\n"""
         cal_item.location = 'Teams Meeting'
         cal_item.start = dt
         cal_item.duration = 30
@@ -46,6 +40,32 @@ The visual below highlights exclusive digital resources available at your dispos
         optional.Type = 2
 
         cal_item.display()
+
+
+def send_email(client, template=None, subject=None, to=None, purpose=None):
+    outlook = win32com.client.Dispatch('outlook.application')
+    template = template
+
+    mail = outlook.CreateItem(0)
+    if to == 'client':
+        mail.To = client[1]
+        if purpose == 'reschedule':
+            mail.HTMLBody = f"Hi {client[0].split(' ')[0]},<br><br>I hope you're doing well! I am reaching out today to " \
+                            f"reschedule your Gartner Onboarding. I have included a new link below for your convenience" \
+                            f" in picking a better time for us to chat.<br><br>Please let me know if I can help" \
+                            f" with anything else. Thank you!<br><br>Scheduling: <b>INSERT LINK HERE (People Code: {client[5]})</b><br><br>Best Regards,<br><br>" \
+                            f"Caio Cardoso | Client Success Associate | Gartner"
+            mail.CC = client[2]
+            mail.Subject = 'Reschedule Your Gartner Onboarding'
+        else:
+            mail.CC = client[2]
+            mail.HTMLBody = f"Hi {client[0].split(' ')[0]},\n\n"
+            mail.Subject = f"{client[0].split(' ')[0]} | Gartner Onboarding"
+    else:
+        mail.To = client[2]
+        mail.HTMLBody = template
+        mail.Subject = 'Client Onboarding Help'
+    mail.Display()
 
 
 def send_emails(clients, template=None, subject=None):
