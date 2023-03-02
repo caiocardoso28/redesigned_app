@@ -700,7 +700,6 @@ class BiWindow(QWidget):
         self.table.setItem(row_number, 7, QTableWidgetItem(selected_date.strftime("%m/%d/%Y %I:%M %p")))
         self.table.item(row_number, 7).setTextAlignment(Qt.AlignCenter)
 
-
     def load_table(self):
         if self.table.columnCount() > 1:
             self.table.clear()
@@ -835,8 +834,11 @@ class ClientView(QDialog):
         self.status_label = self.findChild(QLabel, 'status_label')
         self.status_label.setText(self.parentWidget().info[4])
 
+        # self.doubleClicked.connect(self.dialog_double_clicked)
         self.reschedule = self.findChild(QPushButton, 'pushButton_4')
         self.reschedule.clicked.connect(lambda: self.reschedule_meeting())
+        self.clip = self.findChild(QPushButton, 'pushButton_5')
+        self.clip.clicked.connect(lambda: self.open_clip())
         self.ae_button = self.findChild(QPushButton, 'pushButton_2')
         self.outreach_button = self.findChild(QPushButton, 'pushButton')
         self.outreach_button.clicked.connect(lambda: self.send_outreach())
@@ -847,8 +849,12 @@ class ClientView(QDialog):
 
     def send_outreach(self):
         from communications import send_email
+
         send_email(client=self.parentWidget().info, to='client', purpose='other')
 
+    def open_clip(self):
+        import webbrowser
+        webbrowser.open(f"https://scp.ssd.aws.gartner.com/#/{self.parentWidget().info[5]}")
 
 class WeekView(QDialog):
     def __init__(self, *args, **kwargs):
