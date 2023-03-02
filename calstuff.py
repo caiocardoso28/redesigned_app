@@ -211,8 +211,40 @@ def find_times(item_list, meeting_duration, date_range):
                 else:
                     selection = reset_time(selection)
                     time_key = selection.strftime("%m/%d/%Y %I:%M %p")
+    final_output = []
+    i = 0
+    last_time = None
+    import random
+    for slot in time_output:
+        if slot.date() - today.date() < timedelta(days=2):
+            continue
+        if random.randint(0, 10) % 2 != 0:
+            continue
+        print(slot.date())
+        if not last_time:
+            i += 1
+            final_output.append(slot)
+            last_time = slot
+        else:
+            if last_time.date() == slot.date():
+                if i < 3:
+                    final_output.append(slot)
+                    last_time = slot
+                    i += 1
+                else:
+                    continue
+            else:
+                i = 1
+                final_output.append(slot)
+                last_time = slot
 
-    return time_output
+
+    print(len(time_output))
+    print(len(final_output))
+    if len(final_output) >= 55:
+        return final_output
+    else:
+        return time_output
 
 
 def get_most_recent_email_from_sender(email_address):

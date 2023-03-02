@@ -700,10 +700,15 @@ class BiWindow(QWidget):
         self.table.setItem(row_number, 7, QTableWidgetItem(selected_date.strftime("%m/%d/%Y %I:%M %p")))
         self.table.item(row_number, 7).setTextAlignment(Qt.AlignCenter)
 
+
     def load_table(self):
         if self.table.columnCount() > 1:
+            self.table.clear()
+            self.table.setColumnCount(0)
+            self.table.setRowCount(0)
             print('Already Loaded')
-            return False
+
+            return self.load_table()
 
         from calstuff import get_conflicts, find_times
         self.pyt = find_times(get_conflicts(), 30, 21)
@@ -769,7 +774,7 @@ class BiMonth(BiWindow):
         for item in SELECTION:
             if item.stage != 'Closed Onboarded':
                 if item.stage == 'Waiting For Client' or item.stage == 'Holding' or item.stage == 'Webtour Scheduled':
-                    if item.age < 60:
+                    if 14 <= item.age < 60:
                         self.list.append(item)
 
         self.sorted_list = sorted(self.list, key=lambda x: x.age, reverse=True)
