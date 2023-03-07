@@ -246,29 +246,31 @@ class MainWindow(QMainWindow):
         # Create a list of objects
 
         for index, row in sheet.iterrows():
-
-            age = self.calculate_age(row['ACT_CREATE_DT'])
-            eng_age = self.calculate_age(row['ENGAGEMENT_LAD'])
-            client = Client(name=str(row['CLIENT_NAME']),
-                            ae=str(row['AE_NAME']),
-                            date=row['ACT_CREATE_DT'],
-                            email=str(row['CLIENT_PRIMARY_EMAIL']),
-                            status=row['New_OBC_In_60_Days'],
-                            age=age,
-                            ppl_code=row['PPL_CODE'],
-                            stage=str(row['ACT_STATUS']),
-                            country=str(row['ORG_COUNTRY']),
-                            cpv=row['Cpv_In_30D_Post_Ob'],
-                            dpv=row['Dpv_In_30D_Post_Ob'],
-                            event_act=row['Event_Act_In_30D_Post_Ob'],
-                            inq=row['Inq_In_30D_Post_Ob'],
-                            org_name=row['ORG_NAME'],
-                            eng_lad=row['ENGAGEMENT_LAD'],
-                            eng_age=eng_age,
-                            extra=row['ACT_REASON'],
-                            mem_status=row['MEMBER_STATUS']
-                            )
-
+            try:
+                age = self.calculate_age(row['ACT_CREATE_DT'])
+                eng_age = self.calculate_age(row['ENGAGEMENT_LAD'])
+                client = Client(name=str(row['CLIENT_NAME']),
+                                ae=str(row['AE_NAME']),
+                                date=row['ACT_CREATE_DT'],
+                                email=str(row['CLIENT_PRIMARY_EMAIL']),
+                                status=row['OB_60_achieved'],
+                                age=age,
+                                ppl_code=row['PPL_CODE'],
+                                stage=str(row['ACT_STATUS']),
+                                country=str(row['ORG_COUNTRY']),
+                                cpv=row['Cpv_In_30D_Post_Ob'],
+                                dpv=row['Dpv_In_30D_Post_Ob'],
+                                event_act=row['Event_Act_In_30D_Post_Ob'],
+                                inq=row['Inq_In_30D_Post_Ob'],
+                                org_name=row['ORG_NAME'],
+                                eng_lad=row['ENGAGEMENT_LAD'],
+                                eng_age=eng_age,
+                                extra=row['ACT_REASON'],
+                                mem_status=row['MEMBER_STATUS']
+                                )
+            except Exception as e:
+                print(e)
+                break
             # print(f"{client.eng_age}{client.is_engaged()}")
 
             self.client_list.append(client)
@@ -856,6 +858,7 @@ class ClientView(QDialog):
         import webbrowser
         webbrowser.open(f"https://scp.ssd.aws.gartner.com/#/{self.parentWidget().info[5]}")
 
+
 class WeekView(QDialog):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -937,6 +940,7 @@ class WeekView(QDialog):
             # print(i)
             j = 0
             for key in meeting:
+                subjects = ['Your Gartner Call', 'Accept or Reschedule > Your Gartner Membership', ]
                 if 'Your Gartner Call' in meeting[key].Subject or 'Accept or Reschedule' in meeting[key].Subject or 'Seu' in meeting[key].Subject or 'Sua' in meeting[key].Subject:
                     if i == 0:
                         self.mon.append(meeting[key])
@@ -976,6 +980,7 @@ class WeekView(QDialog):
                         client_email = recipient.Address
                         meeting_type = meeting.Subject
                 match_found = False
+                # looping through clients in 'oldest' month
                 for client in self.clients[0]:
                     if client_email == client.email.lower():
                         self.month_1 = self.parentWidget().month_names[0]
@@ -990,6 +995,7 @@ class WeekView(QDialog):
                         self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
                         match_found = True
                         break
+                # looping through clients in 'middle' month
                 for client in self.clients[1]:
                     if client_email == client.email.lower():
                         self.month_2 = self.parentWidget().month_names[1]
@@ -1004,6 +1010,7 @@ class WeekView(QDialog):
                         self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
                         match_found = True
                         break
+                # looping through clients in 'newest' month
                 for client in self.clients[2]:
                     if client_email == client.email.lower():
                         self.month_3 = self.parentWidget().month_names[2]
@@ -1019,6 +1026,7 @@ class WeekView(QDialog):
                         match_found = True
                         break
                 if not match_found:
+                    # searches entire client list for client email (usually wrong email or out of OB60 range)
                     response = self.discover_email(client_email)
                     if response != 'Unknown':
                         if client.stage == 'Closed Onboarded':

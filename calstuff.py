@@ -76,6 +76,7 @@ def get_conflicts(start_date=None, end_date=None, cal_view=False):
     conflicts = [mon, tues, wed, thur, fri]
     return conflicts
 
+
 def get_meetings_week(week):
     if week == 'This Week':
         today = datetime.today().weekday()
@@ -102,7 +103,6 @@ def get_meetings_week(week):
 
         return meetings
         pass
-
 
 
 def get_meetings_today(array):
