@@ -10,6 +10,8 @@ from ui_functions import *
 USER = None
 SELECTION = None
 SELECTION_NAME = None
+ACTIVITIES = []
+ACTIONS_TAKEN = {}
 
 custom_meeting_subjects = {'Accept or Reschedule > Your Gartner Membership': 'BI',
                                            'Gartner | Seu call de introdução às ferramentas está disponível': 'BI'}
@@ -21,6 +23,30 @@ DISABLED = ['iconz_disabled\\test_icon.png', 'iconz_disabled\\cal_dis.png', 'ico
             'iconz_disabled\\profile_dis.png']
 
 today = datetime.today()
+
+
+def load_activity():
+    global ACTIVITIES
+    file = 'client_actions.csv'
+    try:
+        df = pandas.read_csv(file)
+        for index, row in df.iterrows():
+            # create an instance of the class and append it to the list
+
+            activity = Activity(name=row['client_name'],
+                                action_age=row['days_aged'],
+                                emails_sent=row['email_sent'],
+                                bi_sent=row['bi_sent'],
+                                ae_outreaches=row['ae_outreach'],
+                                last_action=row['last'],
+                                lad=row['last_action_date'])
+            ACTIONS_TAKEN[activity.name] = activity.last_action
+            ACTIVITIES.append(activity)
+            print(activity.name, activity.last_action)
+        return True
+    except:
+
+        return False
 
 
 def load_user():
@@ -35,6 +61,17 @@ def load_user():
     except:
 
         return False
+
+
+class Activity:
+    def __init__(self, name, action_age, emails_sent, bi_sent, ae_outreaches, last_action, lad):
+        self.name = name
+        self.action_age = action_age
+        self.emails_sent = emails_sent
+        self.bi_sent = bi_sent
+        self.ae_outreaches = ae_outreaches
+        self.last_action = last_action
+        self.lad = lad
 
 
 class Person:
@@ -433,6 +470,11 @@ class OutreachWindow(QWidget):
 
                     if item is not None:
                         row_data[header_labels[j]] = item.text()
+                # updating last_action dictionary
+                if ACTIONS_TAKEN.get(row_data['Name']):
+                    ACTIONS_TAKEN[row_data['Name']] = 'email_sent'
+                else:
+                    ACTIONS_TAKEN[row_data['Name']] = 'email_sent'
                 data.append(row_data)
         print(data)
         from tracking import track_actions
@@ -443,8 +485,12 @@ class OutreachWindow(QWidget):
 
     def load_table(self):
         if self.table.columnCount() > 1:
+            self.table.clear()
+            self.table.setColumnCount(0)
+            self.table.setRowCount(0)
             print('Already Loaded')
-            return False
+
+            return self.load_table()
 
         # Set the column headers to be the object's attributes
         attributes = ['', "Name", 'Email', "Age", "Status", "AE", 'Country']
@@ -479,7 +525,15 @@ class OutreachWindow(QWidget):
             else:
                 self.table.item(i, 3).setForeground(Qt.darkGreen)
             # print('item 4')
-            self.table.setItem(i, 4, QTableWidgetItem(str(obj.stage)))
+            if ACTIONS_TAKEN.get(obj.name):
+                if ACTIONS_TAKEN[obj.name] == 'bi_sent':
+                    self.table.setItem(i, 4, QTableWidgetItem(f"BI - {obj.stage}"))
+                elif ACTIONS_TAKEN[obj.name] == 'email_sent':
+                    self.table.setItem(i, 4, QTableWidgetItem(f"Emailed - {obj.stage}"))
+                elif ACTIONS_TAKEN[obj.name] == 'ae_outreach':
+                    self.table.setItem(i, 4, QTableWidgetItem(f"RTS - {obj.stage}"))
+            else:
+                self.table.setItem(i, 4, QTableWidgetItem(obj.stage))
             # print('item 5')
             self.table.setItem(i, 5, QTableWidgetItem(obj.ae))
             # print('item 6')
@@ -602,6 +656,10 @@ class AeWindow(QWidget):
                     if item is not None:
                         row_data[header_labels[j]] = item.text()
                 data.append(row_data)
+                if ACTIONS_TAKEN.get(row_data['Client']):
+                    ACTIONS_TAKEN[row_data['Client']] = 'ae_outreach'
+                else:
+                    ACTIONS_TAKEN[row_data['Client']] = 'ae_outreach'
         print(data)
         if data:
             from tracking import track_actions
@@ -625,6 +683,10 @@ class AeWindow(QWidget):
 
                     if item is not None:
                         row_data[header_labels[j]] = item.text()
+                if ACTIONS_TAKEN.get(row_data['Client']):
+                    ACTIONS_TAKEN[row_data['Client']] = 'ae_outreach'
+                else:
+                    ACTIONS_TAKEN[row_data['Client']] = 'ae_outreach'
                 data.append(row_data)
         print(data)
         from tracking import track_actions
@@ -639,8 +701,12 @@ class AeWindow(QWidget):
 
     def load_table(self):
         if self.table.columnCount() > 1:
+            self.table.clear()
+            self.table.setColumnCount(0)
+            self.table.setRowCount(0)
             print('Already Loaded')
-            return False
+
+            return self.load_table()
 
         # Set the column headers to be the object's attributes
         attributes = ['', "AE", 'Client', "Age", "Status", "Account", "Last Engaged", 'Country']
@@ -675,7 +741,15 @@ class AeWindow(QWidget):
             else:
                 self.table.item(i, 3).setForeground(Qt.darkGreen)
             # print('item 4')
-            self.table.setItem(i, 4, QTableWidgetItem(str(obj.stage)))
+            if ACTIONS_TAKEN.get(obj.name):
+                if ACTIONS_TAKEN[obj.name] == 'bi_sent':
+                    self.table.setItem(i, 4, QTableWidgetItem(f"BI - {obj.stage}"))
+                elif ACTIONS_TAKEN[obj.name] == 'email_sent':
+                    self.table.setItem(i, 4, QTableWidgetItem(f"Emailed - {obj.stage}"))
+                elif ACTIONS_TAKEN[obj.name] == 'ae_outreach':
+                    self.table.setItem(i, 4, QTableWidgetItem(f"RTS - {obj.stage}"))
+            else:
+                self.table.setItem(i, 4, QTableWidgetItem(obj.stage))
             # print('item 5')
             self.table.setItem(i, 5, QTableWidgetItem(obj.org_name))
             # print('item 6')
@@ -765,6 +839,10 @@ class BiWindow(QWidget):
 
                     if item is not None:
                         row_data[header_labels[j]] = item.text()
+                if ACTIONS_TAKEN.get(row_data['Name']):
+                    ACTIONS_TAKEN[row_data['Name']] = 'bi_sent'
+                else:
+                    ACTIONS_TAKEN[row_data['Name']] = 'bi_sent'
                 data.append(row_data)
         print(data)
         from tracking import track_actions
@@ -809,7 +887,15 @@ class BiWindow(QWidget):
 
             self.table.setItem(i, 1, QTableWidgetItem(obj.name))
 
-            self.table.setItem(i, 2, QTableWidgetItem(obj.stage))
+            if ACTIONS_TAKEN.get(obj.name):
+                if ACTIONS_TAKEN[obj.name] == 'bi_sent':
+                    self.table.setItem(i, 2, QTableWidgetItem(f"BI - {obj.stage}"))
+                elif ACTIONS_TAKEN[obj.name] == 'email_sent':
+                    self.table.setItem(i, 2, QTableWidgetItem(f"Emailed - {obj.stage}"))
+                elif ACTIONS_TAKEN[obj.name] == 'ae_outreach':
+                    self.table.setItem(i, 2, QTableWidgetItem(f"RTS - {obj.stage}"))
+            else:
+                self.table.setItem(i, 2, QTableWidgetItem(obj.stage))
 
             self.table.setItem(i, 3, QTableWidgetItem(str(obj.age)))
             self.table.item(i, 3).setTextAlignment(Qt.AlignCenter)
@@ -1536,6 +1622,7 @@ class TemplateEdit(QDialog):
 if __name__ == '__main__':
     app = QApplication([])
     if load_user():
+        load_activity()
         start = MainWindow()
 
     else:
