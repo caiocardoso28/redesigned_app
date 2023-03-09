@@ -11,7 +11,8 @@ USER = None
 SELECTION = None
 SELECTION_NAME = None
 
-
+custom_meeting_subjects = {'Accept or Reschedule > Your Gartner Membership': 'BI',
+                                           'Gartner | Seu call de introdução às ferramentas está disponível': 'BI'}
 ICONS = ['iconz\\test_icon_disabled.png', 'iconz\\cal_reg.png', 'iconz\\hand_reg.png', 'iconz\\plane_reg.png',
          'iconz\\profile_reg.png']
 
@@ -37,12 +38,13 @@ def load_user():
 
 
 class Person:
-    def __init__(self, name, last, scheduling, lunch, team_meeting):
+    def __init__(self, name, last, scheduling, lunch, team_meeting, subjects=None):
         self.name = name
         self.last = last
         self.scheduling = scheduling
         self.lunch = lunch
         self.team_meeting = team_meeting
+        self.subjects = subjects
 
 
 class Client:
@@ -338,6 +340,7 @@ class OutreachWindow(QWidget):
         uic.loadUi('outreach.ui', self)
         self.pushButton = self.findChild(QPushButton, 'pushButton')
         self.table = self.findChild(QTableWidget, 'tableWidget')
+        self.table.cellDoubleClicked.connect(self.show_item_info)
         self.loadButton = self.findChild(QPushButton, 'pushButton_2')
         self.customize = self.findChild(QPushButton, 'pushButton_3')
         self.checkboxes = []
@@ -364,6 +367,26 @@ class OutreachWindow(QWidget):
     change_template = False
     template = None
     subject = None
+    info = None
+
+    def show_item_info(self, row, col):
+        item = self.table.item(row, col)
+        if item and '@' not in item.text():
+            self.info = self.get_item_info(item.text())
+            if self.info:
+                client_card = ClientView(self)
+                client_card.show()
+        else:
+            pass
+
+    def get_item_info(self, name):
+        if name:
+            try:
+                for client in MainWindow.client_list:
+                    if name == client.name:
+                        return [client.name, client.email, client.ae, client.age, client.stage, client.ppl_code]
+            except:
+                return False
 
     def open_editor(self):
         if self.dialog.isHidden():
@@ -412,6 +435,8 @@ class OutreachWindow(QWidget):
                         row_data[header_labels[j]] = item.text()
                 data.append(row_data)
         print(data)
+        from tracking import track_actions
+        track_actions(act='email_sent', data=data)
         if self.change_template:
             return send_emails(data, self.template, self.subject)
         return send_emails(data)
@@ -474,6 +499,7 @@ class AeWindow(QWidget):
         uic.loadUi('ae_window.ui', self)
         self.pushButton = self.findChild(QPushButton, 'pushButton')
         self.table = self.findChild(QTableWidget, 'tableWidget')
+        self.table.cellDoubleClicked.connect(self.show_item_info)
         self.loadButton = self.findChild(QPushButton, 'pushButton_2')
         self.sendUnifiedButton = self.findChild(QPushButton, 'pushButton_3')
         self.customize = self.findChild(QPushButton, 'pushButton_4')
@@ -509,6 +535,27 @@ class AeWindow(QWidget):
     change_template = False
     template = None
     subject = None
+
+    info = None
+
+    def show_item_info(self, row, col):
+        item = self.table.item(row, col)
+        if item and '@' not in item.text():
+            self.info = self.get_item_info(item.text())
+            if self.info:
+                client_card = ClientView(self)
+                client_card.show()
+        else:
+            pass
+
+    def get_item_info(self, name):
+        if name:
+            try:
+                for client in MainWindow.client_list:
+                    if name == client.name:
+                        return [client.name, client.email, client.ae, client.age, client.stage, client.ppl_code]
+            except:
+                return False
 
     def customize_template(self):
 
@@ -557,6 +604,8 @@ class AeWindow(QWidget):
                 data.append(row_data)
         print(data)
         if data:
+            from tracking import track_actions
+            track_actions(act='ae_outreach', data=data)
             return send_emails_ae_unified(data)
         return False
 
@@ -578,6 +627,8 @@ class AeWindow(QWidget):
                         row_data[header_labels[j]] = item.text()
                 data.append(row_data)
         print(data)
+        from tracking import track_actions
+        track_actions(act='ae_outreach', data=data)
         if self.change_template:
             return send_emails_ae(data, self.template, self.subject)
         return send_emails_ae(data)
@@ -646,6 +697,7 @@ class BiWindow(QWidget):
         uic.loadUi('blind_invite.ui', self)
         self.pushButton = self.findChild(QPushButton, 'pushButton')
         self.table = self.findChild(QTableWidget, 'tableWidget')
+        self.table.cellDoubleClicked.connect(self.show_item_info)
         self.loadButton = self.findChild(QPushButton, 'pushButton_2')
         self.checkboxes = []
         self.pushButton.clicked.connect(lambda: self.create_list())
@@ -666,6 +718,29 @@ class BiWindow(QWidget):
         self.show()
 
     bi_list = []
+    info = None
+
+    def show_item_info(self, row, col):
+        item = self.table.item(row, col)
+        if '@' in item.text():
+            from calstuff import get_most_recent_email_from_sender
+            get_most_recent_email_from_sender(item.text())
+        if item:
+            self.info = self.get_item_info(item.text())
+            if self.info:
+                client_card = ClientView(self)
+                client_card.show()
+        else:
+            pass
+
+    def get_item_info(self, name):
+        if name:
+            try:
+                for client in MainWindow.client_list:
+                    if name == client.name:
+                        return [client.name, client.email, client.ae, client.age, client.stage, client.ppl_code]
+            except:
+                return False
 
     def checkbox_toggled(self, state):
         print(f'toggled: {state}')
@@ -692,7 +767,8 @@ class BiWindow(QWidget):
                         row_data[header_labels[j]] = item.text()
                 data.append(row_data)
         print(data)
-
+        from tracking import track_actions
+        track_actions(act='bi_sent', data=data)
         return show_invites(data)
 
     # Connect the date time changed signal to the slot function and pass the row number
@@ -771,6 +847,7 @@ class BiMonth(BiWindow):
         uic.loadUi('blind_invite.ui', self)
         self.label = self.findChild(QLabel, 'label')
         self.label.setText(f'{SELECTION_NAME} BI Workspace')
+
         self.list = []
         for item in SELECTION:
             if item.stage != 'Closed Onboarded':
@@ -899,8 +976,7 @@ class WeekView(QDialog):
 
     def discover_email(self, email):
         for client in MainWindow.client_list:
-
-            if email == client.email.lower():
+            if email.lower() == client.email.lower():
                 return client
         return 'Unknown'
 
@@ -940,8 +1016,19 @@ class WeekView(QDialog):
             # print(i)
             j = 0
             for key in meeting:
-                subjects = ['Your Gartner Call', 'Accept or Reschedule > Your Gartner Membership', ]
-                if 'Your Gartner Call' in meeting[key].Subject or 'Accept or Reschedule' in meeting[key].Subject or 'Seu' in meeting[key].Subject or 'Sua' in meeting[key].Subject:
+                if meeting[key].Subject in custom_meeting_subjects:
+                    if i == 0:
+                        self.mon.append(meeting[key])
+                    elif i == 1:
+                        self.tues.append(meeting[key])
+                    elif i == 2:
+                        self.wed.append(meeting[key])
+                    elif i == 3:
+                        self.thurs.append(meeting[key])
+                    elif i == 4:
+                        self.fri.append(meeting[key])
+
+                elif 'Your Gartner Call' in meeting[key].Subject:
                     if i == 0:
                         self.mon.append(meeting[key])
                     elif i == 1:
@@ -982,7 +1069,7 @@ class WeekView(QDialog):
                 match_found = False
                 # looping through clients in 'oldest' month
                 for client in self.clients[0]:
-                    if client_email == client.email.lower():
+                    if client_email.lower() == client.email.lower():
                         self.month_1 = self.parentWidget().month_names[0]
                         self.month_1_count += 1
                         if client.stage == 'Closed Onboarded':
@@ -997,7 +1084,7 @@ class WeekView(QDialog):
                         break
                 # looping through clients in 'middle' month
                 for client in self.clients[1]:
-                    if client_email == client.email.lower():
+                    if client_email.lower() == client.email.lower():
                         self.month_2 = self.parentWidget().month_names[1]
                         self.month_2_count += 1
                         if client.stage == 'Closed Onboarded':
@@ -1012,7 +1099,7 @@ class WeekView(QDialog):
                         break
                 # looping through clients in 'newest' month
                 for client in self.clients[2]:
-                    if client_email == client.email.lower():
+                    if client_email.lower() == client.email.lower():
                         self.month_3 = self.parentWidget().month_names[2]
                         self.month_3_count += 1
                         if client.stage == 'Closed Onboarded':
@@ -1029,10 +1116,13 @@ class WeekView(QDialog):
                     # searches entire client list for client email (usually wrong email or out of OB60 range)
                     response = self.discover_email(client_email)
                     if response != 'Unknown':
-                        if client.stage == 'Closed Onboarded':
+                        if response.stage == 'Closed Onboarded':
                             self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{response.name}"))
+                        elif "Your Gartner Call" not in meeting_type:
+                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"BI - {response.name}"))
                         else:
                             self.table.setItem(row_index, col_index, QTableWidgetItem(response.name))
+
                         if self.month_1 == all_months[response.date.month]:
                             self.table.item(row_index, col_index).setForeground(Qt.red)
                             self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)

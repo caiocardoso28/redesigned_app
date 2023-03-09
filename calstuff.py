@@ -266,6 +266,8 @@ def get_most_recent_email_from_sender(email_address):
         for message in messages:
             if message.Class != 43:
                 continue
+            if message.SenderEmailType == 'EX':
+                continue
             if i < 1000:
                 try:
                     print(message.ReceivedTime)
@@ -279,6 +281,16 @@ def get_most_recent_email_from_sender(email_address):
                 i += 1
             else:
                 break
+
+        for response in invite_responses:
+            print('response')
+
+            meeting_request = response
+            print(meeting_request.Class)
+            print("Meeting Subject:", meeting_request.Subject)
+            if meeting_request.SenderEmailAddress.lower() == email_address.lower():
+                email_list.append(meeting_request)
+
         print(invite_responses)
         i = 0
 
