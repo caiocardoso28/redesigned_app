@@ -990,6 +990,8 @@ class ClientView(QDialog):
 
         self.name_label = self.findChild(QLabel, 'name_label')
         self.name_label.setText(self.parentWidget().info[0])
+        self.activity_label = self.findChild(QLabel, 'label_2')
+        self.find_activity()
         self.email_label = self.findChild(QLabel, 'email_label')
         self.email_label.setText(self.parentWidget().info[1])
         self.ae_label = self.findChild(QLabel, 'ae_label')
@@ -1008,6 +1010,14 @@ class ClientView(QDialog):
         self.outreach_button = self.findChild(QPushButton, 'pushButton')
         self.outreach_button.clicked.connect(lambda: self.send_outreach())
 
+    def find_activity(self):
+        for activity in ACTIVITIES:
+            if self.name_label.text() == activity.name:
+                print('good here')
+                self.activity_label.setText(f"Last Action: {activity.last_action} {self.parentWidget().info[3] - activity.action_age} days ago")
+                return True
+        self.activity_label.setText('No Actions Yet')
+        return False
     def reschedule_meeting(self):
         from communications import send_email
         send_email(client=self.parentWidget().info, to='client', purpose='reschedule')

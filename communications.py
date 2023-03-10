@@ -29,7 +29,17 @@ Estou animado para falar contigo. Se você não estiver disponível neste horár
 """
         else:
             cal_item.subject = 'Accept or Reschedule > Your Gartner Membership'
-            cal_item.body = f"""Hi {client['Name'].split(' ')[0]},\n\n"""
+            cal_item.body = f"""Hi {client['Name'].split(' ')[0]},\n\nI look forward to holding this time to review and tailor your Gartner.com Platform experience to align with your initiatives. If for any reason this date or time does not work with your calendar, please feel free to suggest an alternative. 
+You’ll find the conference information and a call agenda below.\n 
+AGENDA: 
+•       Showcasing content tailored to your priorities and initiatives 
+•       Customizing your smart news feed and personal library\n 
+BEFORE THE MEETING: 
+•       Please download our Gartner Mobile App (App Store or Play Store) 
+•       Please log in to your Gartner Platform – for your login credentials click here to reset your password or username
+Please have access to your laptop/computer for the session.\n 
+I am looking forward to speaking to you. 
+"""
         cal_item.location = 'Teams Meeting'
         cal_item.start = dt
         cal_item.duration = 30
