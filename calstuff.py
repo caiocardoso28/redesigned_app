@@ -213,11 +213,9 @@ def find_times(item_list, meeting_duration, date_range):
                         eod = datetime.combine(date=selection.date(), time=time(hour=16, minute=0))
                         lunch = datetime.combine(date=selection.date(), time=time(hour=12, minute=0))
                         break_1 = datetime.combine(date=selection.date(), time=time(hour=10, minute=0))
-                        if selection.time() <= eod.time():
+                        if time(hour=8, minute=0) < selection.time() < eod.time():
                             if selection != lunch and selection != break_1:
-                                # ensuring no time outside work hours gets included
-                                if time(hour=8, minute=0) < selection.time() < time(hour=16, minute=0):
-                                    time_output.append(selection)
+                                time_output.append(selection)
                             else:
                                 selection = selection + timedelta(minutes=60)
                                 time_key = selection.strftime("%m/%d/%Y %I:%M %p")
