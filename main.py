@@ -14,7 +14,8 @@ ACTIVITIES = []
 ACTIONS_TAKEN = {}
 
 custom_meeting_subjects = {'Accept or Reschedule > Your Gartner Membership': 'BI',
-                                           'Gartner | Seu call de introdução às ferramentas está disponível': 'BI'}
+                           'Gartner | Seu call de introdução às ferramentas está disponível': 'BI'}
+
 ICONS = ['iconz\\test_icon_disabled.png', 'iconz\\cal_reg.png', 'iconz\\hand_reg.png', 'iconz\\plane_reg.png',
          'iconz\\profile_reg.png']
 
@@ -866,7 +867,7 @@ class BiWindow(QWidget):
             return self.load_table()
 
         from calstuff import get_conflicts, find_times
-        self.pyt = find_times(get_conflicts(), 30, 21)
+        self.pyt = find_times(get_conflicts(), 30, 30)
         # Set the column headers to be the object's attributes
         attributes = ['', "Name", 'Status', "Age", 'AE', "Email", 'Suggested Time', 'Edited Time', 'Country']
         self.table.setColumnCount(len(attributes))

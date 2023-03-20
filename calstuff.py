@@ -36,7 +36,7 @@ def get_conflicts(start_date=None, end_date=None, cal_view=False):
     ending_time = time(17, 0, 0)
 
     end = datetime.combine(ending_date, ending_time)
-    print(begin)
+    #print(begin)
     # restrict range of appointments to read
 
     restriction = "[Start] >= '" + begin.strftime("%m/%d/%Y %I:%M %p") + "' AND [END] <= '" + end.strftime("%m/%d/%Y %I:%M %p") + "'"
@@ -56,6 +56,7 @@ def get_conflicts(start_date=None, end_date=None, cal_view=False):
 
         if item.meetingstatus != 7 and 120 > item.Duration >= 15:
             if item.RecurrenceState < 1:
+                print(item.Subject)
                 if item.Start.weekday() == 0:
                     mon[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
                 elif item.Start.weekday() == 1:
@@ -68,6 +69,7 @@ def get_conflicts(start_date=None, end_date=None, cal_view=False):
                     fri[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
 
             else:
+                # print(f'{item.Subject}: {item.Start.weekday()} Type: {item.GetRecurrencePattern().RecurrenceType}')
                 recurring_appointments.append(item)
         # print(f"{item.Start.weekday()} {item.Subject}")
         else:
@@ -153,12 +155,13 @@ def find_times(item_list, meeting_duration, date_range):
     hour = 9
     minute = 0
     t = time(hour=hour, minute=minute)
-
+    # this is a pointer that moves through weekdays then traverses each day's timeslots (30 or 15 min intervals)
     selection = datetime.combine(dt, t)
 
     # loop through weekdays
     for i in range(date_range):
 
+        # checking if algorithm should skip weekend days
         if selection.date() == datetime.today().date():
             if selection.weekday() == 4:
                 selection = selection + timedelta(days=3)
@@ -168,7 +171,15 @@ def find_times(item_list, meeting_duration, date_range):
             else:
                 selection = selection + timedelta(days=1)
 
-        print(f'{selection.weekday()}: {selection.date()}')
+        # Just in case algorithm tries to push selection date to weekend (Friday '4' is ok)
+        if selection.weekday() == 4:
+            pass
+        elif selection.weekday() == 5:
+            selection = selection + timedelta(days=2)
+        elif selection.weekday() == 6:
+            selection = selection + timedelta(days=1)
+
+        # print(f'{selection.weekday()}: {selection.date()}')
         time_key = selection.strftime("%m/%d/%Y %I:%M %p")
         duration = meeting_duration
         if duration == 30:
@@ -178,39 +189,44 @@ def find_times(item_list, meeting_duration, date_range):
 
         # loop through timeslots and check conflicts using weekday index
         for j in range(time_slot_count):
-            if conflicts[selection.weekday()].get(time_key):
-                conflict = conflicts[selection.weekday()].get(time_key)
-                print(f'Conflict: {conflicts[selection.weekday()].get(time_key).Subject} at {selection.time()}')
+            # print(f"{selection.weekday()} {selection.date()} {selection.time()}")
+            try:
+                if conflicts[selection.weekday()].get(time_key):
+                    conflict = conflicts[selection.weekday()].get(time_key)
+                    # print(f'Conflict: {conflicts[selection.weekday()].get(time_key).Subject} at {selection.time()}')
 
-                if duration == 30:
-                    if conflict.Duration % 2 != 0:
-                        if conflict.Duration < 30:
-                            selection = selection + timedelta(minutes=duration)
+                    if duration == 30:
+                        if conflict.Duration % 2 != 0:
+                            if conflict.Duration < 30:
+                                selection = selection + timedelta(minutes=duration)
+                            else:
+                                selection = selection + timedelta(minutes=90)
                         else:
-                            selection = selection + timedelta(minutes=90)
+                            selection = selection + timedelta(minutes=conflict.Duration)
                     else:
                         selection = selection + timedelta(minutes=conflict.Duration)
-                else:
-                    selection = selection + timedelta(minutes=conflict.Duration)
 
-                time_key = selection.strftime("%m/%d/%Y %I:%M %p")
-            else:
-                if j < time_slot_count - 1:
-                    eod = datetime.combine(date=selection.date(), time=time(hour=16, minute=0))
-                    lunch = datetime.combine(date=selection.date(), time=time(hour=12, minute=0))
-                    if selection.time() <= eod.time():
-                        if selection != lunch:
-                            print(f'opening found at {selection.time()}')
-                            time_output.append(selection)
-                        else:
-                            selection = selection + timedelta(minutes=60)
-                            time_key = selection.strftime("%m/%d/%Y %I:%M %p")
-                            continue
-                    selection = selection + timedelta(minutes=duration)
                     time_key = selection.strftime("%m/%d/%Y %I:%M %p")
                 else:
-                    selection = reset_time(selection)
-                    time_key = selection.strftime("%m/%d/%Y %I:%M %p")
+                    if j < time_slot_count - 1:
+                        # user variable parameters (lunchtime object and other recurrences will be considered here
+                        eod = datetime.combine(date=selection.date(), time=time(hour=16, minute=0))
+                        lunch = datetime.combine(date=selection.date(), time=time(hour=12, minute=0))
+                        if selection.time() <= eod.time():
+                            if selection != lunch:
+                                # print(f'opening found at {selection.time()}')
+                                time_output.append(selection)
+                            else:
+                                selection = selection + timedelta(minutes=60)
+                                time_key = selection.strftime("%m/%d/%Y %I:%M %p")
+                                continue
+                        selection = selection + timedelta(minutes=duration)
+                        time_key = selection.strftime("%m/%d/%Y %I:%M %p")
+                    else:
+                        selection = reset_time(selection)
+                        time_key = selection.strftime("%m/%d/%Y %I:%M %p")
+            except:
+                pass
     final_output = []
     i = 0
     last_time = None
@@ -218,9 +234,10 @@ def find_times(item_list, meeting_duration, date_range):
     for slot in time_output:
         if slot.date() - today.date() < timedelta(days=2):
             continue
+        # randomize times to avoid only capturing earlier times for each day
         if random.randint(0, 10) % 2 != 0:
             continue
-        print(slot.date())
+        # print(slot.date())
         if not last_time:
             i += 1
             final_output.append(slot)
@@ -237,7 +254,6 @@ def find_times(item_list, meeting_duration, date_range):
                 i = 1
                 final_output.append(slot)
                 last_time = slot
-
 
     print(len(time_output))
     print(len(final_output))
