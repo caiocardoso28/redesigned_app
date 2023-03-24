@@ -40,7 +40,7 @@ QAbstractButton{
 QLabel{
 	font: 87 24pt &quot;Arial&quot;;
     font-weight: 600
-    
+
 }
 /* Set the color of text in LineEdit to white */
 QLineEdit {
@@ -56,7 +56,7 @@ QPushButton {
     padding: 4px;
     font: 12pt &quot;Arial&quot;;
     height: 35px;
-    
+
     font-weight: 800;
 }
 
@@ -102,7 +102,7 @@ QTableWidget::item:selected {
 /* Set the color of text in TableWidget header to white */
 QHeaderView::section {
     border-radius: 1px;
-    
+
     color: white;
     background-color: #3c3c3c;
     font: 9pt Arial;
@@ -118,15 +118,15 @@ QScrollBar:vertical{
 }
 
 /*  HANDLE BAR VERTICAL */
-QScrollBar::handle:vertical {	
+QScrollBar::handle:vertical {
 	background-color: #6f6f6f;
 	min-height: 30px;
 	border-radius: 7px;
 }
-QScrollBar::handle:vertical:hover{	
+QScrollBar::handle:vertical:hover{
 	background-color: #ff9d00;
 }
-QScrollBar::handle:vertical:pressed {	
+QScrollBar::handle:vertical:pressed {
 	background-color: #ffb900;
 }
 
@@ -141,7 +141,7 @@ QScrollBar::sub-line:vertical {
 	subcontrol-origin: margin;
 }
 
-QScrollBar::sub-line:vertical:pressed {	
+QScrollBar::sub-line:vertical:pressed {
 	background-color: #ffb900;
 }
 
@@ -156,7 +156,7 @@ QScrollBar::add-line:vertical {
 	subcontrol-origin: margin;
 }
 
-QScrollBar::add-line:vertical:pressed {	
+QScrollBar::add-line:vertical:pressed {
 	background-color: #ffb900;
 }
 
@@ -184,10 +184,10 @@ QScrollBar::handle:horizontal {
 	border-radius: 7px;
 }
 
-QScrollBar::handle:horizontal:hover{	
+QScrollBar::handle:horizontal:hover{
 	background-color: #ff9d00;
 }
-QScrollBar::handle:horizontal:pressed {	
+QScrollBar::handle:horizontal:pressed {
 	background-color: #ffb900;
 }
 QScrollBar::add-line:horizontal {
@@ -221,7 +221,7 @@ QDateTimeEdit::up-button {
     font: 87 8pt &quot;Arial&quot;;
     width: 20px;
     height: 20px;
-    
+
 }
 
 
@@ -230,7 +230,7 @@ QDateTimeEdit::down-button {
     font: 87 8pt &quot;Arial&quot;;
     width: 20px;
     height: 20px;
-    
+
 }
 </string>
   </property>
@@ -285,9 +285,9 @@ QDateTimeEdit::down-button {
     padding: 4px;
     font: 10pt &quot;Arial&quot;;
     height: 20px;
-    
-    
-    
+
+
+
 }
 
 /* Add a hover effect to buttons */

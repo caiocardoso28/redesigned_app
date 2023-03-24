@@ -160,8 +160,7 @@ def find_times(item_list, meeting_duration, date_range):
 
     # loop through weekdays
     for i in range(date_range):
-
-        # checking if algorithm should skip weekend days
+        # checking if selection is same-day, then pushing the selection date accordingly
         if selection.date() == datetime.today().date():
             if selection.weekday() == 4:
                 selection = selection + timedelta(days=3)
@@ -179,14 +178,15 @@ def find_times(item_list, meeting_duration, date_range):
         elif selection.weekday() == 6:
             selection = selection + timedelta(days=1)
 
-        # print(f'{selection.weekday()}: {selection.date()}')
+        # time_key is used to check for conflicts in conflicts dictionary using constant O(1) time
         time_key = selection.strftime("%m/%d/%Y %I:%M %p")
         duration = meeting_duration
+        # BI Duration (30min or 15min) is used to determine how many time slots to check for each day
         if duration == 30:
             time_slot_count = 16
         else:
             time_slot_count = 26
-
+        print(time_slot_count)
         # loop through timeslots and check conflicts using weekday index
         for j in range(time_slot_count):
             # print(f"{selection.weekday()} {selection.date()} {selection.time()}")
@@ -194,7 +194,7 @@ def find_times(item_list, meeting_duration, date_range):
                 if conflicts[selection.weekday()].get(time_key):
                     conflict = conflicts[selection.weekday()].get(time_key)
                     # print(f'Conflict: {conflicts[selection.weekday()].get(time_key).Subject} at {selection.time()}')
-
+                    # Determining time to push the selection pointer forward in the day using conflict duration
                     if duration == 30:
                         if conflict.Duration % 2 != 0:
                             if conflict.Duration < 30:
@@ -209,12 +209,23 @@ def find_times(item_list, meeting_duration, date_range):
                     time_key = selection.strftime("%m/%d/%Y %I:%M %p")
                 else:
                     if j < time_slot_count - 1:
-                        # user variable parameters (lunchtime object and other recurrences will be considered here
+                        # user variable parameters (lunchtime object and other recurrences times will be considered here
+                        bod = datetime.combine(date=selection.date(), time=time(hour=8, minute=0))
                         eod = datetime.combine(date=selection.date(), time=time(hour=16, minute=0))
                         lunch = datetime.combine(date=selection.date(), time=time(hour=12, minute=0))
                         break_1 = datetime.combine(date=selection.date(), time=time(hour=10, minute=0))
-                        if time(hour=8, minute=0) < selection.time() < eod.time():
-                            if selection != lunch and selection != break_1:
+                        # Solution for team meetings for right now
+                        if selection.weekday() == 0:
+                            team_meeting = datetime.combine(date=selection.date(), time=time(hour=11, minute=0))
+                        else:
+                            team_meeting = None
+                        if selection.weekday() == 4:
+                            team_eow = datetime.combine(date=selection.date(), time=time(hour=11, minute=0))
+                        else:
+                            team_eow = None
+                        # ensuring no time outside work hours gets included
+                        if bod.time() < selection.time() < eod.time():
+                            if selection != lunch and selection != break_1 and selection != team_meeting and selection != team_eow:
                                 time_output.append(selection)
                             else:
                                 selection = selection + timedelta(minutes=60)

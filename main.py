@@ -337,12 +337,15 @@ class MainWindow(QMainWindow):
     def load_data_bi(self):
 
         self.selected(self.btn_page_2)
-        if self.verticalLayoutBi.isEmpty():
-            table_window = BiWindow()
-            self.verticalLayoutBi.addWidget(table_window)
-            self.stackedWidget.setCurrentWidget(self.page_2)
-        else:
-            self.stackedWidget.setCurrentWidget(self.page_2)
+        try:
+            if self.verticalLayoutBi.isEmpty():
+                table_window = BiWindow()
+                self.verticalLayoutBi.addWidget(table_window)
+                self.stackedWidget.setCurrentWidget(self.page_2)
+            else:
+                self.stackedWidget.setCurrentWidget(self.page_2)
+        except Exception as e:
+            print(e)
 
     def selected(self, button):
         if self.selected_tab:
