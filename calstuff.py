@@ -9,6 +9,14 @@ today = datetime.today()
 # encapsulate below as get_conflicts(start, end) this will return list of conflicts, date_range in days (int), and start
 # as tuple return (conflicts, day_range, begin)
 
+test_emails = ['rebecca.probus@brightspringhealth.com',
+               'leo.merle@blaize.com',
+               'rogerio.gallo@sefaz.mt.gov.br',
+               'ALSMITH1@ARKBLUECROSS.COM',
+               'steve.benni@oakstreethealth.com',
+               'rohit.juneja@newgold.com',
+               'john.wheeler@cognizant.com']
+
 
 def get_conflicts(start_date=None, end_date=None, cal_view=False):
     outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
@@ -136,7 +144,7 @@ def get_meetings_today(array):
 # will take output from get_conflicts (conflicts, day_range, begin) and meeting duration
 
 
-def find_times(item_list, meeting_duration, date_range):
+def find_times(item_list, meeting_duration, date_range, length=None):
 
     time_output = []
     conflicts = item_list
@@ -268,10 +276,11 @@ def find_times(item_list, meeting_duration, date_range):
 
     print(len(time_output))
     print(len(final_output))
-    if len(final_output) >= 55:
+    final_output.pop()
+    if len(final_output) >= length:
         return final_output
     else:
-        return time_output
+        return find_times(conflicts, meeting_duration, date_range, length=length)
 
 
 def get_most_recent_email_from_sender(email_address):
@@ -338,7 +347,7 @@ def get_most_recent_email_from_sender(email_address):
             most_recent_email = None
 
     return most_recent_email
-# testing = find_times(conflicts, 30, day_range)
+# testing = get_conflicts()
 
 
 

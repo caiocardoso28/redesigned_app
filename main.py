@@ -104,7 +104,8 @@ class Client:
                  eng_lad=None,
                  eng_age=None,
                  extra=None,
-                 mem_status=None):
+                 mem_status=None,
+                 meeting_status=None):
         self.date = date
         self.name = name
         self.email = email
@@ -123,10 +124,12 @@ class Client:
         self.eng_age = eng_age
         self.extra = extra
         self.mem_status = mem_status
+        self.meeting_status = meeting_status
 
     close_date = None
     to_send = True
     mobile = None
+
 
     def is_engaged(self):
         engagement = [self.cpv, self.dpv, self.event_act, self.inq]
@@ -229,6 +232,7 @@ class MainWindow(QMainWindow):
     selected_tab = None
     loaded_file = None
     people = []
+    email_list = []
 
     def testing(self):
         self.selected(self.btn_page_5)
@@ -326,6 +330,7 @@ class MainWindow(QMainWindow):
         for j in range(len(self.client_list)):
             if self.client_list[j].is_over() and self.client_list[j].status == 0:
                 self.object_list.append(self.client_list[j])
+                self.email_list.append(self.client_list[j].email)
         i = 0
         for button in self.buttons:
             if not button.isEnabled():
@@ -870,7 +875,7 @@ class BiWindow(QWidget):
             return self.load_table()
 
         from calstuff import get_conflicts, find_times
-        self.pyt = find_times(get_conflicts(), 30, 30)
+        self.pyt = find_times(get_conflicts(), 30, 30, length=len(self.sorted_list))
         # Set the column headers to be the object's attributes
         attributes = ['', "Name", 'Status', "Age", 'AE', "Email", 'Suggested Time', 'Edited Time', 'Country']
         self.table.setColumnCount(len(attributes))
@@ -996,6 +1001,23 @@ class ClientView(QDialog):
         self.name_label.setText(self.parentWidget().info[0])
         self.activity_label = self.findChild(QLabel, 'label_2')
         self.find_activity()
+        self.meeting_status_label = self.findChild(QLabel, 'label_3')
+        try:
+            if self.parentWidget().info[6] == 3:
+                self.meeting_status_label.setText(f"Accepted")
+                self.meeting_status_label.setStyleSheet('color:#009933; font: 9pt Arial;')
+            elif self.parentWidget().info[6] == 4:
+                self.meeting_status_label.setText(f"Declined")
+                self.meeting_status_label.setStyleSheet('color:#cc0000; font: 9pt Arial;')
+            elif self.parentWidget().info[6] == 2:
+                self.meeting_status_label.setText(f"Tentative")
+                self.meeting_status_label.setStyleSheet('color:#e6e600; font: 9pt Arial;')
+            elif self.parentWidget().info[6] == 5:
+                self.meeting_status_label.setText(f"No Response")
+            else:
+                self.meeting_status_label.setText(f"No Response")
+        except:
+            self.meeting_status_label.setText(f"")
         self.email_label = self.findChild(QLabel, 'email_label')
         self.email_label.setText(self.parentWidget().info[1])
         self.ae_label = self.findChild(QLabel, 'ae_label')
@@ -1090,7 +1112,7 @@ class WeekView(QDialog):
                     name = name[1:]
             for client in MainWindow.client_list:
                 if name == client.name:
-                    return [client.name, client.email, client.ae, client.age, client.stage, client.ppl_code]
+                    return [client.name, client.email, client.ae, client.age, client.stage, client.ppl_code, client.meeting_status]
             return 'NA'
 
     def on_activated(self, text):
@@ -1098,6 +1120,13 @@ class WeekView(QDialog):
         self.load_table(self.week_selection)
         print(self.week_selection)
         print(self.clients)
+
+    def verify_meeting(self, attendee_list):
+        for person in attendee_list:
+            if '@' in person.Name:
+                if person.Name in MainWindow.email_list:
+                    return True
+        return False
 
     def load_table(self, text):
         self.table.clearContents()
@@ -1113,7 +1142,7 @@ class WeekView(QDialog):
 
         i = 0
         for meeting in meetings:
-            # print(i)
+            # FILTERING FOR RELEVANT CLIENT MEETINGS COULD BE IMPROVED & ENCAPSULATED
             j = 0
             for key in meeting:
                 if meeting[key].Subject in custom_meeting_subjects:
@@ -1140,6 +1169,20 @@ class WeekView(QDialog):
                     elif i == 4:
                         self.fri.append(meeting[key])
 
+                else:
+                    if self.verify_meeting(meeting[key].Recipients):
+
+                        if i == 0:
+                            self.mon.append(meeting[key])
+                        elif i == 1:
+                            self.tues.append(meeting[key])
+                        elif i == 2:
+                            self.wed.append(meeting[key])
+                        elif i == 3:
+                            self.thurs.append(meeting[key])
+                        elif i == 4:
+                            self.fri.append(meeting[key])
+
                 j += 1
             i += 1
         self.weekly_clients = [sorted(self.mon, key=lambda x: x.Start.time()),
@@ -1155,90 +1198,113 @@ class WeekView(QDialog):
         self.span_label.setText(span)
         self.span_label.setStyleSheet('font: 12pt Arial')
         # loading table
-        for col_index, day in enumerate(self.weekly_clients):
-            meetings = self.weekly_clients[col_index]
+        try:
+            for col_index, day in enumerate(self.weekly_clients):
+                meetings = self.weekly_clients[col_index]
 
-            for row_index, meeting in enumerate(meetings):
+                for row_index, meeting in enumerate(meetings):
 
-                client_email = None
-                meeting_type = None
-                for recipient in meeting.Recipients:
-                    if ',' not in recipient.Name and recipient.Type == 1:
-                        client_email = recipient.Address
-                        meeting_type = meeting.Subject
-                match_found = False
-                # looping through clients in 'oldest' month
-                for client in self.clients[0]:
-                    if client_email.lower() == client.email.lower():
-                        self.month_1 = self.parentWidget().month_names[0]
-                        self.month_1_count += 1
-                        if client.stage == 'Closed Onboarded':
-                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{client.name}"))
-                        elif "Your Gartner Call" not in meeting_type:
-                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"BI - {client.name}"))
-                        else:
-                            self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
-                        self.table.item(row_index, col_index).setForeground(Qt.red)
-                        self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
-                        match_found = True
-                        break
-                # looping through clients in 'middle' month
-                for client in self.clients[1]:
-                    if client_email.lower() == client.email.lower():
-                        self.month_2 = self.parentWidget().month_names[1]
-                        self.month_2_count += 1
-                        if client.stage == 'Closed Onboarded':
-                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{client.name}"))
-                        elif "Your Gartner Call" not in meeting_type:
-                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"BI - {client.name}"))
-                        else:
-                            self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
-                        self.table.item(row_index, col_index).setForeground(Qt.darkYellow)
-                        self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
-                        match_found = True
-                        break
-                # looping through clients in 'newest' month
-                for client in self.clients[2]:
-                    if client_email.lower() == client.email.lower():
-                        self.month_3 = self.parentWidget().month_names[2]
-                        self.month_3_count += 1
-                        if client.stage == 'Closed Onboarded':
-                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{client.name}"))
-                        elif "Your Gartner Call" not in meeting_type:
-                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"BI - {client.name}"))
-                        else:
-                            self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
-                        self.table.item(row_index, col_index).setForeground(Qt.darkGreen)
-                        self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
-                        match_found = True
-                        break
-                if not match_found:
-                    # searches entire client list for client email (usually wrong email or out of OB60 range)
-                    response = self.discover_email(client_email)
-                    if response != 'Unknown':
-                        if response.stage == 'Closed Onboarded':
-                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{response.name}"))
-                        elif "Your Gartner Call" not in meeting_type:
-                            self.table.setItem(row_index, col_index, QTableWidgetItem(f"BI - {response.name}"))
-                        else:
-                            self.table.setItem(row_index, col_index, QTableWidgetItem(response.name))
+                    client_email = 'emailnotfound@gartner.com'
+                    meeting_type = None
+                    for recipient in meeting.Recipients:
+                        if ',' not in recipient.Name and recipient.Type == 1:
+                            client_email = recipient.Address
+                            middle_man = self.discover_email(client_email)
+                            if not isinstance(middle_man, str):
+                                middle_man.meeting_status = recipient.MeetingResponseStatus
+                                print(f"{middle_man.name} - {middle_man.meeting_status}")
+                            meeting_type = meeting.Subject
+                    match_found = False
+                    # looping through clients in 'oldest' month
+                    for client in self.clients[0]:
+                        if client_email.lower() == client.email.lower():
 
-                        if self.month_1 == all_months[response.date.month]:
+                            self.month_1 = self.parentWidget().month_names[0]
+                            self.month_1_count += 1
+                            if client.stage == 'Closed Onboarded':
+                                self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{client.name}"))
+                            elif "Your Gartner Call" not in meeting_type:
+                                if meeting_type in custom_meeting_subjects:
+                                    self.table.setItem(row_index, col_index, QTableWidgetItem(f"BI - {client.name}"))
+                                else:
+                                    self.table.setItem(row_index, col_index, QTableWidgetItem(f"SKO - {client.name}"))
+                            else:
+                                self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
                             self.table.item(row_index, col_index).setForeground(Qt.red)
                             self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
-                        elif self.month_2 == all_months[response.date.month]:
+                            match_found = True
+                            break
+                    # looping through clients in 'middle' month
+                    for client in self.clients[1]:
+                        if client_email.lower() == client.email.lower():
+
+                            self.month_2 = self.parentWidget().month_names[1]
+                            self.month_2_count += 1
+                            if client.stage == 'Closed Onboarded':
+                                self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{client.name}"))
+                            elif "Your Gartner Call" not in meeting_type:
+                                if meeting_type in custom_meeting_subjects:
+                                    self.table.setItem(row_index, col_index, QTableWidgetItem(f"BI - {client.name}"))
+                                else:
+                                    self.table.setItem(row_index, col_index, QTableWidgetItem(f"SKO - {client.name}"))
+                            else:
+                                self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
                             self.table.item(row_index, col_index).setForeground(Qt.darkYellow)
                             self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
-                        elif self.month_3 == all_months[response.date.month]:
+                            match_found = True
+                            break
+                    # looping through clients in 'newest' month
+                    for client in self.clients[2]:
+                        if client_email.lower() == client.email.lower():
+
+                            self.month_3 = self.parentWidget().month_names[2]
+                            self.month_3_count += 1
+                            if client.stage == 'Closed Onboarded':
+                                self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{client.name}"))
+                            elif "Your Gartner Call" not in meeting_type:
+                                if meeting_type in custom_meeting_subjects:
+                                    self.table.setItem(row_index, col_index, QTableWidgetItem(f"BI - {client.name}"))
+                                else:
+                                    self.table.setItem(row_index, col_index, QTableWidgetItem(f"SKO - {client.name}"))
+                            else:
+                                self.table.setItem(row_index, col_index, QTableWidgetItem(client.name))
                             self.table.item(row_index, col_index).setForeground(Qt.darkGreen)
                             self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
+                            match_found = True
+                            break
+                    if not match_found:
+                        # searches entire client list for client email (usually wrong email or out of OB60 range)
+                        response = self.discover_email(client_email)
+                        if response != 'Unknown':
+
+                            if response.stage == 'Closed Onboarded':
+                                self.table.setItem(row_index, col_index, QTableWidgetItem(f"✓{response.name}"))
+                            elif "Your Gartner Call" not in meeting_type:
+                                if meeting_type in custom_meeting_subjects:
+                                    self.table.setItem(row_index, col_index, QTableWidgetItem(f"BI - {response.name}"))
+                                else:
+                                    self.table.setItem(row_index, col_index, QTableWidgetItem(f"SKO - {response.name}"))
+                            else:
+                                self.table.setItem(row_index, col_index, QTableWidgetItem(response.name))
+
+                            if self.month_1 == all_months[response.date.month]:
+                                self.table.item(row_index, col_index).setForeground(Qt.red)
+                                self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
+                            elif self.month_2 == all_months[response.date.month]:
+                                self.table.item(row_index, col_index).setForeground(Qt.darkYellow)
+                                self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
+                            elif self.month_3 == all_months[response.date.month]:
+                                self.table.item(row_index, col_index).setForeground(Qt.darkGreen)
+                                self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
+                            else:
+                                self.table.item(row_index, col_index).setForeground(Qt.gray)
+                                self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
                         else:
+                            self.table.setItem(row_index, col_index, QTableWidgetItem(client_email))
                             self.table.item(row_index, col_index).setForeground(Qt.gray)
                             self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
-                    else:
-                        self.table.setItem(row_index, col_index, QTableWidgetItem(client_email))
-                        self.table.item(row_index, col_index).setForeground(Qt.gray)
-                        self.table.item(row_index, col_index).setTextAlignment(Qt.AlignCenter)
+        except Exception as e:
+            print(e)
 
 
 class MetricWindow(QWidget):

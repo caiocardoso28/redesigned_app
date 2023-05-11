@@ -263,6 +263,20 @@ color: rgb(153, 153, 153)</string>
     </widget>
    </item>
    <item>
+    <widget class="QLabel" name="label_3">
+     <property name="styleSheet">
+      <string notr="true">font: 9pt Arial;
+color: rgb(153, 153, 153)</string>
+     </property>
+     <property name="text">
+      <string>Meeting Status: </string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="Line" name="line">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

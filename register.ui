@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>463</width>
-    <height>641</height>
+    <width>461</width>
+    <height>395</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -66,13 +66,12 @@ QLabel{
 }
 
 QLineEdit{
-    margin-bottom: 10px;
+
     border: 1px solid lightblue;
-    
     height: 25px;
 }
 QLineEdit:focus{
-    margin-bottom: 10px;
+ 
     border: 1px solid orange;   
 }
 
@@ -94,302 +93,1163 @@ QDateTimeEdit{
 QDateTimeEdit:focus{
 	border: 1px solid orange;
     font: 87 9pt &quot;Arial&quot;;
+}
+
+QSpinBox{
+	border: 1px solid lightblue;
+    font: 87 9pt &quot;Arial&quot;;
+    height: 25px;
+}
+
+QSpinBox:focus{
+	border: 1px solid orange;
+    font: 87 9pt &quot;Arial&quot;;
 }</string>
   </property>
   <property name="sizeGripEnabled">
    <bool>false</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_7">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>18</pointsize>
-         <weight>50</weight>
-         <italic>false</italic>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QLabel{
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="0">
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="styleSheet">
+      <string notr="true">QTableWidget {
+    border-radius: 10px;
+    border: 2px solid rgb(227, 227, 227);
+    background-color: rgb(227, 227, 227);
+    color: rgb(11, 30, 100);
+    font-weight: bold;
+    font: calibri;
+    gridline-color: #5f5f5f;
+}
+
+QTableCornerButton::section{
+    background-color: #3c3c3c;
+}
+/* Add a hover effect to rows */
+QTableWidget::item:hover {
+    
+    color: #7fcde1;
+}
+
+/* Add a hover effect to rows */
+QTableWidget::item:selected {
+    background-color: #6f6f6f;
+    color: #7fcde1;
+
+}
+
+/* Set the color of text in TableWidget header to white */
+QHeaderView::section {
+    border-radius: 1px;
+    border: 1px solid white;
+    color: white;
+    background-color: #3c3c3c;
+    font: 9pt Arial;
+    font-weight: bold;
+}
+
+QScrollBar:vertical{
+    border: none;
+    background-color: #303030;
+    width: 14px;
+    margin: 15px 0 15px 0;
+    border-radius: 0px;
+}
+
+/*  HANDLE BAR VERTICAL */
+QScrollBar::handle:vertical {	
+	background-color: #6f6f6f;
+	min-height: 30px;
+	border-radius: 7px;
+}
+QScrollBar::handle:vertical:hover{	
+	background-color: #ff9d00;
+}
+QScrollBar::handle:vertical:pressed {	
+	background-color: #ffb900;
+}
+
+/* BTN TOP - SCROLLBAR */
+QScrollBar::sub-line:vertical {
+	border: none;
+	background-color: #303030;
+	height: 15px;
+	border-top-left-radius: 7px;
+	border-top-right-radius: 7px;
+	subcontrol-position: top;
+	subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical:pressed {	
+	background-color: #ffb900;
+}
+
+/* BTN BOTTOM - SCROLLBAR */
+QScrollBar::add-line:vertical {
+	border: none;
+	background-color: #303030;
+	height: 15px;
+	border-bottom-left-radius: 7px;
+	border-bottom-right-radius: 7px;
+	subcontrol-position: bottom;
+	subcontrol-origin: margin;
+}
+
+QScrollBar::add-line:vertical:pressed {	
+	background-color: #ffb900;
+}
+
+
+/* RESET ARROW */
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
+	background: none;
+}
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+	background: none;
+}
+
+
+/* HORIZONTAL SCROLLBAR - HOMEWORK */
+QScrollBar:horizontal {
+    border: none;
+    background-color: #303030;
+    height: 14px;
+    margin: 0 15px 0 15px;
+    border-radius: 0px;
+}
+QScrollBar::handle:horizontal {
+	background-color: #6f6f6f;
+	min-width: 30px;
+	border-radius: 7px;
+}
+
+QScrollBar::handle:horizontal:hover{	
+	background-color: #ff9d00;
+}
+QScrollBar::handle:horizontal:pressed {	
+	background-color: #ffb900;
+}
+QScrollBar::add-line:horizontal {
+	border: none;
+	background-color: #303030;
+	width: 15px;
+	border-bottom-right-radius: 7px;
+	border-top-right-radius: 7px;
+	subcontrol-position: right;
+	subcontrol-origin: margin;
+}
+QScrollBar::sub-line:horizontal {
+	border: none;
+	background-color: #303030;
+	width: 15px;
+	border-top-left-radius: 7px;
+	border-bottom-left-radius: 7px;
+	subcontrol-position: left;
+	subcontrol-origin: margin;
+}
+QScrollBar::up-arrow:horizontal, QScrollBar::down-arrow:horizontal{
+
+    background: none;
+}
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal{
+
+    background: none;
+}</string>
+     </property>
+     <property name="currentIndex">
+      <number>3</number>
+     </property>
+     <widget class="QWidget" name="welcome">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>18</pointsize>
+             <weight>50</weight>
+             <italic>false</italic>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QLabel{
     color: #182454;
     font: 18pt &quot;Arial&quot;;
     font-weight: 400;
-    margin-bottom: 10px;
+    
 }</string>
-       </property>
-       <property name="text">
-        <string>Client Catcher</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_10">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QLabel{
+           </property>
+           <property name="text">
+            <string>Welcome!</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_10">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QLabel{
     color: #182454;
     font: 8pt &quot;Arial&quot;;
     font-weight: 600;
 }</string>
-       </property>
-       <property name="text">
-        <string>Enter Your Information Below</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>*First Name:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="nameEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="placeholderText">
-        <string>First Name</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_3">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>*Last Name:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="lastEdit">
-       <property name="placeholderText">
-        <string>Last Name</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_4">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>*Scheduling Link:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="schedulingEdit">
-       <property name="styleSheet">
-        <string notr="true">margin: 0px</string>
-       </property>
-       <property name="placeholderText">
-        <string>Scheduling Link</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_2">
-       <property name="styleSheet">
-        <string notr="true">height: 25px;</string>
-       </property>
-       <property name="text">
-        <string>Submit</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_5">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QLabel{
-    color: #ff9d00;
-    font: 12pt &quot;Arial&quot;;
-    font-weight: 600;
+           </property>
+           <property name="text">
+            <string>Enter Your Information Below</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>*First Name:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="nameEdit">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="placeholderText">
+            <string>First Name</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>*Last Name:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lastEdit">
+           <property name="placeholderText">
+            <string>Last Name</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_5">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>*Manager Email:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="placeholderText">
+            <string>Email Address</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Calendly Link (Optional):</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="schedulingEdit">
+           <property name="styleSheet">
+            <string notr="true">margin: 0px</string>
+           </property>
+           <property name="placeholderText">
+            <string>Scheduling Link</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="continue_1">
+           <property name="styleSheet">
+            <string notr="true">height: 25px;</string>
+           </property>
+           <property name="text">
+            <string>Continue</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="language_select">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QLabel" name="label_20">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">font: 18pt Arial</string>
+         </property>
+         <property name="text">
+          <string>Language Selection</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Select all that apply.</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="spanish">
+           <property name="focusPolicy">
+            <enum>Qt::StrongFocus</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: rgb(217, 217, 217);
+	color: rgb(222, 222, 222);
+    color: rgb(125, 125, 125);
+    border: 1px solid #7fcde1;
+    border-radius: 2px;
+    padding: 4px;
+    font: 10pt &quot;Arial&quot;;
+    height: 25px;
+    
+    
+    
+}
+
+/* Add a hover effect to buttons */
+QPushButton:hover {
+    background: rgb(241, 241, 241);
+    font: rgb(186, 186, 186);
+    color: rgb(176, 176, 176);
+}
+
+/* Add a pressed effect to buttons */
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+    stop: 0 #ff9d00, stop: 1 #ffb900);
+	color: white;
 }</string>
-       </property>
-       <property name="text">
-        <string>Optional Settings</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_6">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QLabel{
+           </property>
+           <property name="text">
+            <string>Spanish</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="english">
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: rgb(217, 217, 217);
+	color: rgb(222, 222, 222);
+    color: rgb(125, 125, 125);
+    border: 1px solid #7fcde1;
+    border-radius: 2px;
+    padding: 4px;
+    font: 10pt &quot;Arial&quot;;
+    height: 25px;
+    
+    
+    
+}
+
+/* Add a hover effect to buttons */
+QPushButton:hover {
+    background: rgb(241, 241, 241);
+    font: rgb(186, 186, 186);
+    color: rgb(176, 176, 176);
+}
+
+/* Add a pressed effect to buttons */
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+    stop: 0 #ff9d00, stop: 1 #ffb900);
+	color: white;
+}</string>
+           </property>
+           <property name="text">
+            <string>English</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="portuguese">
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: rgb(217, 217, 217);
+	color: rgb(222, 222, 222);
+    color: rgb(125, 125, 125);
+    border: 1px solid #7fcde1;
+    border-radius: 2px;
+    padding: 4px;
+    font: 10pt &quot;Arial&quot;;
+    height: 25px;
+    
+    
+    
+}
+
+/* Add a hover effect to buttons */
+QPushButton:hover {
+    background: rgb(241, 241, 241);
+    font: rgb(186, 186, 186);
+    color: rgb(176, 176, 176);
+}
+
+/* Add a pressed effect to buttons */
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+    stop: 0 #ff9d00, stop: 1 #ffb900);
+	color: white;
+}</string>
+           </property>
+           <property name="text">
+            <string>Portuguese</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QPushButton" name="french">
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: rgb(217, 217, 217);
+	color: rgb(222, 222, 222);
+    color: rgb(125, 125, 125);
+    border: 1px solid #7fcde1;
+    border-radius: 2px;
+    padding: 4px;
+    font: 10pt &quot;Arial&quot;;
+    height: 25px;
+    
+    
+    
+}
+
+/* Add a hover effect to buttons */
+QPushButton:hover {
+    background: rgb(241, 241, 241);
+    font: rgb(186, 186, 186);
+    color: rgb(176, 176, 176);
+}
+
+/* Add a pressed effect to buttons */
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+    stop: 0 #ff9d00, stop: 1 #ffb900);
+	color: white;
+}</string>
+           </property>
+           <property name="text">
+            <string>French</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="japanese">
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: rgb(217, 217, 217);
+	color: rgb(222, 222, 222);
+    color: rgb(125, 125, 125);
+    border: 1px solid #7fcde1;
+    border-radius: 2px;
+    padding: 4px;
+    font: 10pt &quot;Arial&quot;;
+    height: 25px;
+    
+    
+    
+}
+
+/* Add a hover effect to buttons */
+QPushButton:hover {
+    background: rgb(241, 241, 241);
+    font: rgb(186, 186, 186);
+    color: rgb(176, 176, 176);
+}
+
+/* Add a pressed effect to buttons */
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+    stop: 0 #ff9d00, stop: 1 #ffb900);
+	color: white;
+}</string>
+           </property>
+           <property name="text">
+            <string>Japanese</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetDefaultConstraint</enum>
+         </property>
+         <item>
+          <widget class="QPushButton" name="mandarin">
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: rgb(217, 217, 217);
+	color: rgb(222, 222, 222);
+    color: rgb(125, 125, 125);
+    border: 1px solid #7fcde1;
+    border-radius: 2px;
+    padding: 4px;
+    font: 10pt &quot;Arial&quot;;
+    height: 25px;
+    
+    
+    
+}
+
+/* Add a hover effect to buttons */
+QPushButton:hover {
+    background: rgb(241, 241, 241);
+    font: rgb(186, 186, 186);
+    color: rgb(176, 176, 176);
+}
+
+/* Add a pressed effect to buttons */
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+    stop: 0 #ff9d00, stop: 1 #ffb900);
+	color: white;
+}</string>
+           </property>
+           <property name="text">
+            <string>Mandarin</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="continue_2">
+         <property name="styleSheet">
+          <string notr="true">height: 25px;</string>
+         </property>
+         <property name="text">
+          <string>Continue</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="daily_recurrences">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>18</pointsize>
+           <weight>50</weight>
+           <italic>false</italic>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel{
     color: #182454;
-    font: 8pt &quot;Arial&quot;;
-    font-weight: bold;
+    font: 18pt &quot;Arial&quot;;
+    font-weight: 400;
+    
 }</string>
-       </property>
-       <property name="text">
-        <string>(These will help improve time suggestions)</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_8">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Lunch Time:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QTimeEdit" name="timeEdit">
-       <property name="styleSheet">
-        <string notr="true">margin-bottom: 8px</string>
-       </property>
-       <property name="time">
-        <time>
-         <hour>12</hour>
-         <minute>0</minute>
-         <second>0</second>
-        </time>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_9">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Team Meeting (Next Occurence):</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDateTimeEdit" name="dateTimeEdit">
-       <property name="date">
-        <date>
-         <year>2023</year>
-         <month>1</month>
-         <day>1</day>
-        </date>
-       </property>
-       <property name="time">
-        <time>
-         <hour>8</hour>
-         <minute>0</minute>
-         <second>0</second>
-        </time>
-       </property>
-       <property name="minimumDateTime">
-        <datetime>
-         <hour>9</hour>
-         <minute>0</minute>
-         <second>0</second>
-         <year>1752</year>
-         <month>9</month>
-         <day>14</day>
-        </datetime>
-       </property>
-      </widget>
-     </item>
-     <item alignment="Qt::AlignHCenter">
-      <widget class="QCheckBox" name="checkBox">
-       <property name="text">
-        <string>Save Optional Settings</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="Line" name="line_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>Get Started</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+         </property>
+         <property name="text">
+          <string>Block Daily Recurrences</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_13">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>9</pointsize>
+           <weight>50</weight>
+           <italic>false</italic>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+    color: #182454;
+    font: 9pt &quot;Arial&quot;;
+    font-weight: 400;
+    
+}</string>
+         </property>
+         <property name="text">
+          <string>Event Name:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="eventEdit">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="placeholderText">
+          <string>Name of Event (lunch, break, etc...)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_11">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>9</pointsize>
+           <weight>50</weight>
+           <italic>false</italic>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+    color: #182454;
+    font: 9pt &quot;Arial&quot;;
+    font-weight: 400;
+    
+}</string>
+         </property>
+         <property name="text">
+          <string>Time</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTimeEdit" name="timeEdit">
+         <property name="dateTime">
+          <datetime>
+           <hour>12</hour>
+           <minute>0</minute>
+           <second>0</second>
+           <year>2000</year>
+           <month>1</month>
+           <day>1</day>
+          </datetime>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_12">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>9</pointsize>
+           <weight>50</weight>
+           <italic>false</italic>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+    color: #182454;
+    font: 9pt &quot;Arial&quot;;
+    font-weight: 400;
+    
+}</string>
+         </property>
+         <property name="text">
+          <string>Duration (in minutes)</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="durationEdit">
+         <property name="maximum">
+          <number>120</number>
+         </property>
+         <property name="value">
+          <number>30</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="addDaily">
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+    background-color: rgb(217, 217, 217);
+	color: rgb(222, 222, 222);
+    color: rgb(125, 125, 125);
+    border: 1px solid #7fcde1;
+    border-radius: 2px;
+    padding: 4px;
+    font: 10pt &quot;Arial&quot;;
+    height: 25px;
+    
+    
+    
+}
+
+/* Add a hover effect to buttons */
+QPushButton:hover {
+    background: rgb(241, 241, 241);
+    font: rgb(186, 186, 186);
+    color: rgb(176, 176, 176);
+}
+
+/* Add a pressed effect to buttons */
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+    stop: 0 #ff9d00, stop: 1 #ffb900);
+}</string>
+         </property>
+         <property name="text">
+          <string>Add Event</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="saveDaily">
+         <property name="text">
+          <string>Save and Continue</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="weekly_recurrences">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QLabel" name="label_14">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>18</pointsize>
+           <weight>50</weight>
+           <italic>false</italic>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+    color: #182454;
+    font: 18pt &quot;Arial&quot;;
+    font-weight: 400;
+    
+}</string>
+         </property>
+         <property name="text">
+          <string>Block Weekly Recurrences</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_16">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>9</pointsize>
+           <weight>50</weight>
+           <italic>false</italic>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+    color: #182454;
+    font: 9pt &quot;Arial&quot;;
+    font-weight: 400;
+    
+}</string>
+         </property>
+         <property name="text">
+          <string>Event Name:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="eventEdit_2">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="placeholderText">
+          <string>Name of Event (team meeting, coaching, etc...)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_19">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>9</pointsize>
+           <weight>50</weight>
+           <italic>false</italic>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+    color: #182454;
+    font: 9pt &quot;Arial&quot;;
+    font-weight: 400;
+    
+}</string>
+         </property>
+         <property name="text">
+          <string>Weekday</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="weekSelect">
+         <item>
+          <property name="text">
+           <string>Monday</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Tuesday</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Wednesday</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Thursday</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Friday</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_18">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>9</pointsize>
+           <weight>50</weight>
+           <italic>false</italic>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+    color: #182454;
+    font: 9pt &quot;Arial&quot;;
+    font-weight: 400;
+    
+}</string>
+         </property>
+         <property name="text">
+          <string>Time</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTimeEdit" name="timeEdit_2">
+         <property name="dateTime">
+          <datetime>
+           <hour>12</hour>
+           <minute>0</minute>
+           <second>0</second>
+           <year>2000</year>
+           <month>1</month>
+           <day>1</day>
+          </datetime>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_17">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>9</pointsize>
+           <weight>50</weight>
+           <italic>false</italic>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+    color: #182454;
+    font: 9pt &quot;Arial&quot;;
+    font-weight: 400;
+    
+}</string>
+         </property>
+         <property name="text">
+          <string>Duration (in minutes)</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="durationEdit_2">
+         <property name="maximum">
+          <number>120</number>
+         </property>
+         <property name="value">
+          <number>30</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="addWeekly">
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+    background-color: rgb(217, 217, 217);
+	color: rgb(222, 222, 222);
+    color: rgb(125, 125, 125);
+    border: 1px solid #7fcde1;
+    border-radius: 2px;
+    padding: 4px;
+    font: 10pt &quot;Arial&quot;;
+    height: 25px;
+    
+    
+    
+}
+
+/* Add a hover effect to buttons */
+QPushButton:hover {
+    background: rgb(241, 241, 241);
+    font: rgb(186, 186, 186);
+    color: rgb(176, 176, 176);
+}
+
+/* Add a pressed effect to buttons */
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+    stop: 0 #ff9d00, stop: 1 #ffb900);
+}</string>
+         </property>
+         <property name="text">
+          <string>Add Event</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="saveWeekly">
+         <property name="text">
+          <string>Save and Finalize</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="Line" name="line_4">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
