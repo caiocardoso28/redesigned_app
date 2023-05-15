@@ -276,7 +276,7 @@ def find_times(item_list, meeting_duration, date_range, length=None):
 
     print(len(time_output))
     print(len(final_output))
-    final_output.pop()
+
     if len(final_output) >= length:
         return final_output
     else:

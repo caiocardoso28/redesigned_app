@@ -258,7 +258,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal{
 }</string>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="welcome">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -1235,6 +1235,190 @@ QPushButton:pressed {
        </item>
        <item>
         <widget class="QPushButton" name="saveWeekly">
+         <property name="text">
+          <string>Save and Continue</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+    color: #182454;
+    font: 18pt &quot;Arial&quot;;
+    font-weight: 400;
+    
+}</string>
+         </property>
+         <property name="text">
+          <string>Enter Invite Subject Lines</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_9">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Enter custom subject lines from invites that you create for clients. (for example, 'Accept or Reschedule &gt; Your Gartner Membership')</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::AutoText</enum>
+         </property>
+         <property name="scaledContents">
+          <bool>false</bool>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_15">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: rgb(213, 41, 29);</string>
+         </property>
+         <property name="text">
+          <string>These should match EXACTLY the subject lines you have for BIs and other meetings you create on the calendar. Even in different languages!</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::AutoText</enum>
+         </property>
+         <property name="scaledContents">
+          <bool>false</bool>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_5">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_21">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Subject:</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::AutoText</enum>
+         </property>
+         <property name="scaledContents">
+          <bool>false</bool>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="subjectEdit">
+         <property name="placeholderText">
+          <string>Ex. Accept or Reschedule &gt; Your Gartner Membership</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="addSubject">
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+    background-color: rgb(217, 217, 217);
+	color: rgb(222, 222, 222);
+    color: rgb(125, 125, 125);
+    border: 1px solid #7fcde1;
+    border-radius: 2px;
+    padding: 4px;
+    font: 10pt &quot;Arial&quot;;
+    height: 25px;
+    
+    
+    
+}
+
+/* Add a hover effect to buttons */
+QPushButton:hover {
+    background: rgb(241, 241, 241);
+    font: rgb(186, 186, 186);
+    color: rgb(176, 176, 176);
+}
+
+/* Add a pressed effect to buttons */
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+    stop: 0 #ff9d00, stop: 1 #ffb900);
+}</string>
+         </property>
+         <property name="text">
+          <string>Add Another Custom Subject</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="finalizeButton">
          <property name="text">
           <string>Save and Finalize</string>
          </property>

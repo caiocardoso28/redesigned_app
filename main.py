@@ -105,7 +105,8 @@ class Client:
                  eng_age=None,
                  extra=None,
                  mem_status=None,
-                 meeting_status=None):
+                 meeting_status=None,
+                 meeting=None):
         self.date = date
         self.name = name
         self.email = email
@@ -125,6 +126,7 @@ class Client:
         self.extra = extra
         self.mem_status = mem_status
         self.meeting_status = meeting_status
+        self.meeting = meeting
 
     close_date = None
     to_send = True
@@ -430,7 +432,7 @@ class OutreachWindow(QWidget):
             try:
                 for client in MainWindow.client_list:
                     if name == client.name:
-                        return [client.name, client.email, client.ae, client.age, client.stage, client.ppl_code]
+                        return [client.name, client.email, client.ae, client.age, client.stage, client.ppl_code, client.meeting_status, client.meeting]
             except:
                 return False
 
@@ -616,7 +618,7 @@ class AeWindow(QWidget):
             try:
                 for client in MainWindow.client_list:
                     if name == client.name:
-                        return [client.name, client.email, client.ae, client.age, client.stage, client.ppl_code]
+                        return [client.name, client.email, client.ae, client.age, client.stage, client.ppl_code, client.meeting_status, client.meeting]
             except:
                 return False
 
@@ -805,9 +807,6 @@ class BiWindow(QWidget):
 
     def show_item_info(self, row, col):
         item = self.table.item(row, col)
-        if '@' in item.text():
-            from calstuff import get_most_recent_email_from_sender
-            get_most_recent_email_from_sender(item.text())
         if item:
             self.info = self.get_item_info(item.text())
             if self.info:
@@ -821,7 +820,7 @@ class BiWindow(QWidget):
             try:
                 for client in MainWindow.client_list:
                     if name == client.name:
-                        return [client.name, client.email, client.ae, client.age, client.stage, client.ppl_code]
+                        return [client.name, client.email, client.ae, client.age, client.stage, client.ppl_code, client.meeting_status, client.meeting]
             except:
                 return False
 
@@ -1012,10 +1011,10 @@ class ClientView(QDialog):
             elif self.parentWidget().info[6] == 2:
                 self.meeting_status_label.setText(f"Tentative")
                 self.meeting_status_label.setStyleSheet('color:#e6e600; font: 9pt Arial;')
-            elif self.parentWidget().info[6] == 5:
+            elif self.parentWidget().info[6] == 0:
                 self.meeting_status_label.setText(f"No Response")
             else:
-                self.meeting_status_label.setText(f"No Response")
+                self.meeting_status_label.setText(f"")
         except:
             self.meeting_status_label.setText(f"")
         self.email_label = self.findChild(QLabel, 'email_label')
@@ -1047,6 +1046,9 @@ class ClientView(QDialog):
     def reschedule_meeting(self):
         from communications import send_email
         send_email(client=self.parentWidget().info, to='client', purpose='reschedule')
+        if self.parentWidget().info[7]:
+            self.parentWidget().info[7].Display()
+
 
     def send_outreach(self):
         from communications import send_email
@@ -1112,7 +1114,7 @@ class WeekView(QDialog):
                     name = name[1:]
             for client in MainWindow.client_list:
                 if name == client.name:
-                    return [client.name, client.email, client.ae, client.age, client.stage, client.ppl_code, client.meeting_status]
+                    return [client.name, client.email, client.ae, client.age, client.stage, client.ppl_code, client.meeting_status, client.meeting]
             return 'NA'
 
     def on_activated(self, text):
@@ -1212,6 +1214,7 @@ class WeekView(QDialog):
                             middle_man = self.discover_email(client_email)
                             if not isinstance(middle_man, str):
                                 middle_man.meeting_status = recipient.MeetingResponseStatus
+                                middle_man.meeting = meeting
                                 print(f"{middle_man.name} - {middle_man.meeting_status}")
                             meeting_type = meeting.Subject
                     match_found = False
