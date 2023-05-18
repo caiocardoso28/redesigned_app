@@ -7,14 +7,15 @@ import pandas
 from datetime import datetime, timedelta
 from communications import show_invites, send_emails, send_emails_ae, send_emails_ae_unified
 from ui_functions import *
+from calstuff import get_meeting_dict
 USER = None
 SELECTION = None
 SELECTION_NAME = None
 ACTIVITIES = []
 ACTIONS_TAKEN = {}
 
-custom_meeting_subjects = {'Accept or Reschedule > Your Gartner Membership': 'BI',
-                           'Gartner | Seu call de introdução às ferramentas está disponível': 'BI'}
+custom_meeting_subjects = {'Accept or Reschedule > Your Gartner Membership': True,
+                           'Gartner | Seu call de introdução às ferramentas está disponível': True}
 
 ICONS = ['iconz\\test_icon_disabled.png', 'iconz\\cal_reg.png', 'iconz\\hand_reg.png', 'iconz\\plane_reg.png',
          'iconz\\profile_reg.png']
@@ -51,16 +52,42 @@ def load_activity():
 
 
 def load_user():
-    file = 'catcher.csv'
     try:
+        file = 'catcher2.csv'
         df = pandas.read_csv(file)
         for index, row in df.iterrows():
             # create an instance of the class and append it to the list
-            global USER
-            USER = Person(row['First'], row['Last'], row['Scheduling'], row['Lunch'], row['Team Meeting'])
-            return True
-    except:
+            # global USER
+            first_name,last_name,manager,scheduling = row['First'], row['Last'], row['Manager'], row['Scheduling']
+            print(first_name,last_name,manager,scheduling)
+            break
+            # return True
+        user_languages = []
+        file = 'language_selection.csv'
+        df = pandas.read_csv(file)
+        for index, row in df.iterrows():
+            language = row['Languages']
+            user_languages.append(language)
+        user_recurrences = get_meeting_dict()
+        user_subjects = []
+        file = 'user_subjects.csv'
+        df = pandas.read_csv(file)
+        for index, row in df.iterrows():
+            subject = row['Subjects']
+            user_subjects.append(subject)
+        global USER
+        USER = Person(name=first_name,
+                      last=last_name,
+                      manager=manager,
+                      scheduling=scheduling,
+                      languages=user_languages,
+                      recurrences=user_recurrences,
+                      subjects=user_subjects)
+        print(USER.name)
+        return True
 
+    except Exception as e:
+        print(e)
         return False
 
 
@@ -75,14 +102,24 @@ class Activity:
         self.lad = lad
 
 
+class Event:
+    def __init__(self, event_name, event_time, event_duration, event_pattern):
+        self.event_name = event_name
+        self.event_time = event_time
+        self.event_duration = event_duration
+        self.event_pattern = event_pattern
+
+
 class Person:
-    def __init__(self, name, last, scheduling, lunch, team_meeting, subjects=None):
+    def __init__(self, name, last, manager, scheduling, languages, recurrences=None, subjects=None):
         self.name = name
         self.last = last
+        self.manager = manager
         self.scheduling = scheduling
-        self.lunch = lunch
-        self.team_meeting = team_meeting
+        self.languages = languages
+        self.recurrences = recurrences
         self.subjects = subjects
+
 
 
 class Client:
@@ -1159,7 +1196,7 @@ class WeekView(QDialog):
                     elif i == 4:
                         self.fri.append(meeting[key])
 
-                elif 'Your Gartner Call' in meeting[key].Subject:
+                elif 'Your Gartner Call' in meeting[key].Subject or 'Su llamada con Gartner' in meeting[key].Subject:
                     if i == 0:
                         self.mon.append(meeting[key])
                     elif i == 1:
@@ -1617,63 +1654,208 @@ class TestBox(QDialog):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         uic.loadUi('register.ui', self)
-        self.submit = self.findChild(QPushButton, 'pushButton_2')
-        self.button = self.findChild(QPushButton, 'pushButton')
-        self.button.clicked.connect(self.save_user)
-        self.nameEdit = self.findChild(QLineEdit, 'nameEdit')
-        self.lastEdit = self.findChild(QLineEdit, 'lastEdit')
-        self.timeEdit = self.findChild(QTimeEdit, 'timeEdit')
-        self.dateTimeEdit = self.findChild(QDateTimeEdit, 'dateTimeEdit')
-        self.schedulingEdit = self.findChild(QLineEdit, 'schedulingEdit')
-        self.checkbox = self.findChild(QCheckBox, 'checkBox')
-        self.logo = self.findChild(QLabel, 'label')
+        self.pages = []
+        self.stackedWidget = self.findChild(QStackedWidget, 'stackedWidget')
 
-        self.submit.clicked.connect(self.verify_fields)
+        self.welcome = self.findChild(QWidget, 'welcome')
+        self.pages.append(self.welcome)
+        self.stackedWidget.setCurrentWidget(self.welcome)
+        self.nameEdit = self.welcome.findChild(QLineEdit, 'nameEdit')
+        self.lastEdit = self.welcome.findChild(QLineEdit, 'lastEdit')
+        self.managerEdit = self.welcome.findChild(QLineEdit, 'lineEdit')
+        self.schedulingEdit = self.welcome.findChild(QLineEdit, 'schedulingEdit')
+        self.errorLabel = self.welcome.findChild(QLabel, 'errorLabel')
 
-        pixmap = QtGui.QPixmap('C:\\Users\\ccardoso\\Desktop\\August Data\\Gartner_logo.svg.png')
-        pixmap = pixmap.scaled(464, 200, Qt.KeepAspectRatio)
-        self.logo.setPixmap(pixmap)
-        self.logo.setScaledContents(True)
-        self.logo.setAlignment(Qt.AlignCenter)
+        self.language_select = self.findChild(QWidget, 'language_select')
+        self.spanish = self.language_select.findChild(QPushButton, 'spanish')
+        self.spanish.clicked.connect(lambda: self.select_language(self.spanish))
+        self.english = self.language_select.findChild(QPushButton, 'english')
+        self.english.clicked.connect(lambda: self.select_language(self.english))
+        self.portuguese = self.language_select.findChild(QPushButton, 'portuguese')
+        self.portuguese.clicked.connect(lambda: self.select_language(self.portuguese))
+        self.french = self.language_select.findChild(QPushButton, 'french')
+        self.french.clicked.connect(lambda: self.select_language(self.french))
+        self.japanese = self.language_select.findChild(QPushButton, 'japanese')
+        self.japanese.clicked.connect(lambda: self.select_language(self.japanese))
+        self.mandarin = self.language_select.findChild(QPushButton, 'mandarin')
+        self.mandarin.clicked.connect(lambda: self.select_language(self.mandarin))
+        self.pages.append(self.language_select)
 
-        self.checkbox.setEnabled(False)
-        self.timeEdit.setEnabled(False)
-        self.dateTimeEdit.setEnabled(False)
-        self.button.setEnabled(False)
+        self.daily_recurrences = self.findChild(QWidget, 'daily_recurrences')
+        self.eventEdit = self.daily_recurrences.findChild(QLineEdit, 'eventEdit')
+        self.timeEdit = self.daily_recurrences.findChild(QTimeEdit, 'timeEdit')
+        self.durationEdit = self.daily_recurrences.findChild(QSpinBox, 'durationEdit')
+        self.addDaily = self.daily_recurrences.findChild(QPushButton, 'addDaily')
+        self.addDaily.clicked.connect(self.add_daily_event)
+        self.pages.append(self.daily_recurrences)
 
-        if len(self.nameEdit.text()) > 3 and len(self.lastEdit.text()) > 3 and len(self.schedulingEdit.text()) > 10:
-            self.button.setEnabled(False)
+        self.weekly_recurrences = self.findChild(QWidget, 'weekly_recurrences')
+        self.eventEdit_2 = self.weekly_recurrences.findChild(QLineEdit, 'eventEdit_2')
+        self.weekSelect = self.weekly_recurrences.findChild(QComboBox, 'weekSelect')
+        self.timeEdit_2 = self.weekly_recurrences.findChild(QTimeEdit, 'timeEdit_2')
+        self.durationEdit_2 = self.weekly_recurrences.findChild(QSpinBox, 'durationEdit_2')
+        self.addWeekly = self.weekly_recurrences.findChild(QPushButton, 'addWeekly')
+        self.addWeekly.clicked.connect(self.add_weekly_event)
+        self.pages.append(self.weekly_recurrences)
+
+        self.subject = self.findChild(QWidget, 'subject')
+        self.subjectEdit = self.subject.findChild(QLineEdit, 'subjectEdit')
+        self.addSubject = self.subject.findChild(QPushButton, 'addSubject')
+        self.addSubject.clicked.connect(self.add_subject)
+        self.pages.append(self.subject)
+
+        self.continue_1 = self.welcome.findChild(QPushButton, 'continue_1')
+        self.continue_2 = self.language_select.findChild(QPushButton, 'continue_2')
+        self.continue_3 = self.daily_recurrences.findChild(QPushButton, 'saveDaily')
+        self.continue_4 = self.weekly_recurrences.findChild(QPushButton, 'saveWeekly')
+        self.finalize = self.subject.findChild(QPushButton, 'finalizeButton')
+
+        self.continue_1.clicked.connect(lambda: self.save_user())
+        self.continue_2.clicked.connect(lambda: self.save_languages())
+        self.continue_3.clicked.connect(self.next_page)
+        self.continue_4.clicked.connect(lambda: self.save_events())
+        self.finalize.clicked.connect(lambda: self.finalize_all())
+
         self.show()
 
-    def verify_fields(self):
-        if len(self.nameEdit.text()) > 3 and len(self.lastEdit.text()) > 3 and len(self.schedulingEdit.text()) > 10:
-            self.checkbox.setEnabled(True)
-            self.timeEdit.setEnabled(True)
-            self.dateTimeEdit.setEnabled(True)
-            self.button.setEnabled(True)
+    idx = 0
+    user_languages = []
+    user_events = []
+    user_subjects = []
+
+    def select_language(self, language):
+        if language.isChecked():
+            language.setStyleSheet('QPushButton{background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ff9d00, stop: 1 #ffb900);'
+                                   'color: white;}')
+            print(f'Selected: {language.text()}')
+            self.user_languages.append(language.text())
+            print(self.user_languages)
+        else:
+
+            language.setStyleSheet("QPushButton{background-color: rgb(217, 217, 217);"
+                                   "color: rgb(222, 222, 222);"
+                                   "color: rgb(125, 125, 125);"
+                                   "border: 1px solid #7fcde1;"
+                                   "border-radius: 2px;"
+                                   "padding: 4px;"
+                                   "font: 10pt 'Arial';"
+                                   "height: 25px;}"
+                                   "QPushButton:hover{"
+                                   "background: rgb(241, 241, 241);"
+                                   "font: rgb(186, 186, 186);"
+                                   "color: rgb(176, 176, 176);}")
+            print(f'Deselected: {language.text()}')
+            self.user_languages.remove(language.text())
+            print(self.user_languages)
+
+    def add_subject(self):
+        try:
+            self.user_subjects.append(self.subjectEdit.text())
+            self.subjectEdit.clear()
+        except:
+            pass
+
+    def save_events(self):
+        if len(self.user_events) < 1:
+            return False
+        else:
+            data = {"Meeting Name": [event.event_name for event in self.user_events],
+                    "Meeting Time": [event.event_time for event in self.user_events],
+                    "Meeting Duration": [event.event_duration for event in self.user_events],
+                    "Recurrence Pattern": [event.event_pattern for event in self.user_events]}
+            df = pandas.DataFrame(data).set_index('Meeting Name')
+            df.to_csv('recurring_events.csv')
+            self.next_page()
+
+    def add_weekly_event(self):
+        try:
+            event = Event(event_name=self.eventEdit_2.text(),
+                          event_time=self.timeEdit_2.time().toPyTime(),
+                          event_duration=self.durationEdit_2.text(),
+                          event_pattern=self.weekSelect.currentText())
+            self.eventEdit_2.clear()
+            self.timeEdit_2.setTime(QTime(12, 0))
+            self.weekSelect.setCurrentText('Monday')
+            self.user_events.append(event)
+            print(f'event added: {event.event_name} {event.event_time}')
+        except Exception as e:
+            print(e)
+            pass
+
+    def add_daily_event(self):
+        try:
+            event = Event(event_name=self.eventEdit.text(),
+                          event_time=self.timeEdit.time().toPyTime(),
+                          event_duration=self.durationEdit.text(),
+                          event_pattern='Daily')
+            self.eventEdit.clear()
+            self.timeEdit.setTime(QTime(12, 0))
+            self.user_events.append(event)
+            print('event added')
+        except Exception as e:
+            print(e)
+            pass
+
+    def next_page(self):
+        if self.idx < 4:
+            self.idx += 1
+            self.stackedWidget.setCurrentWidget(self.pages[self.idx])
+
+    def verify_user_fields(self):
+        if len(self.nameEdit.text()) > 3 and len(self.lastEdit.text()) > 3 and '@' in self.managerEdit.text():
+            if len(self.managerEdit.text()) > 10:
+                return True
+        return False
+
+    def save_languages(self):
+        if len(self.user_languages) < 1:
+            pass
+        else:
+            data = {'Languages': self.user_languages}
+            df = pandas.DataFrame(data)
+            df.to_csv('language_selection.csv')
+            self.next_page()
 
     def save_user(self):
-        columns = ['First', 'Last', 'Scheduling', 'Lunch', 'Team Meeting']
-        if self.checkbox.isChecked():
-            data = {'First': [self.nameEdit.text()],
-                    'Last': [self.lastEdit.text()],
-                    'Scheduling': [self.schedulingEdit.text()],
-                    'Lunch': [self.timeEdit.text()],
-                    'Team Meeting': [self.dateTimeEdit.text()]}
+        columns = ['First', 'Last', 'Manager', 'Scheduling']
+        if self.verify_user_fields():
+            try:
+                data = {'First': [self.nameEdit.text()],
+                        'Last': [self.lastEdit.text()],
+                        'Manager': [self.managerEdit.text()],
+                        'Scheduling': [self.schedulingEdit.text()],
+                        }
+            except Exception as e:
+                print(e)
+                data = {'First': [self.nameEdit.text()],
+                        'Last': [self.lastEdit.text()],
+                        'Manager': [self.managerEdit.text()],
+                        'Scheduling': [''],
+                        }
+            df = pandas.DataFrame(data)
+            df.to_csv(f'catcher2.csv',
+                      index=False, header=True, columns=columns)
+            # ACTIVATING MAIN WINDOW (WILL BE MOVED TO FINALIZE FUNCTION
+            # start.setEnabled(True)
+            # global USER
+            # USER = True
+            self.next_page()
         else:
-            data = {'First': [self.nameEdit.text()],
-                    'Last': [self.lastEdit.text()],
-                    'Scheduling': [self.schedulingEdit.text()],
-                    'Lunch': [''],
-                    'Team Meeting': ['']}
-        df = pandas.DataFrame(data)
-        df.to_csv(f'catcher.csv',
-                  index=False, header=True, columns=columns)
-        start.setEnabled(True)
-        global USER
-        USER = True
+            self.errorLabel.setText('Please make sure all required fields are filled in properly.')
+        # self.close()
 
-        self.close()
+    def finalize_all(self):
+        try:
+            data = {'Subjects': self.user_subjects}
+            df = pandas.DataFrame(data)
+            df.to_csv('user_subjects.csv')
+            start.setEnabled(True)
+            global USER
+            load_user()
+            self.close()
+        except Exception as e:
+            print(e)
+            pass
 
 
 class TemplateEdit(QDialog):
@@ -1712,6 +1894,6 @@ if __name__ == '__main__':
         start = MainWindow()
         start.setEnabled(False)
         test = TestBox()
-        load_user()
+
 
     app.exec_()

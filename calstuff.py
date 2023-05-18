@@ -2,9 +2,46 @@ from datetime import datetime, timedelta, date, time
 import win32com.client
 import time as gn
 import win32com.client
-
+import pandas
 from datetime import datetime
 
+
+def get_meeting_dict():
+    df = pandas.read_csv("recurring_events.csv", index_col="Meeting Name")
+
+    # Convert the DataFrame to a dictionary
+    meeting_dict = df.to_dict(orient="index")
+
+    # Convert the dictionary values to a list
+    for key, value in meeting_dict.items():
+        meeting_dict[key] = [value['Meeting Time'], value['Meeting Duration'], value['Recurrence Pattern']]
+    print(meeting_dict)
+    return meeting_dict
+
+
+def recurrence_conflict(selection, dic):
+    work_week = {
+        "Monday": 0,
+        "Tuesday": 1,
+        "Wednesday": 2,
+        "Thursday": 3,
+        "Friday": 4,
+    }
+    selection_date = selection.date()
+    for meeting in dic:
+        if dic[meeting][2] != 'Daily':
+            if selection.weekday() == work_week[dic[meeting][2]]:
+                if selection.time().strftime("%H:%M:%S") == dic[meeting][0]:
+                    print(dic[meeting][0])
+                    print('hitting true')
+                    return True
+        else:
+            if selection.time().strftime("%H:%M:%S") == dic[meeting][0]:
+                print(dic[meeting][0])
+                print('hitting true')
+                return True
+    print('hitting False')
+    return False
 today = datetime.today()
 # encapsulate below as get_conflicts(start, end) this will return list of conflicts, date_range in days (int), and start
 # as tuple return (conflicts, day_range, begin)
@@ -145,7 +182,7 @@ def get_meetings_today(array):
 
 
 def find_times(item_list, meeting_duration, date_range, length=None):
-
+    user_events = get_meeting_dict()
     time_output = []
     conflicts = item_list
 
@@ -233,7 +270,7 @@ def find_times(item_list, meeting_duration, date_range, length=None):
                             team_eow = None
                         # ensuring no time outside work hours gets included
                         if bod.time() < selection.time() < eod.time():
-                            if selection != lunch and selection != break_1 and selection != team_meeting and selection != team_eow:
+                            if not recurrence_conflict(selection, user_events):
                                 time_output.append(selection)
                             else:
                                 selection = selection + timedelta(minutes=60)
@@ -280,6 +317,7 @@ def find_times(item_list, meeting_duration, date_range, length=None):
     if len(final_output) >= length:
         return final_output
     else:
+        date_range += 3
         return find_times(conflicts, meeting_duration, date_range, length=length)
 
 
