@@ -4,7 +4,7 @@ import time as gn
 import win32com.client
 
 
-def show_invites(clients):
+def show_invites(clients, user=None):
     outlook = win32com.client.Dispatch("Outlook.Application")
 
     for client in clients:
@@ -52,7 +52,7 @@ I am looking forward to speaking to you.
         cal_item.display()
 
 
-def send_email(client, template=None, subject=None, to=None, purpose=None):
+def send_email(client, template=None, subject=None, to=None, purpose=None, user=None):
     outlook = win32com.client.Dispatch('outlook.application')
     template = template
 
@@ -78,7 +78,7 @@ def send_email(client, template=None, subject=None, to=None, purpose=None):
     mail.Display()
 
 
-def send_emails(clients, template=None, subject=None):
+def send_emails(clients, template=None, subject=None, user=None):
     outlook = win32com.client.Dispatch('outlook.application')
     template = template
     to_change = ['(AE)', '(AGE)', '(CLIENT)', '(ORG)']
@@ -126,7 +126,7 @@ def send_emails(clients, template=None, subject=None):
         mail.Display()
 
 
-def send_emails_ae(clients, template=None, subject=None):
+def send_emails_ae(clients, template=None, subject=None, user=None):
     outlook = win32com.client.Dispatch('outlook.application')
     template = template
     to_change = ['(AGE)', '(CLIENT)', '(ORG)', '(AE)']
@@ -180,7 +180,7 @@ def send_emails_ae(clients, template=None, subject=None):
         i += 1
         mail.Display()
 
-def send_emails_ae_unified(clients):
+def send_emails_ae_unified(clients, user=None):
     outlook = win32com.client.Dispatch('outlook.application')
     last_ae = ''
     mail_list = []

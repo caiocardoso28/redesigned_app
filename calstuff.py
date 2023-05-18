@@ -42,6 +42,8 @@ def recurrence_conflict(selection, dic):
                 return True
     print('hitting False')
     return False
+
+
 today = datetime.today()
 # encapsulate below as get_conflicts(start, end) this will return list of conflicts, date_range in days (int), and start
 # as tuple return (conflicts, day_range, begin)

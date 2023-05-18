@@ -121,7 +121,6 @@ class Person:
         self.subjects = subjects
 
 
-
 class Client:
     def __init__(self,
                  date=None,
@@ -253,6 +252,7 @@ class MainWindow(QMainWindow):
         self.show()
 
         # ==> END ##
+
     months = {'1': [],
               '2': [],
               '3': [],
@@ -366,6 +366,7 @@ class MainWindow(QMainWindow):
                 else:
                     if client.mem_status != 'INACTIVE':
                         self.months[str(client.date.month)].append(client)
+
         for j in range(len(self.client_list)):
             if self.client_list[j].is_over() and self.client_list[j].status == 0:
                 self.object_list.append(self.client_list[j])
@@ -529,7 +530,7 @@ class OutreachWindow(QWidget):
         track_actions(act='email_sent', data=data)
         if self.change_template:
             return send_emails(data, self.template, self.subject)
-        return send_emails(data)
+        return send_emails(data, user=USER)
 
     def load_table(self):
         if self.table.columnCount() > 1:
@@ -712,7 +713,7 @@ class AeWindow(QWidget):
         if data:
             from tracking import track_actions
             track_actions(act='ae_outreach', data=data)
-            return send_emails_ae_unified(data)
+            return send_emails_ae_unified(data, user=USER)
         return False
 
     def create_list(self):
@@ -741,7 +742,7 @@ class AeWindow(QWidget):
         track_actions(act='ae_outreach', data=data)
         if self.change_template:
             return send_emails_ae(data, self.template, self.subject)
-        return send_emails_ae(data)
+        return send_emails_ae(data, user=USER)
 
     # Connect the date time changed signal to the slot function and pass the row number
     def update_table(self, date_time, row_number):
@@ -892,7 +893,7 @@ class BiWindow(QWidget):
         print(data)
         from tracking import track_actions
         track_actions(act='bi_sent', data=data)
-        return show_invites(data)
+        return show_invites(data, user=USER)
 
     # Connect the date time changed signal to the slot function and pass the row number
     def update_table(self, date_time, row_number):
@@ -1894,6 +1895,5 @@ if __name__ == '__main__':
         start = MainWindow()
         start.setEnabled(False)
         test = TestBox()
-
 
     app.exec_()
