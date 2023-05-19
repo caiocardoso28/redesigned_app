@@ -20,8 +20,7 @@ IDIOMS = {'en': 'English',
           'fr': 'French'
           }
 
-custom_meeting_subjects = {'Accept or Reschedule > Your Gartner Membership': True,
-                           'Gartner | Seu call de introdução às ferramentas está disponível': True}
+custom_meeting_subjects = {}
 
 ICONS = ['iconz\\test_icon_disabled.png', 'iconz\\cal_reg.png', 'iconz\\hand_reg.png', 'iconz\\plane_reg.png',
          'iconz\\profile_reg.png']
@@ -80,6 +79,7 @@ def load_user():
         df = pandas.read_csv(file)
         for index, row in df.iterrows():
             subject = row['Subjects']
+            custom_meeting_subjects[subject] = True
             language = detect(subject)
             try:
                 language = IDIOMS[language]
