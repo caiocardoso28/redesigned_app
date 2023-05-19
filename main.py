@@ -191,7 +191,7 @@ class Client:
         return False
 
     def is_over(self):
-        return 14 <= self.age < 60
+        return 13 <= self.age < 60
 
     def __repr__(self):
         return repr(f"Client Object: {self.name}")

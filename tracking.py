@@ -123,12 +123,5 @@ def gather_metrics():
     print(f"AE Outreaches Per Client: {round(ae_per_client, 1)}")
 
 
-
-
-
-
-
-
-
-
 gather_metrics()
+
