@@ -21,6 +21,8 @@ IDIOMS = {'en': 'English',
           }
 
 custom_meeting_subjects = {}
+auto_meeting_subjects = {'Su llamada con Gartner': True,
+                         'Your Gartner Call': True}
 
 ICONS = ['iconz\\test_icon_disabled.png', 'iconz\\cal_reg.png', 'iconz\\hand_reg.png', 'iconz\\plane_reg.png',
          'iconz\\profile_reg.png']
@@ -1082,6 +1084,7 @@ class ClientView(QDialog):
         self.clip = self.findChild(QPushButton, 'pushButton_5')
         self.clip.clicked.connect(lambda: self.open_clip())
         self.ae_button = self.findChild(QPushButton, 'pushButton_2')
+        self.ae_button.clicked.connect(lambda: self.message_ae())
         self.outreach_button = self.findChild(QPushButton, 'pushButton')
         self.outreach_button.clicked.connect(lambda: self.send_outreach())
 
@@ -1093,17 +1096,21 @@ class ClientView(QDialog):
                 return True
         self.activity_label.setText('No Actions Yet')
         return False
+
+    def message_ae(self):
+        from communications import send_email
+        send_email(client=self.parentWidget().info, to='partner', purpose=None, user=USER)
+        pass
+
     def reschedule_meeting(self):
         from communications import send_email
-        send_email(client=self.parentWidget().info, to='client', purpose='reschedule')
+        send_email(client=self.parentWidget().info, to='client', purpose='reschedule', user=USER)
         if self.parentWidget().info[7]:
             self.parentWidget().info[7].Display()
 
-
     def send_outreach(self):
         from communications import send_email
-
-        send_email(client=self.parentWidget().info, to='client', purpose='other')
+        send_email(client=self.parentWidget().info, to='client', purpose='other', user=USER)
 
     def open_clip(self):
         import webbrowser

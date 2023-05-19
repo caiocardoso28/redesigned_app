@@ -6,6 +6,9 @@ from comm_templates import countries
 
 
 def show_invites(clients, user=None):
+    """Takes a list of client dictionaries with open time slots from the blind invite table and creates
+    personalized/language specific Outlook calendar invites to display for review.
+    """
     outlook = win32com.client.Dispatch("Outlook.Application")
     for client in clients:
         if client.get('Edited Time'):
@@ -37,6 +40,8 @@ def show_invites(clients, user=None):
 
 
 def send_email(client, template=None, subject=None, to=None, purpose=None, user=None):
+    """Creates and displays an email from client contact card. Can be an email to client or to Account Executive
+    Takes a list of client attributes"""
     outlook = win32com.client.Dispatch('outlook.application')
     template = template
 
@@ -57,12 +62,14 @@ def send_email(client, template=None, subject=None, to=None, purpose=None, user=
             mail.Subject = f"{client[0].split(' ')[0]} | Gartner Onboarding"
     else:
         mail.To = client[2]
-        mail.HTMLBody = template
+        mail.HTMLBody = f"Hello {client[2].split(',')[1]}"
         mail.Subject = 'Client Onboarding Help'
     mail.Display()
 
 
 def send_emails(clients, template=None, subject=None, user=None):
+    """Create and display emails going to clients this function can also take in a template from the user and
+    replace keywords in the template with information. Like AE names, client days 'aged', and organization"""
     outlook = win32com.client.Dispatch('outlook.application')
     template = template
     to_change = ['(AE)', '(AGE)', '(CLIENT)', '(ORG)']
@@ -111,6 +118,7 @@ def send_emails(clients, template=None, subject=None, user=None):
 
 
 def send_emails_ae(clients, template=None, subject=None, user=None):
+    """Creates and displays emails to send to account executives. Custom templates can be passed and personalized."""
     outlook = win32com.client.Dispatch('outlook.application')
     template = template
     to_change = ['(AGE)', '(CLIENT)', '(ORG)', '(AE)']
@@ -168,6 +176,8 @@ def send_emails_ae(clients, template=None, subject=None, user=None):
 
 
 def send_emails_ae_unified(clients, user=None):
+    """Function takes in list of dictionaries representing clients belonging to the same account. This creates a single
+    email to an account executive in reference to clients that are part of their account."""
     outlook = win32com.client.Dispatch('outlook.application')
     last_ae = ''
     mail_list = []

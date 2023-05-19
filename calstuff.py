@@ -20,6 +20,9 @@ def get_meeting_dict():
 
 
 def recurrence_conflict(selection, dic):
+    """This function ensures no conflict occurs with user-defined recurrence blocks (recurring appointments
+    captured by the get_conflicts() function have different time data that can interfere with find_times() function.
+    This is a minor work-around for the issue)"""
     work_week = {
         "Monday": 0,
         "Tuesday": 1,
@@ -58,6 +61,9 @@ test_emails = ['rebecca.probus@brightspringhealth.com',
 
 
 def get_conflicts(start_date=None, end_date=None, cal_view=False):
+    """This function searches and sorts through user's local Outlook calendar items. If cal_view is set to True,
+    then the function will specifically search for calendar items for the specified week to populate the
+    clients on the calendar widget. Otherwise, the range will be based on user input or default to 21 days."""
     outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
     appointments = outlook.GetDefaultFolder(9).Items
     appointments.IncludeRecurrences = True
@@ -180,10 +186,12 @@ def get_meetings_today(array):
     return clients
 
 
-# will take output from get_conflicts (conflicts, day_range, begin) and meeting duration
-
-
-def find_times(item_list, meeting_duration, date_range, length=None):
+def find_times(item_list, meeting_duration, date_range=30, length=None):
+    """ Algorithm for finding open slots on calendar -> returns array of datetime objects to fill Invite Table.
+        IF not enough times are found in the default range of 30 days, the function recursively extends date range until
+        enough
+        times are found.
+    """
     user_events = get_meeting_dict()
     time_output = []
     conflicts = item_list
@@ -319,7 +327,7 @@ def find_times(item_list, meeting_duration, date_range, length=None):
     if len(final_output) >= length:
         return final_output
     else:
-        date_range += 3
+        date_range += 1
         return find_times(conflicts, meeting_duration, date_range, length=length)
 
 
