@@ -1,4 +1,5 @@
 import csv
+from langdetect import detect
 from monthly import all_months
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QTime, QDate, QDateTime, QEvent
@@ -13,6 +14,11 @@ SELECTION = None
 SELECTION_NAME = None
 ACTIVITIES = []
 ACTIONS_TAKEN = {}
+IDIOMS = {'en': 'English',
+          'pt': 'Portuguese',
+          'es': 'Spanish',
+          'fr': 'French'
+          }
 
 custom_meeting_subjects = {'Accept or Reschedule > Your Gartner Membership': True,
                            'Gartner | Seu call de introdução às ferramentas está disponível': True}
@@ -44,7 +50,7 @@ def load_activity():
                                 lad=row['last_action_date'])
             ACTIONS_TAKEN[activity.name] = activity.last_action
             ACTIVITIES.append(activity)
-            print(activity.name, activity.last_action)
+            # print(activity.name, activity.last_action)
         return True
     except:
 
@@ -69,12 +75,18 @@ def load_user():
             language = row['Languages']
             user_languages.append(language)
         user_recurrences = get_meeting_dict()
-        user_subjects = []
+        user_subjects = {}
         file = 'user_subjects.csv'
         df = pandas.read_csv(file)
         for index, row in df.iterrows():
             subject = row['Subjects']
-            user_subjects.append(subject)
+            language = detect(subject)
+            try:
+                language = IDIOMS[language]
+            except Exception as e:
+                print(e)
+                pass
+            user_subjects[language] = subject
         global USER
         USER = Person(name=first_name,
                       last=last_name,
@@ -83,7 +95,7 @@ def load_user():
                       languages=user_languages,
                       recurrences=user_recurrences,
                       subjects=user_subjects)
-        print(USER.name)
+        print(USER.subjects)
         return True
 
     except Exception as e:

@@ -2,44 +2,28 @@
 import win32com.client
 import time as gn
 import win32com.client
+from comm_templates import countries
 
 
 def show_invites(clients, user=None):
     outlook = win32com.client.Dispatch("Outlook.Application")
-
     for client in clients:
         if client.get('Edited Time'):
             dt = client.get('Edited Time')
         else:
             dt = client.get('Suggested Time')
         cal_item = outlook.CreateItem(1)
-        if client.get('Country') == 'BRAZIL':
-            cal_item.subject = "Gartner | Seu call de introdução às ferramentas está disponível"
-            cal_item.body = f"""Oi {client['Name'].split(' ')[0]},\n\nNotamos que você ainda não selecionou um outro horário para o seu tour do portal e do app. Portanto, proponho este para explorarmos os seus novos recursos dentro do Gartner.com. para otimizar o seu uso das funcionalidades.\n
-Além de responder as suas perguntas, revisaremos:
-•	Como procurar pesquisas relevantes eficientemente
-•	Customizar o mural de notícias inteligente
-•	Comunicar com outros clientes via o nosso fórum de discussões\n
-Antes da reunião, afim de maximizar o nosso tempo, peço que:
-•	Baixe o nosso app My Gartner Mobile (Versão IOS / Versão Android)
-•	Realize o login no seu portal do Gartner –  Se estiver procurando procurando o seu usuário e senha, clique aqui para resetar a sua senha ou usuário.
-•	Procure ter acesso ao seu notebook/computador para a sessão
-
-Estou animado para falar contigo. Se você não estiver disponível neste horário por favor responder “RESCHEDULE” a este email e proporei um novo horário.
-"""
-        else:
+        try:
+            lang = countries[client.get('Country')]['Language']
+            temps = countries[client.get('Country')]['Templates']
+            greeting = temps['GREETING']
+            cal_item.subject = f"{user.subjects[lang]}"
+            cal_item.body = f"""{greeting} {client['Name'].split(' ')[0]},\n\n{temps['BLIND_INVITE']}"""
+        except Exception as e:
+            print(e)
             cal_item.subject = 'Accept or Reschedule > Your Gartner Membership'
-            cal_item.body = f"""Hi {client['Name'].split(' ')[0]},\n\nI look forward to holding this time to review and tailor your Gartner.com Platform experience to align with your initiatives. If for any reason this date or time does not work with your calendar, please feel free to suggest an alternative. 
-You’ll find the conference information and a call agenda below.\n 
-AGENDA: 
-•       Showcasing content tailored to your priorities and initiatives 
-•       Customizing your smart news feed and personal library\n 
-BEFORE THE MEETING: 
-•       Please download our Gartner Mobile App (App Store or Play Store) 
-•       Please log in to your Gartner Platform – for your login credentials click here to reset your password or username
-Please have access to your laptop/computer for the session.\n 
-I am looking forward to speaking to you. 
-"""
+            cal_item.body = f"""Hi {client['Name'].split(' ')[0]},\n\n"""
+
         cal_item.location = 'Teams Meeting'
         cal_item.start = dt
         cal_item.duration = 30
@@ -64,7 +48,7 @@ def send_email(client, template=None, subject=None, to=None, purpose=None, user=
                             f"reschedule your Gartner Onboarding. I have included a new link below for your convenience" \
                             f" in picking a better time for us to chat.<br><br>Please let me know if I can help" \
                             f" with anything else. Thank you!<br><br>Scheduling: <b>INSERT LINK HERE (People Code: {client[5]})</b><br><br>Best Regards,<br><br>" \
-                            f"Caio Cardoso | Client Success Associate | Gartner"
+                            f"{user.name} {user.last} | Client Success Associate | Gartner"
             mail.CC = client[2]
             mail.Subject = 'Reschedule Your Gartner Onboarding'
         else:
@@ -120,7 +104,7 @@ def send_emails(clients, template=None, subject=None, user=None):
         
                     <br><br>Best,
         
-                    <br><br>{'Caio'} {'Cardoso'}<br>Client Onboarding Specialist-NCE | Gartner"""
+                    <br><br>{user.name} {user.last}<br>Client Onboarding Specialist-NCE | Gartner"""
         # mail.Send()
         i += 1
         mail.Display()
@@ -135,7 +119,8 @@ def send_emails_ae(clients, template=None, subject=None, user=None):
     for client in clients:
         mail = outlook.CreateItem(0)
         mail.To = f'{client["AE"]};'
-        mail.CC = 'Conley, Ashlee;'
+        mail.CC = user.manager
+        # personalizing template
         if template and subject:
             for item in to_change:
                 if item == '(AE)':
@@ -161,6 +146,7 @@ def send_emails_ae(clients, template=None, subject=None, user=None):
             last_client = client
             mail.Subject = subject
             mail.HTMLBody = template
+        # or using default template
         else:
             mail.Subject = 'Gartner Platform Overview'
             mail.HTMLBody = f"""Hello <b>{client['AE'].split(',')[1]},</b>
@@ -175,10 +161,11 @@ def send_emails_ae(clients, template=None, subject=None, user=None):
     
                     <br><br>Best,
     
-                    <br><br>{'Caio'} {'Cardoso'}<br>Client Onboarding Specialist-NCE | Gartner"""
+                    <br><br>{user.name} {user.last}<br>Client Onboarding Specialist-NCE | Gartner"""
         # mail.Send()
         i += 1
         mail.Display()
+
 
 def send_emails_ae_unified(clients, user=None):
     outlook = win32com.client.Dispatch('outlook.application')
@@ -201,7 +188,7 @@ def send_emails_ae_unified(clients, user=None):
         html_tags.append(f'<li>{client["Client"]}</li>')
     mail = outlook.CreateItem(0)
     mail.To = f'{last_ae};'
-    mail.CC = 'Conley, Ashlee;'
+    mail.CC = user.manager
     mail.Subject = 'Gartner Platform Overview'
     mail.HTMLBody = f"""Hello <b>{last_ae.split(',')[1]},</b>
 
@@ -216,7 +203,7 @@ def send_emails_ae_unified(clients, user=None):
 
                     <br><br>Best,
 
-                    <br><br>{'Caio'} {'Cardoso'}<br>Client Onboarding Specialist-NCE | Gartner"""
+                    <br><br>{user.name} {user.last}<br>Client Onboarding Specialist-NCE | Gartner"""
     # mail.Send()
     mail.Display()
 
