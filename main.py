@@ -156,7 +156,8 @@ class Client:
                  extra=None,
                  mem_status=None,
                  meeting_status=None,
-                 meeting=None):
+                 meeting=None,
+                 price_plan=None):
         self.date = date
         self.name = name
         self.email = email
@@ -177,6 +178,7 @@ class Client:
         self.mem_status = mem_status
         self.meeting_status = meeting_status
         self.meeting = meeting
+        self.price_plan = price_plan
 
     close_date = None
     to_send = True
@@ -363,7 +365,8 @@ class MainWindow(QMainWindow):
                                 eng_lad=row['ENGAGEMENT_LAD'],
                                 eng_age=eng_age,
                                 extra=row['ACT_REASON'],
-                                mem_status=row['MEMBER_STATUS']
+                                mem_status=row['MEMBER_STATUS'],
+                                price_plan=row['PRICE_PLAN_NAME']
                                 )
             except Exception as e:
                 print(e)
@@ -1435,11 +1438,18 @@ class MetricWindow(QWidget):
 
         self.quick_maths(self.monthly_clients)
 
+        self.activity_button = self.findChild(QPushButton, 'activity_button')
+        self.activity_button.clicked.connect(lambda: self.show_activities())
         self.show()
 
     active_month = None
     window_list = []
     current_clients = []
+    activity_list = []
+
+    def show_activities(self):
+        activity_window = ActivityWindow(self)
+        activity_window.show()
 
     def open_calendar(self):
         self.current_clients = self.monthly_clients
@@ -1668,6 +1678,23 @@ class MetricWindow(QWidget):
 
             clients.append(MainWindow.months.get(str(month)))
         return clients
+
+
+class ActivityWindow(QDialog):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        uic.loadUi('activity_tracker.ui', self)
+        from tracking import gather_activity_metrics
+        activity_list = gather_activity_metrics(MainWindow.object_list, MainWindow.client_list)
+        self.average_bi = self.findChild(QLabel, 'averageBI_number')
+        self.average_bi.setText(str(round(activity_list[0], 1)))
+        self.average_ae = self.findChild(QLabel, 'averageAE_number')
+        self.average_ae.setText(str(round(activity_list[1], 1)))
+        self.bi_per_client = self.findChild(QLabel, 'bi_per_client_number')
+        self.bi_per_client.setText(str(round(activity_list[2], 1)))
+        self.ae_per_client = self.findChild(QLabel, 'ae_per_client_number')
+        self.ae_per_client.setText(str(round(activity_list[3], 1)))
+        self.show()
 
 
 class TestBox(QDialog):
