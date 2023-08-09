@@ -546,7 +546,7 @@ class OutreachWindow(QWidget):
         from tracking import track_actions
         track_actions(act='email_sent', data=data)
         if self.change_template:
-            return send_emails(data, self.template, self.subject)
+            return send_emails(data, self.template, self.subject, user=USER)
         return send_emails(data, user=USER)
 
     def load_table(self):
@@ -758,7 +758,7 @@ class AeWindow(QWidget):
         from tracking import track_actions
         track_actions(act='ae_outreach', data=data)
         if self.change_template:
-            return send_emails_ae(data, self.template, self.subject)
+            return send_emails_ae(data, self.template, self.subject, user=USER)
         return send_emails_ae(data, user=USER)
 
     # Connect the date time changed signal to the slot function and pass the row number
@@ -1089,7 +1089,7 @@ class ClientView(QDialog):
         self.ae_button = self.findChild(QPushButton, 'pushButton_2')
         self.ae_button.clicked.connect(lambda: self.message_ae())
         self.outreach_button = self.findChild(QPushButton, 'pushButton')
-        self.outreach_button.clicked.connect(lambda: self.send_outreach())
+        self.outreach_button.clicked.connect(lambda: self.open_invite())
 
     def find_activity(self):
         for activity in ACTIVITIES:
@@ -1103,7 +1103,9 @@ class ClientView(QDialog):
     def message_ae(self):
         from communications import send_email
         send_email(client=self.parentWidget().info, to='partner', purpose=None, user=USER)
-        pass
+        from tracking import track_actions
+        track_actions(act='ae_outreach', data=[{"Client": self.parentWidget().info[0],
+                                                "Age": self.parentWidget().info[3]}])
 
     def reschedule_meeting(self):
         from communications import send_email
@@ -1111,9 +1113,12 @@ class ClientView(QDialog):
         if self.parentWidget().info[7]:
             self.parentWidget().info[7].Display()
 
-    def send_outreach(self):
-        from communications import send_email
-        send_email(client=self.parentWidget().info, to='client', purpose='other', user=USER)
+    def open_invite(self):
+        if self.parentWidget().info[7]:
+            self.parentWidget().info[7].Display()
+            from tracking import track_actions
+            track_actions(act='bi_sent', data=[{"Client": self.parentWidget().info[0],
+                                                "Age": self.parentWidget().info[3]}])
 
     def open_clip(self):
         import webbrowser
@@ -1164,6 +1169,32 @@ class WeekView(QDialog):
                 return client
         return 'Unknown'
 
+    def discover_exchange_name(self, name):
+        try:
+            if ',' in name:
+
+                first_name = name.split(',')[1]
+
+                if ' ' == first_name[0]:
+                    first_name = first_name.split(' ')[1]
+                    fixed_name = first_name + ' ' + name.split(',')[0]
+                elif len(first_name.split(' ')) == 2:
+                    first_name = first_name.split(' ')[0]
+                    fixed_name = first_name + ' ' + name.split(',')[0]
+                else:
+                    fixed_name = name.split(',')[1] + ' ' + name.split(',')[0]
+                # print(fixed_name)
+            else:
+                fixed_name = name
+
+            for client in MainWindow.client_list:
+                if client.name.lower() == fixed_name.lower():
+                    return client
+            return False
+        except Exception as e:
+            print(Exception)
+            return False
+
     def get_item_info(self, name):
         if name:
             if name[0] == '✓' or name[3] == '-':
@@ -1172,6 +1203,9 @@ class WeekView(QDialog):
                     print(name)
                 else:
                     name = name[1:]
+            elif 'SKO' in name:
+                name = name[6:]
+
             for client in MainWindow.client_list:
                 if name == client.name:
                     return [client.name, client.email, client.ae, client.age, client.stage, client.ppl_code, client.meeting_status, client.meeting]
@@ -1184,11 +1218,18 @@ class WeekView(QDialog):
         print(self.clients)
 
     def verify_meeting(self, attendee_list):
-        for person in attendee_list:
-            if '@' in person.Name:
-                if person.Name in MainWindow.email_list:
-                    return True
-        return False
+        try:
+            for person in attendee_list:
+                if '@' in person.Name:
+                    if person.Name in MainWindow.email_list:
+                        return True
+                else:
+                    ex_user = person.AddressEntry.GetExchangeUser()
+                    # print(ex_user)
+            return False
+        except Exception as e:
+            print(e)
+            return False
 
     def load_table(self, text):
         self.table.clearContents()
@@ -1268,15 +1309,30 @@ class WeekView(QDialog):
 
                     client_email = 'emailnotfound@gartner.com'
                     meeting_type = None
+                    # determining which email belongs to client to populate weekly table
                     for recipient in meeting.Recipients:
-                        if ',' not in recipient.Name and recipient.Type == 1:
+                        # checking if address is exchange address or regular smtp address
+                        if recipient.AddressEntry.GetExchangeUser() is not None:
+                            exchange_user = recipient.AddressEntry.GetExchangeUser()
+                            if len(exchange_user.PrimarySmtpAddress) > 1:
+                                continue
+                            if self.discover_exchange_name(exchange_user.Name):
+                                middle_man = self.discover_exchange_name(exchange_user.Name)
+                                client_email = middle_man.email
+                                middle_man.meeting_status = recipient.MeetingResponseStatus
+                                middle_man.meeting = meeting
+                            else:
+                                continue
+                            meeting_type = meeting.Subject
+                        # EXTRA check to verify actual client email and not associate email
+                        elif ',' not in recipient.Name and recipient.Type == 1:
                             client_email = recipient.Address
                             middle_man = self.discover_email(client_email)
                             if not isinstance(middle_man, str):
                                 middle_man.meeting_status = recipient.MeetingResponseStatus
                                 middle_man.meeting = meeting
-                                print(f"{middle_man.name} - {middle_man.meeting_status}")
                             meeting_type = meeting.Subject
+
                     match_found = False
                     # looping through clients in 'oldest' month
                     for client in self.clients[0]:
@@ -1533,19 +1589,22 @@ class MetricWindow(QWidget):
             total_closed.append(closed)
             print(total_closed)
         ob_1 = total_closed[0]/int(self.totalLabel_1.text())
+        self.findChild(QLabel, 'goal_1').setText(f"{int(round((.82 - ob_1) * int(self.totalLabel_1.text()), 0))}")
         self.obLabel_1.setText(f'{str(ob_1 * 100)[:4]}%')
 
         ob_2 = total_closed[1] / int(self.totalLabel_2.text())
+        self.findChild(QLabel, 'goal_2').setText(f"{int(round((.82 - ob_2) * int(self.totalLabel_2.text()), 0))}")
         self.obLabel_2.setText(f'{str(ob_2 * 100)[:4]}%')
 
         # check if month has clients before dividing by 0
         if int(self.totalLabel_3.text()) != 0:
             ob_3 = total_closed[2] / int(self.totalLabel_3.text())
+            self.findChild(QLabel, 'goal_3').setText(f"{int(round((.82 - ob_3) * int(self.totalLabel_3.text()), 0))}")
             self.obLabel_3.setText(f'{str(ob_3 * 100)[:4]}%')
         else:
             ob_3 = 0
             self.obLabel_3.setText(f'{str(ob_3)}%')
-
+            self.findChild(QLabel, 'goal_3').setText("NA")
         opportunities = []
 
         for month in clients:
@@ -1578,7 +1637,7 @@ class MetricWindow(QWidget):
                                         border: 1px solid rgb(79, 79, 79);
                                         border-radius: 2px'''
                                           )
-        elif rem_1 < .70:
+        if rem_1 < .70:
             self.maxLabel_1.setStyleSheet('''font: 12pt Arial;
                                         font-weight: bold;
                                         color: red;

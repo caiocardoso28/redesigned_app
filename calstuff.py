@@ -109,7 +109,7 @@ def get_conflicts(start_date=None, end_date=None, cal_view=False):
 
         if item.meetingstatus != 7 and 120 > item.Duration >= 15:
             if item.RecurrenceState < 1:
-                print(item.Subject)
+                # print(item.Subject)
                 if item.Start.weekday() == 0:
                     mon[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
                 elif item.Start.weekday() == 1:

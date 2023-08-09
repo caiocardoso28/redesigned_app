@@ -503,7 +503,7 @@ QPushButton:pressed {
 }</string>
      </property>
      <property name="text">
-      <string>Send Outreach</string>
+      <string>Move Invite</string>
      </property>
     </widget>
    </item>
