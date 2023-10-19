@@ -67,69 +67,72 @@ def get_conflicts(start_date=None, end_date=None, cal_view=False):
     outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
     appointments = outlook.GetDefaultFolder(9).Items
     appointments.IncludeRecurrences = True
-
-    now = datetime.now()
-    # begin will be equal to start
-    if start_date:
-        begin_date = start_date.date()
-    else:
-        begin_date = today.date()
-    begin_time = time(8, 0, 0)
-    begin = datetime.combine(begin_date, begin_time)
-    # will be equal to tdelta end - start
-    if not cal_view:
-        day_range = 21
-    else:
-        day_range = 5
-    # will be equal to end argument from function call
-    if end_date:
-        ending_date = end_date.date()
-    else:
-        ending_date = begin_date + timedelta(days=day_range)
-    ending_time = time(17, 0, 0)
-
-    end = datetime.combine(ending_date, ending_time)
-    #print(begin)
-    # restrict range of appointments to read
-
-    restriction = "[Start] >= '" + begin.strftime("%m/%d/%Y %I:%M %p") + "' AND [END] <= '" + end.strftime("%m/%d/%Y %I:%M %p") + "'"
-    appointments = appointments.Restrict(restriction)
-    recurring_appointments = []
-
-    sorted_list = sorted(appointments, key=lambda x: x.Start.date())
-
-    mon = {}
-    tues = {}
-    wed = {}
-    thur = {}
-    fri = {}
-
-    # capture and categorize calendar events by weekday
-    for item in sorted_list:
-
-        if item.meetingstatus != 7 and 120 > item.Duration >= 15:
-            if item.RecurrenceState < 1:
-                # print(item.Subject)
-                if item.Start.weekday() == 0:
-                    mon[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
-                elif item.Start.weekday() == 1:
-                    tues[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
-                elif item.Start.weekday() == 2:
-                    wed[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
-                elif item.Start.weekday() == 3:
-                    thur[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
-                elif item.Start.weekday() == 4:
-                    fri[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
-
-            else:
-                # print(f'{item.Subject}: {item.Start.weekday()} Type: {item.GetRecurrencePattern().RecurrenceType}')
-                recurring_appointments.append(item)
-        # print(f"{item.Start.weekday()} {item.Subject}")
+    try:
+        now = datetime.now()
+        # begin will be equal to start
+        if start_date:
+            begin_date = start_date.date()
         else:
-            pass
+            begin_date = today.date()
+        begin_time = time(8, 0, 0)
+        begin = datetime.combine(begin_date, begin_time)
+        # will be equal to tdelta end - start
+        if not cal_view:
+            day_range = 21
+        else:
+            day_range = 5
+        # will be equal to end argument from function call
+        if end_date:
+            ending_date = end_date.date()
+        else:
+            ending_date = begin_date + timedelta(days=day_range)
+        ending_time = time(17, 0, 0)
 
-    conflicts = [mon, tues, wed, thur, fri]
-    return conflicts
+        end = datetime.combine(ending_date, ending_time)
+        #print(begin)
+        # restrict range of appointments to read
+
+        restriction = "[Start] >= '" + begin.strftime("%m/%d/%Y %I:%M %p") + "' AND [END] <= '" + end.strftime("%m/%d/%Y %I:%M %p") + "'"
+        appointments = appointments.Restrict(restriction)
+        recurring_appointments = []
+
+        sorted_list = sorted(appointments, key=lambda x: x.Start.date())
+
+        mon = {}
+        tues = {}
+        wed = {}
+        thur = {}
+        fri = {}
+
+        # capture and categorize calendar events by weekday
+        for item in sorted_list:
+
+            if item.meetingstatus != 7 and 120 > item.Duration >= 15:
+                if item.RecurrenceState < 1:
+                    # print(item.Subject)
+                    if item.Start.weekday() == 0:
+                        mon[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
+                    elif item.Start.weekday() == 1:
+                        tues[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
+                    elif item.Start.weekday() == 2:
+                        wed[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
+                    elif item.Start.weekday() == 3:
+                        thur[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
+                    elif item.Start.weekday() == 4:
+                        fri[(item.Start.strftime("%m/%d/%Y %I:%M %p"))] = item
+
+                else:
+                    # print(f'{item.Subject}: {item.Start.weekday()} Type: {item.GetRecurrencePattern().RecurrenceType}')
+                    recurring_appointments.append(item)
+            # print(f"{item.Start.weekday()} {item.Subject}")
+            else:
+                pass
+
+        conflicts = [mon, tues, wed, thur, fri]
+        return conflicts
+    except Exception as e:
+        print(e)
+        return []
 
 
 def get_meetings_week(week):
@@ -195,6 +198,8 @@ def find_times(item_list, meeting_duration, date_range=30, length=None):
     user_events = get_meeting_dict()
     time_output = []
     conflicts = item_list
+    if len(conflicts) == 0:
+        return []
 
     def reset_time(date_time):
         if date_time.weekday() == 4:

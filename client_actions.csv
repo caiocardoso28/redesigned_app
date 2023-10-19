@@ -1,33 +1,74 @@
 client_name,days_aged,email_sent,bi_sent,ae_outreach,last,last_action_date
-Michael Sengsbusch,31,0,1,0,bi_sent,03/10/2023 15:06 PM
-Luis Freay,24,0,1,0,bi_sent,03/10/2023 15:06 PM
-Julian Lopez,24,0,1,0,bi_sent,03/10/2023 15:06 PM
-Anton Kolomyeytsev,23,0,1,0,bi_sent,03/10/2023 15:06 PM
-Mark Johnson,23,0,1,0,bi_sent,03/10/2023 15:06 PM
-Gustavo Moraes,22,0,1,0,bi_sent,03/10/2023 15:06 PM
-Camilo Mussi,20,0,1,0,bi_sent,03/10/2023 15:06 PM
-Tony Paterra,18,0,1,0,bi_sent,03/10/2023 15:06 PM
-Rodrigo Braga,17,0,1,0,bi_sent,03/10/2023 15:06 PM
-Bruno Bin,17,0,1,0,bi_sent,03/10/2023 15:06 PM
-Matthew Elam,15,0,1,0,bi_sent,03/10/2023 15:06 PM
-Daniela Gumiero,15,0,1,0,bi_sent,03/10/2023 15:06 PM
-Andreia Malucelli,15,0,1,0,bi_sent,03/10/2023 15:06 PM
-Matt Pierce,14,0,1,0,bi_sent,03/10/2023 15:06 PM
-Luther Hargrove,52,1,1,1,bi_sent,03/20/2023 10:03 AM
-Ben Tamblyn,44,0,0,1,ae_outreach,03/10/2023 15:46 PM
-Eduardo Pulido,50,0,0,1,ae_outreach,03/10/2023 15:46 PM
-Michele Kratky,34,0,0,1,ae_outreach,03/10/2023 15:46 PM
-Claudio Vasconcelos Braga,26,0,1,0,bi_sent,03/14/2023 18:10 PM
-Gustavo Henrique Britto Figueiredo,26,0,1,0,bi_sent,03/14/2023 18:10 PM
-Victor Moreira Gurjao,26,0,1,0,bi_sent,03/14/2023 18:10 PM
-Marino Aguiar,25,0,1,0,bi_sent,03/14/2023 18:10 PM
-Steve Taylor,41,0,1,0,bi_sent,03/20/2023 12:02 PM
-Alex Kramer,20,0,1,0,bi_sent,03/20/2023 15:29 PM
-Art Hargrove,19,0,1,0,bi_sent,03/20/2023 15:29 PM
-Lisa Petoskey,19,0,1,0,bi_sent,03/20/2023 15:29 PM
-Shamoun Smurtza Walkerdunlop Com,19,0,1,0,bi_sent,03/20/2023 15:29 PM
-Robert Boland,19,0,1,0,bi_sent,03/20/2023 15:29 PM
-Ricardo Cézar De Moura Juca,17,0,1,0,bi_sent,03/20/2023 15:29 PM
-Eduardo Lang,17,0,1,0,bi_sent,03/20/2023 15:29 PM
-Alexandre Ferreira,16,0,1,0,bi_sent,03/20/2023 15:29 PM
-Parthiv Patel,16,0,1,0,bi_sent,03/20/2023 15:29 PM
+Sader Charone,45,0,2,0,bi_sent,10/05/2023 10:54 AM
+Leandro Garcia,15,0,1,0,bi_sent,09/06/2023 16:09 PM
+Thiago Baere,43,0,2,0,bi_sent,10/05/2023 10:54 AM
+Ana Resende,15,0,1,0,bi_sent,09/06/2023 16:09 PM
+Marcos Melo,43,0,2,0,bi_sent,10/05/2023 10:54 AM
+Ismael Tedesco,47,0,4,0,bi_sent,10/09/2023 11:39 AM
+Sergio Kamache,15,0,1,0,bi_sent,09/06/2023 16:09 PM
+Rafael Soto,15,0,1,0,bi_sent,09/06/2023 16:09 PM
+Jonas Vian,14,0,1,0,bi_sent,09/06/2023 16:09 PM
+Isabela Lacerda,14,0,1,0,bi_sent,09/06/2023 16:09 PM
+Debora Modesto,14,0,1,0,bi_sent,09/06/2023 16:09 PM
+Nancy Audette,22,0,1,0,bi_sent,09/15/2023 11:17 AM
+Alex Barboza,41,0,2,0,bi_sent,10/05/2023 10:54 AM
+Cameron Smith,37,0,3,0,bi_sent,10/05/2023 10:54 AM
+Cristiano Steyer,40,0,3,0,bi_sent,10/09/2023 11:39 AM
+Adriana Muniz Da Silva,16,0,1,0,bi_sent,09/15/2023 11:17 AM
+Meghan Therrien,14,0,1,0,bi_sent,09/15/2023 11:17 AM
+Emily Ledvina,14,0,1,0,bi_sent,09/15/2023 11:17 AM
+Sam Khamooshi,14,0,1,0,bi_sent,09/15/2023 11:17 AM
+David Riddle,14,0,1,0,bi_sent,09/15/2023 11:17 AM
+Steven Heist,13,0,1,0,bi_sent,09/15/2023 11:17 AM
+Chris Olsen,13,0,1,0,bi_sent,09/15/2023 11:17 AM
+Garry Adkins,13,0,1,0,bi_sent,09/15/2023 11:17 AM
+Sheri Major,13,0,1,0,bi_sent,09/15/2023 11:17 AM
+James Lugabihl,13,0,1,0,bi_sent,09/15/2023 11:17 AM
+Garret Spargo,13,0,1,0,bi_sent,09/15/2023 11:17 AM
+Loucif Kharouni,13,0,1,0,bi_sent,09/15/2023 11:17 AM
+Diego Costa,21,0,1,0,bi_sent,09/29/2023 11:07 AM
+James Kelley,16,0,1,0,bi_sent,09/29/2023 11:07 AM
+Walter Emura,25,0,2,0,bi_sent,10/09/2023 09:46 AM
+Leandro Lopes Lyra,15,0,1,0,bi_sent,09/29/2023 11:07 AM
+Ryan Glasgow,15,0,1,0,bi_sent,09/29/2023 11:07 AM
+Keith Basil,15,0,1,0,bi_sent,09/29/2023 11:07 AM
+Mike Zill,23,0,2,0,bi_sent,10/09/2023 09:46 AM
+Tej Gil,13,0,1,0,bi_sent,09/29/2023 11:07 AM
+Farhan Aslam,13,0,1,0,bi_sent,09/29/2023 11:07 AM
+Sanjay Puri,13,0,1,0,bi_sent,09/29/2023 11:07 AM
+Tifanny Morrissey,17,0,1,0,bi_sent,10/09/2023 10:45 AM
+Flavio Jose Vazquez Maceira,17,0,1,0,bi_sent,10/09/2023 10:45 AM
+Renata Bricio Vianna,17,0,1,0,bi_sent,10/09/2023 10:45 AM
+Marco Anthony Steveson Villas Boas,17,0,1,0,bi_sent,10/09/2023 10:45 AM
+Eduardo Aggio De Sá,17,0,1,0,bi_sent,10/09/2023 10:45 AM
+Thielly Potiens,17,0,1,0,bi_sent,10/09/2023 10:45 AM
+Amy Thomas,17,0,1,0,bi_sent,10/09/2023 10:45 AM
+Leslie Kosturko,13,0,1,0,bi_sent,10/09/2023 10:45 AM
+Sanket Amin,13,0,1,0,bi_sent,10/09/2023 10:45 AM
+Yurimia Aleman,19,0,1,0,bi_sent,10/16/2023 14:34 PM
+Cynthia Scarborough,19,0,1,0,bi_sent,10/16/2023 14:34 PM
+Michael Brons,19,0,1,0,bi_sent,10/16/2023 14:34 PM
+Lauren Deren,19,0,1,0,bi_sent,10/16/2023 14:34 PM
+Scott Schmuhl,19,0,1,0,bi_sent,10/16/2023 14:34 PM
+Craig Laufer,18,0,1,0,bi_sent,10/16/2023 14:34 PM
+Sandy Iyer,18,0,1,0,bi_sent,10/16/2023 14:34 PM
+Jeff Piotrowski,18,0,1,0,bi_sent,10/16/2023 14:34 PM
+Alexandre Bard Villeroy,17,0,1,0,bi_sent,10/16/2023 14:34 PM
+Siroui Mushegian,16,0,1,0,bi_sent,10/16/2023 14:34 PM
+Michael Chunn,16,0,1,0,bi_sent,10/16/2023 14:34 PM
+Dwayne Wright,16,0,1,0,bi_sent,10/16/2023 14:34 PM
+Marcelo Oliveira,19,0,1,0,bi_sent,10/18/2023 14:22 PM
+Marilou Tuazon,15,0,1,0,bi_sent,10/18/2023 14:22 PM
+Viroj Vienvattanah,15,0,1,0,bi_sent,10/18/2023 14:22 PM
+James Pipe,15,0,1,0,bi_sent,10/18/2023 14:22 PM
+Dean Lima,15,0,1,0,bi_sent,10/18/2023 14:22 PM
+Melinda Hamel,15,0,1,0,bi_sent,10/18/2023 14:22 PM
+Lance Hatfield,15,0,1,0,bi_sent,10/18/2023 14:22 PM
+Shawn Lewis,15,0,1,0,bi_sent,10/18/2023 14:22 PM
+Christopher Olsen,15,0,1,0,bi_sent,10/18/2023 14:22 PM
+Eduardo Rojas,15,0,1,0,bi_sent,10/18/2023 14:22 PM
+Alexandre Pires Pelliccione,15,0,1,0,bi_sent,10/18/2023 14:22 PM
+Justin Kestelyn,15,0,1,0,bi_sent,10/18/2023 14:22 PM
+Mihir Shah,13,0,1,0,bi_sent,10/18/2023 14:22 PM
+Shylaja Nathan,13,0,1,0,bi_sent,10/18/2023 14:22 PM
+Guilherme Machado Rodrigues,13,0,1,0,bi_sent,10/18/2023 14:22 PM
